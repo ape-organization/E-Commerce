@@ -1,0 +1,394 @@
+
+/* =========================
+   COLOR PALETTE
+   ========================= */
+
+:host {
+  --navy: #0b1f3a;
+  --navy-light: #122d50;
+  --navy-dark: #071529;
+
+  --gold: #d4af37;
+  --gold-light: #e6c85c;
+  --gold-dark: #b8941f;
+
+  --white: #ffffff;
+  --gray: #c8ced6;
+  --gray-dark: #8f98a5;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+  position: relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--navy-dark),
+      var(--navy)
+    );
+
+  color: var(--white);
+
+  padding: 4rem 0 1.5rem;
+
+  margin-top: 4rem;
+
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+
+  overflow: hidden;
+}
+
+
+/* Subtle gold glow */
+
+.footer::before {
+  content: "";
+
+  position: absolute;
+
+  top: -120px;
+  left: 50%;
+
+  width: 350px;
+  height: 350px;
+
+  background: rgba(212, 175, 55, 0.05);
+
+  border-radius: 50%;
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+}
+
+
+/* =========================
+   CONTAINER
+   ========================= */
+
+.container {
+  position: relative;
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 0 1.5rem;
+
+  text-align: center;
+}
+
+
+/* =========================
+   BRAND
+   ========================= */
+
+.footer-brand {
+  margin-bottom: 2rem;
+}
+
+
+.brand-logo {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  color: var(--white);
+
+  font-size: 1.7rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+}
+
+
+.logo-icon {
+  color: var(--gold);
+
+  font-size: 1.7rem;
+
+  transition: transform 0.3s ease;
+}
+
+
+.brand-logo:hover .logo-icon {
+  transform: rotate(20deg) scale(1.1);
+}
+
+
+.brand-description {
+  max-width: 500px;
+
+  margin: 1rem auto 0;
+
+  color: var(--gray);
+
+  font-size: 0.95rem;
+
+  line-height: 1.7;
+}
+
+
+/* =========================
+   DIVIDER
+   ========================= */
+
+.footer-divider {
+  width: 100%;
+
+  height: 1px;
+
+  margin: 2rem 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(212, 175, 55, 0.5),
+      transparent
+    );
+}
+
+
+/* =========================
+   CONTACT
+   ========================= */
+
+.contact-section h3 {
+  position: relative;
+
+  display: inline-block;
+
+  font-size: 1.3rem;
+
+  margin: 0 0 1.5rem;
+
+  color: var(--gold);
+
+  font-weight: 600;
+
+  letter-spacing: 0.5px;
+}
+
+
+/* Small gold underline */
+
+.contact-section h3::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: -8px;
+
+  width: 35px;
+
+  height: 2px;
+
+  background: var(--gold);
+
+  transform: translateX(-50%);
+}
+
+
+/* Contact item */
+
+.contact-item {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 0.6rem;
+
+  margin: 0.75rem 0;
+
+  color: var(--gray);
+}
+
+
+.contact-icon {
+  display: inline-flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  color: var(--gold);
+
+  border: 1px solid rgba(212, 175, 55, 0.3);
+
+  border-radius: 50%;
+
+  font-size: 0.85rem;
+
+  transition: all 0.3s ease;
+}
+
+
+.contact-item:hover .contact-icon {
+  background: var(--gold);
+
+  color: var(--navy-dark);
+
+  border-color: var(--gold);
+
+  transform: translateY(-2px);
+}
+
+
+/* Contact links */
+
+.contact-item a {
+  color: var(--gray);
+
+  text-decoration: none;
+
+  font-size: 0.95rem;
+
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+
+.contact-item a:hover {
+  color: var(--gold-light);
+
+  transform: translateX(3px);
+}
+
+
+/* =========================
+   FOOTER BOTTOM
+   ========================= */
+
+.footer-bottom {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  padding-top: 0.5rem;
+}
+
+
+.copyright {
+  margin: 0;
+
+  color: var(--gray-dark);
+
+  font-size: 0.8rem;
+}
+
+
+/* Tagline */
+
+.footer-tagline {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  color: var(--gray-dark);
+
+  font-size: 0.78rem;
+
+  letter-spacing: 0.5px;
+}
+
+
+.gold-dot {
+  color: var(--gold);
+
+  font-size: 1rem;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 768px) {
+
+  .footer {
+    padding: 3rem 0 1.5rem;
+
+    margin-top: 3rem;
+  }
+
+  .brand-logo {
+    font-size: 1.5rem;
+  }
+
+  .brand-description {
+    font-size: 0.9rem;
+  }
+
+  .contact-section h3 {
+    font-size: 1.2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 0.5rem;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 480px) {
+
+  .footer {
+    padding: 2.5rem 0 1.25rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .brand-logo {
+    font-size: 1.35rem;
+  }
+
+  .brand-description {
+    font-size: 0.85rem;
+
+    line-height: 1.6;
+  }
+
+  .contact-item a {
+    font-size: 0.85rem;
+  }
+
+  .footer-tagline {
+    font-size: 0.7rem;
+  }
+
+}

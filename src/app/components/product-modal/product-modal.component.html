@@ -1,0 +1,130 @@
+
+<div class="dialog-content">
+
+  <!-- Product Image -->
+  <div class="product-image">
+
+    <div class="image-frame">
+      <img
+        [src]="product.imageUrl"
+        [alt]="product.name"
+      />
+    </div>
+
+    <div class="image-label">
+      ✦ Premium Beauty
+    </div>
+
+  </div>
+
+
+  <!-- Product Details -->
+  <div class="product-details">
+
+    <div class="details-header">
+
+      <span class="product-category">
+        BEAUTY COLLECTION
+      </span>
+
+      <h2 class="product-name">
+        {{ product.name }}
+      </h2>
+
+      <div class="title-line"></div>
+
+    </div>
+
+
+    <!-- Description -->
+    <p class="product-description">
+      {{ product.description }}
+    </p>
+
+
+    <!-- Price -->
+    <div class="price-section">
+
+      <span class="price">
+        {{ product.price }}
+      </span>
+
+      <span class="currency">
+        EGP
+      </span>
+
+    </div>
+
+
+    <!-- Quantity -->
+    <div class="quantity-section">
+
+      <label for="quantity">
+        Quantity
+      </label>
+
+      <div class="quantity-control">
+
+        <button
+          type="button"
+          class="quantity-btn"
+          (click)="quantity = quantity > 1 ? quantity - 1 : 1"
+        >
+          −
+        </button>
+
+        <input
+          id="quantity"
+          type="number"
+          [(ngModel)]="quantity"
+          min="1"
+          step="1"
+          class="quantity-input"
+        />
+
+        <button
+          type="button"
+          class="quantity-btn"
+          (click)="quantity = quantity + 1"
+        >
+          +
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+
+      <button
+        mat-raised-button
+        (click)="addToCart()"
+        class="add-btn"
+      >
+
+        <mat-icon>
+          add_shopping_cart
+        </mat-icon>
+
+        <span>
+          Add to Cart
+        </span>
+
+      </button>
+
+
+      <button
+        mat-button
+        (click)="closeDialog()"
+        class="close-btn"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

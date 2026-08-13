@@ -1,0 +1,123 @@
+
+<main class="container">
+
+  <h1 class="page-title">
+    <span>Our</span> Products
+  </h1>
+
+  <div class="title-decoration">
+    <span>✦</span>
+  </div>
+
+
+  <div class="product-grid">
+
+    <div
+      class="product-card"
+      *ngFor="let product of products"
+      (click)="openProductDetails(product)"
+    >
+
+      <!-- Product Image -->
+      <div class="product-image">
+
+        <img
+          [src]="product.imageUrl"
+          [alt]="product.name"
+        />
+
+        <!-- Small badge -->
+        <div class="product-badge">
+          Beauty
+        </div>
+
+      </div>
+
+
+      <!-- Product Info -->
+      <div class="product-info">
+
+        <div class="mainData">
+
+          <h3 class="product-name">
+            {{ product.name }}
+          </h3>
+
+          <p class="product-description">
+            {{ product.description }}
+          </p>
+
+          <p class="product-price">
+            {{ product.price }}
+            <span>EGP</span>
+          </p>
+
+        </div>
+
+
+        <!-- Product Overlay -->
+        <div class="product-overlay">
+
+          <div class="product-actions">
+
+            <!-- Quantity -->
+            <div
+              class="quantity-wrapper"
+              (click)="$event.stopPropagation()"
+            >
+
+              <label>
+                Qty
+              </label>
+
+              <input
+                type="number"
+                [id]="'qty-' + product.id"
+                [(ngModel)]="quantities[product.id]"
+                [ngModelOptions]="{ standalone: true }"
+                min="1"
+                step="1"
+                class="quantity-input"
+              />
+
+            </div>
+
+
+            <!-- Add To Cart -->
+            <button
+              mat-button
+              class="add-to-cart"
+              (click)="addToCart(product, $event)"
+            >
+
+              <mat-icon>
+                add_shopping_cart
+              </mat-icon>
+
+              <span>
+                Add to Cart
+              </span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Loading -->
+  <div
+    *ngIf="products.length === 0"
+    class="loading-spinner"
+  >
+    <span class="loading-icon">✦</span>
+    Loading products...
+  </div>
+
+</main>

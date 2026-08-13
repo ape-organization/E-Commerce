@@ -1,0 +1,71 @@
+
+<header class="header">
+
+  <!-- Main Header -->
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/products">
+        <span class="logo-icon">✦</span>
+        <span class="logo-text">Cosmetics</span>
+      </a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <ul>
+        <li>
+          <a routerLink="/products" routerLinkActive="active">
+            Home
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/products" routerLinkActive="active">
+            Products
+          </a>
+        </li>
+
+        <li>
+          <a [routerLink]="[]" fragment="footer">
+            Contact
+          </a>
+        </li>
+
+        <!-- Cart -->
+        <li class="cart-link">
+          <a routerLink="/cart" class="cart-button">
+
+            <button
+              mat-icon-button
+              [matBadge]="cartCount"
+              matBadgeColor="warn"
+              aria-label="Shopping cart">
+
+              <mat-icon fontSet="material-symbols-outlined">
+                shopping_bag
+              </mat-icon>
+
+            </button>
+
+            <span class="cart-text">Cart</span>
+
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+
+  <!-- Announcement Bar -->
+  <div class="info">
+    <span class="info-star">✦</span>
+    <strong>Shop Smart.</strong>
+    <span>Save More.</span>
+    <span class="info-star">✦</span>
+  </div>
+
+</header>
+
+

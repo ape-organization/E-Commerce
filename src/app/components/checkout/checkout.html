@@ -1,0 +1,399 @@
+<div class="checkout-page">
+
+  <!-- Header -->
+  <div class="checkout-header">
+    <div class="checkout-header-content">
+
+      <button
+        type="button"
+        class="back-button"
+        (click)="goBackToCart()"
+      >
+        <span class="back-icon">←</span>
+        Back to Cart
+      </button>
+
+      <div class="header-title">
+        <span class="title-accent">✦</span>
+
+        <div>
+          <h1>Checkout</h1>
+          <p>Complete your order</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Content -->
+  <div class="checkout-container">
+
+    <form
+      class="checkout-form"
+      [formGroup]="checkoutForm"
+      (ngSubmit)="placeOrder()"
+      novalidate
+    >
+
+      <!-- Customer Information -->
+      <section class="checkout-card">
+
+        <div class="section-header">
+          <div class="section-icon">01</div>
+
+          <div>
+            <h2>Customer Information</h2>
+            <p>Tell us how we can reach you</p>
+          </div>
+        </div>
+
+
+        <div class="form-grid">
+
+          <!-- Full Name -->
+          <div class="form-field full-width">
+
+            <label for="fullName">
+              Full Name
+              <span>*</span>
+            </label>
+
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              [class.invalid]="isInvalid('fullName')"
+            />
+
+            @if (isInvalid('fullName')) {
+              <small>
+                Please enter your full name.
+              </small>
+            }
+
+          </div>
+
+
+          <!-- Phone -->
+          <div class="form-field">
+
+            <label for="phone">
+              Phone Number
+              <span>*</span>
+            </label>
+
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              placeholder="01XXXXXXXXX"
+              autocomplete="tel"
+              [class.invalid]="isInvalid('phone')"
+            />
+
+            @if (isInvalid('phone')) {
+              <small>
+                Enter a valid Egyptian phone number.
+              </small>
+            }
+
+          </div>
+
+
+          <!-- Email -->
+          <div class="form-field">
+
+            <label for="email">
+              Email Address
+              <em>Optional</em>
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="example@email.com"
+              autocomplete="email"
+              [class.invalid]="isInvalid('email')"
+            />
+
+            @if (isInvalid('email')) {
+              <small>
+                Please enter a valid email address.
+              </small>
+            }
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Delivery Information -->
+      <section class="checkout-card">
+
+        <div class="section-header">
+          <div class="section-icon">02</div>
+
+          <div>
+            <h2>Delivery Information</h2>
+            <p>Where should we deliver your order?</p>
+          </div>
+        </div>
+
+
+        <div class="form-grid">
+
+          <!-- City -->
+          <div class="form-field">
+
+            <label for="city">
+              City / Governorate
+              <span>*</span>
+            </label>
+
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              placeholder="Enter your city"
+              autocomplete="address-level2"
+              [class.invalid]="isInvalid('city')"
+            />
+
+            @if (isInvalid('city')) {
+              <small>
+                Please enter your city.
+              </small>
+            }
+
+          </div>
+
+
+          <!-- Apartment -->
+          <div class="form-field">
+
+            <label for="apartment">
+              Apartment / Building
+              <em>Optional</em>
+            </label>
+
+            <input
+              id="apartment"
+              type="text"
+              formControlName="apartment"
+              placeholder="Building, floor, apartment..."
+            />
+
+          </div>
+
+
+          <!-- Address -->
+          <div class="form-field full-width">
+
+            <label for="address">
+              Full Address
+              <span>*</span>
+            </label>
+
+            <textarea
+              id="address"
+              formControlName="address"
+              rows="3"
+              placeholder="Street name, building number, area..."
+              autocomplete="street-address"
+              [class.invalid]="isInvalid('address')"
+            ></textarea>
+
+            @if (isInvalid('address')) {
+              <small>
+                Please enter your delivery address.
+              </small>
+            }
+
+          </div>
+
+
+          <!-- Notes -->
+          <div class="form-field full-width">
+
+            <label for="notes">
+              Delivery Notes
+              <em>Optional</em>
+            </label>
+
+            <textarea
+              id="notes"
+              formControlName="notes"
+              rows="3"
+              placeholder="Any special instructions for delivery?"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Payment -->
+      <section class="checkout-card">
+
+        <div class="section-header">
+          <div class="section-icon">03</div>
+
+          <div>
+            <h2>Payment Method</h2>
+            <p>Choose how you want to pay</p>
+          </div>
+        </div>
+
+
+        <div class="payment-option selected">
+
+          <div class="payment-radio">
+            <div class="radio-dot"></div>
+          </div>
+
+          <div class="payment-content">
+
+            <div class="payment-title">
+              <span class="payment-icon">₣</span>
+
+              <div>
+                <h3>Cash on Delivery</h3>
+                <p>Pay when your order arrives</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="payment-check">
+            ✓
+          </div>
+
+        </div>
+
+      </section>
+
+    </form>
+
+
+    <!-- Order Summary -->
+    <aside class="order-summary">
+
+      <div class="summary-header">
+        <div>
+          <span class="summary-label">YOUR ORDER</span>
+          <h2>Order Summary</h2>
+        </div>
+
+        <span class="items-count">
+          {{ totalItems }} items
+        </span>
+      </div>
+
+
+      <!-- Products -->
+      <div class="summary-products">
+
+        @for (item of cartItems(); track item.id) {
+
+          <div class="summary-product">
+
+            <div class="product-image">
+              <img
+                [src]="item.image"
+                [alt]="item.name"
+              />
+            </div>
+
+            <div class="product-info">
+
+              <h3>{{ item.name }}</h3>
+
+              <p>
+                Qty: {{ item.quantity }}
+              </p>
+
+            </div>
+
+            <strong>
+              {{ item.price * item.quantity  }} EGP
+            </strong>
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- Totals -->
+      <div class="summary-totals">
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>
+            {{ subtotal  }} EGP
+          </strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery</span>
+          <strong>
+            {{ deliveryFee()  }} EGP
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="summary-total">
+
+        <span>Total</span>
+
+        <strong>
+          {{ total  }} EGP
+        </strong>
+
+      </div>
+
+
+      <!-- Place Order -->
+      <button
+        type="button"
+        class="place-order-button"
+        [disabled]="isSubmitting()"
+        (click)="placeOrder()"
+      >
+
+        @if (isSubmitting()) {
+
+          <span class="spinner"></span>
+          Processing...
+
+        } @else {
+
+          <span>Place Order</span>
+          <span class="button-arrow">→</span>
+
+        }
+
+      </button>
+
+
+      <div class="secure-note">
+        <span>🔒</span>
+        <span>Your information is secure and private.</span>
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>

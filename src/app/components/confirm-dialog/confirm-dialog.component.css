@@ -1,0 +1,259 @@
+
+/* =========================
+   COLOR PALETTE
+   ========================= */
+
+:host {
+  --navy: #0b1f3a;
+  --navy-dark: #071529;
+
+  --gold: #d4af37;
+  --gold-light: #e6c85c;
+
+  --white: #ffffff;
+
+  --gray: #6f7782;
+  --gray-light: #f5f6f8;
+
+  --border: #e2e5e9;
+
+  --danger: #b33a3a;
+  --danger-dark: #963030;
+}
+
+
+/* =========================
+   DIALOG
+   ========================= */
+
+.confirm-dialog {
+  min-width: 360px;
+
+  padding: 1.5rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--white),
+      #f8f9fb
+    );
+
+  border-radius: 12px;
+}
+
+
+/* =========================
+   ICON
+   ========================= */
+
+.dialog-icon {
+  width: 58px;
+
+  height: 58px;
+
+  margin: 0 auto 1rem;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(212, 175, 55, 0.1);
+
+  border: 1px solid
+    rgba(212, 175, 55, 0.3);
+
+  color: var(--gold);
+}
+
+
+.dialog-icon mat-icon {
+  width: 28px;
+
+  height: 28px;
+
+  font-size: 28px;
+}
+
+
+/* =========================
+   MESSAGE
+   ========================= */
+
+.dialog-message {
+  min-height: 60px;
+
+  padding: 0.5rem 0 1.2rem;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  color: var(--navy);
+
+  font-size: 0.95rem;
+
+  font-weight: 500;
+
+  line-height: 1.6;
+}
+
+
+/* =========================
+   ACTIONS
+   ========================= */
+
+.dialog-actions {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 0.75rem;
+
+  padding: 1.2rem 0 0;
+
+  margin: 0;
+
+  border-top: 1px solid var(--border);
+}
+
+
+/* =========================
+   CANCEL
+   ========================= */
+
+.cancel-btn {
+  min-width: 110px;
+
+  min-height: 40px;
+
+  padding: 0 1.2rem;
+
+  border: 1px solid var(--border);
+
+  border-radius: 7px;
+
+  background: var(--white);
+
+  color: var(--navy);
+
+  font-size: 0.8rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.cancel-btn:hover {
+  background: var(--gray-light);
+
+  border-color: var(--navy);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================
+   CONFIRM
+   ========================= */
+
+.confirm-btn {
+  min-width: 110px;
+
+  min-height: 40px;
+
+  display: inline-flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 0.35rem;
+
+  padding: 0 1.2rem;
+
+  border: 1px solid var(--danger);
+
+  border-radius: 7px;
+
+  background: var(--danger);
+
+  color: var(--white);
+
+  font-size: 0.8rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.confirm-btn mat-icon {
+  width: 18px;
+
+  height: 18px;
+
+  font-size: 18px;
+}
+
+
+.confirm-btn:hover {
+  background: var(--danger-dark);
+
+  border-color: var(--danger-dark);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 480px) {
+
+  .confirm-dialog {
+    min-width: 0;
+
+    width: 100%;
+
+    padding: 1.2rem;
+  }
+
+  .dialog-message {
+    font-size: 0.9rem;
+  }
+
+  .dialog-actions {
+    gap: 0.5rem;
+  }
+
+  .cancel-btn,
+  .confirm-btn {
+    flex: 1;
+
+    min-width: 0;
+  }
+
+}

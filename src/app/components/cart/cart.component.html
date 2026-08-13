@@ -1,0 +1,267 @@
+
+<main class="cart-container">
+
+  <!-- Cart Header -->
+  <div class="cart-header">
+    <div>
+      <span class="cart-label">YOUR SELECTION</span>
+
+      <h1 class="cart-title">
+        Shopping <span>Cart</span>
+      </h1>
+    </div>
+
+    <div class="cart-count">
+      {{ cartItems.length }}
+      <span>items</span>
+    </div>
+  </div>
+
+
+  <!-- Cart -->
+  <div
+    class="cart-content"
+    *ngIf="cartItems.length > 0; else emptyCart"
+  >
+
+    <!-- Products Table -->
+    <div class="table-wrapper">
+
+      <table class="cart-table">
+
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="let item of cartItems"
+            class="cart-item-row"
+          >
+
+            <!-- Product -->
+            <td class="product-name">
+              {{ item.product.name }}
+            </td>
+
+
+            <!-- Price -->
+            <td class="product-price">
+
+              <strong>
+                {{ item.product.price }}
+              </strong>
+
+              <span>EGP</span>
+
+            </td>
+
+
+            <!-- Quantity -->
+            <td class="quantity-cell">
+
+              <div class="quantity-control">
+
+                <button
+                  type="button"
+                  class="quantity-btn"
+                  (click)="updateQuantity(
+                    item.product.id,
+                    item.quantity - 1
+                  )"
+                  [disabled]="item.quantity <= 1"
+                >
+                  −
+                </button>
+
+                <input
+                  type="number"
+                  [(ngModel)]="item.quantity"
+                  (change)="updateQuantity(
+                    item.product.id,
+                    item.quantity
+                  )"
+                  min="1"
+                  class="quantity-input"
+                />
+
+                <button
+                  type="button"
+                  class="quantity-btn"
+                  (click)="updateQuantity(
+                    item.product.id,
+                    item.quantity + 1
+                  )"
+                >
+                  +
+                </button>
+
+              </div>
+
+            </td>
+
+
+            <!-- Subtotal -->
+            <td class="subtotal">
+
+              <strong>
+                {{ item.product.price * item.quantity }}
+              </strong>
+
+              <span>EGP</span>
+
+            </td>
+
+
+            <!-- Delete -->
+            <td class="action-cell">
+
+              <button
+                type="button"
+                class="remove-btn"
+                (click)="removeFromCart(item.product.id)"
+                aria-label="Remove product"
+              >
+
+                <mat-icon>
+                  delete_outline
+                </mat-icon>
+
+              </button>
+
+            </td>
+
+          </tr>
+
+
+          <!-- Total -->
+          <tr class="total-row">
+
+            <td
+              colspan="3"
+              class="total-label"
+            >
+              Total
+            </td>
+
+            <td
+              colspan="2"
+              class="total-price"
+            >
+
+              {{ cartTotal }}
+
+              <span>EGP</span>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- Actions -->
+    <div class="cart-actions">
+
+      <!-- Shopping -->
+      <a
+        routerLink="/products"
+        class="continue-shopping"
+      >
+        <mat-icon>
+          arrow_back
+        </mat-icon>
+
+        Continue Shopping
+      </a>
+
+
+      <div class="purchase-actions">
+
+  <!-- Checkout -->
+  <button
+    mat-raised-button
+    class="checkout-btn"
+    [disabled]="cartItems.length <= 0"
+    (click)="goToCheckout()"
+  >
+    <mat-icon>
+      shopping_bag
+    </mat-icon>
+
+    <span>
+      Checkout
+    </span>
+  </button>
+
+
+  <!-- Clear -->
+  <button
+    mat-button
+    class="clear-btn"
+    [disabled]="cartItems.length <= 0"
+    (click)="clearCart()"
+  >
+    <mat-icon>
+      delete_outline
+    </mat-icon>
+
+    <span>
+      Clear Cart
+    </span>
+  </button>
+
+</div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Empty Cart -->
+  <ng-template #emptyCart>
+
+    <div class="empty-cart">
+
+      <div class="empty-icon">
+        shopping_bag
+      </div>
+
+      <h2>
+        Your cart is empty
+      </h2>
+
+      <p>
+        Discover something beautiful and add it to your collection.
+      </p>
+
+      <a
+        routerLink="/products"
+        class="continue-shopping empty-shopping"
+      >
+
+        <mat-icon>
+          shopping_bag
+        </mat-icon>
+
+        Continue Shopping
+
+      </a>
+
+    </div>
+
+  </ng-template>
+
+</main>
