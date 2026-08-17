@@ -34,7 +34,10 @@ private readonly router = inject(Router);
   removeFromCart(productId: number) {
     this.cartService.removeFromCart(productId);
   }
-
+back()
+{
+  this.router.navigate(['/products'])
+}
   updateQuantity(productId: number, quantity: number) {
     if (quantity > 0) {
       this.cartService.updateQuantity(productId, quantity);

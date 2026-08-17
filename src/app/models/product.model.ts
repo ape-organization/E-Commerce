@@ -1,8 +1,17 @@
-export interface Product {
-  imageUrl: string;
+export interface SubCategory {
   id: number;
   name: string;
+  categoryId: number;
+  categoryName?: string;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  description?: string | null;
   price: number;
-  description: string;
-  image: string;
+  stockQuantity: number;
+  imageUrl?: string | null;
+
+  subCategories: SubCategory[];
 }

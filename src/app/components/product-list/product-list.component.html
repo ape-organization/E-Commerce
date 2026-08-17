@@ -1,123 +1,432 @@
-
 <main class="container">
 
+
+  <!-- ======================================================
+       PAGE TITLE
+       ====================================================== -->
+
   <h1 class="page-title">
-    <span>Our</span> Products
+
+    <span>
+      Our
+    </span>
+
+    Products
+
   </h1>
 
+
   <div class="title-decoration">
-    <span>✦</span>
+
+    <span>
+      ✦
+    </span>
+
   </div>
 
 
-  <div class="product-grid">
+
+  <!-- ======================================================
+       FILTERS
+       ====================================================== -->
+
+  <div class="product-filters">
+
+
+    <!-- CATEGORY -->
+
+    <div class="filter-group">
+
+     
+
+
+      <select
+        id="category"
+
+        class="filter-select"
+
+        [(ngModel)]="selectedCategory"
+
+        (change)="onCategoryChange()"
+      >
+
+        <option value="" class="options">
+
+          All Categories
+
+        </option>
+
+
+        <option class="options"
+          *ngFor="let category of categories"
+
+          [value]="category"
+        >
+
+          {{ category }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+
+
+    <!-- SUBCATEGORY -->
+
+    <div
+      class="filter-group"
+
+      *ngIf="selectedCategory"
+    >
+
+   
+
+
+      <select
+        id="subcategory"
+
+        class="filter-select"
+
+        [(ngModel)]="selectedSubCategory"
+
+        (change)="onSubCategoryChange()"
+      >
+
+        <option value="" class="options">
+
+          All Subcategories
+
+        </option>
+
+
+        <option class="options"
+          *ngFor="
+            let subCategory
+            of subCategories
+          "
+
+          [value]="subCategory"
+        >
+
+          {{ subCategory }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+
+
+    <!-- CLEAR FILTERS -->
+
+    <button
+      *ngIf="
+        selectedCategory ||
+        selectedSubCategory
+      "
+
+      type="button"
+
+      class="clear-filters"
+
+      (click)="clearFilters()"
+    >
+
+      <mat-icon>
+        close
+      </mat-icon>
+
+      <span>
+        Clear Filters
+      </span>
+
+    </button>
+
+
+  </div>
+
+
+
+  <!-- ======================================================
+       PRODUCTS
+       ====================================================== -->
+
+  <div
+    class="product-grid"
+
+    *ngIf="
+      !isLoading &&
+      filteredProducts.length > 0
+    "
+  >
+
+
+    <!-- PRODUCT CARD -->
 
     <div
       class="product-card"
-      *ngFor="let product of products"
-      (click)="openProductDetails(product)"
+
+      *ngFor="
+        let product
+        of filteredProducts
+      "
+
+      (click)="
+        openProductDetails(product)
+      "
     >
 
-      <!-- Product Image -->
+
+      <!-- ==================================================
+           IMAGE
+           ================================================== -->
+
       <div class="product-image">
+
 
         <img
           [src]="product.imageUrl"
           [alt]="product.name"
         />
 
-        <!-- Small badge -->
+
+        <!-- CATEGORY BADGE -->
+
         <div class="product-badge">
-          Beauty
+
+          {{
+            product
+              ?.subCategories?.[0]
+              ?.categoryName
+              || 'Uncategorized'
+          }}
+
         </div>
+
 
       </div>
 
 
-      <!-- Product Info -->
+
+      <!-- ==================================================
+           PRODUCT INFO
+           ================================================== -->
+
       <div class="product-info">
+
 
         <div class="mainData">
 
+
+          <!-- NAME -->
+
           <h3 class="product-name">
+
             {{ product.name }}
+
           </h3>
 
+
+          <!-- DESCRIPTION -->
+
           <p class="product-description">
+
             {{ product.description }}
+
           </p>
 
+
+          <!-- PRICE -->
+
           <p class="product-price">
+
             {{ product.price }}
-            <span>EGP</span>
+
+            <span>
+              EGP
+            </span>
+
           </p>
+
 
         </div>
 
 
-        <!-- Product Overlay -->
+
+        <!-- =================================================
+             OVERLAY
+             ================================================= -->
+
         <div class="product-overlay">
+
 
           <div class="product-actions">
 
-            <!-- Quantity -->
+
+            <!-- QUANTITY -->
+
             <div
               class="quantity-wrapper"
-              (click)="$event.stopPropagation()"
-            >
 
-              <label>
-                Qty
-              </label>
+              (click)="
+                $event.stopPropagation()
+              "
+            >
 
               <input
                 type="number"
+
                 [id]="'qty-' + product.id"
-                [(ngModel)]="quantities[product.id]"
-                [ngModelOptions]="{ standalone: true }"
-                min="1"
+
+                [(ngModel)]="
+                  quantities[product.id]
+                "
+
+                [ngModelOptions]="{
+                  standalone: true
+                }"
+
+                min="0"
+
                 step="1"
+
                 class="quantity-input"
               />
 
             </div>
 
 
-            <!-- Add To Cart -->
+
+            <!-- ADD TO CART -->
+
             <button
               mat-button
+
+              type="button"
+
               class="add-to-cart"
-              (click)="addToCart(product, $event)"
+
+              (click)="
+                addToCart(
+                  product,
+                  $event
+                )
+              "
             >
 
               <mat-icon>
+
                 add_shopping_cart
+
               </mat-icon>
 
+
               <span>
+
                 Add to Cart
+
               </span>
 
             </button>
+
 
           </div>
 
         </div>
 
+
       </div>
+
 
     </div>
 
+
   </div>
 
 
-  <!-- Loading -->
+
+  <!-- ======================================================
+       LOADING
+       ====================================================== -->
+
   <div
-    *ngIf="products.length === 0"
+    *ngIf="isLoading"
+
     class="loading-spinner"
   >
-    <span class="loading-icon">✦</span>
+
+    <span class="loading-icon">
+
+      ✦
+
+    </span>
+
     Loading products...
+
   </div>
+
+
+
+  <!-- ======================================================
+       NO PRODUCTS
+       ====================================================== -->
+
+  <div
+    *ngIf="
+      !isLoading &&
+      filteredProducts.length === 0
+    "
+
+    class="no-products"
+  >
+
+    <span class="no-products-icon">
+
+      ✦
+
+    </span>
+
+
+    <h3>
+
+      No Products Found
+
+    </h3>
+
+
+    <p>
+
+      No products match
+      the selected filters.
+
+    </p>
+
+
+    <button
+      *ngIf="
+        selectedCategory ||
+        selectedSubCategory
+      "
+
+      type="button"
+
+      class="clear-filters"
+
+      (click)="clearFilters()"
+    >
+
+      <mat-icon>
+        refresh
+      </mat-icon>
+
+      Show All Products
+
+    </button>
+
+  </div>
+
 
 </main>
