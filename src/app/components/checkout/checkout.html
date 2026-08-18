@@ -1,7 +1,11 @@
 <div class="checkout-page">
 
-  <!-- Header -->
+  <!-- ========================================= -->
+  <!-- HEADER -->
+  <!-- ========================================= -->
+
   <div class="checkout-header">
+
     <div class="checkout-header-content">
 
       <button
@@ -10,24 +14,47 @@
         (click)="goBackToCart()"
       >
         <span class="back-icon">←</span>
+
         Back to Cart
       </button>
 
+
       <div class="header-title">
-        <span class="title-accent">✦</span>
+
+        <span class="title-accent">
+          ✦
+        </span>
 
         <div>
-          <h1>Checkout</h1>
-          <p>Complete your order</p>
+
+          <h1>
+            Checkout
+          </h1>
+
+          <p style="color: navy;">
+            Complete your order
+          </p>
+
         </div>
+
       </div>
 
     </div>
+
   </div>
 
 
-  <!-- Content -->
+
+  <!-- ========================================= -->
+  <!-- CONTENT -->
+  <!-- ========================================= -->
+
   <div class="checkout-container">
+
+
+    <!-- ======================================= -->
+    <!-- CHECKOUT FORM -->
+    <!-- ======================================= -->
 
     <form
       class="checkout-form"
@@ -36,28 +63,139 @@
       novalidate
     >
 
-      <!-- Customer Information -->
+
+      <!-- ===================================== -->
+      <!-- CUSTOMER INFORMATION -->
+      <!-- ===================================== -->
+
       <section class="checkout-card">
 
+
         <div class="section-header">
-          <div class="section-icon">01</div>
+
+          <div class="section-icon">
+            01
+          </div>
 
           <div>
-            <h2>Customer Information</h2>
-            <p>Tell us how we can reach you</p>
+
+            <h2>
+              Customer Information
+            </h2>
+
+            <p>
+              Tell us how we can reach you
+            </p>
+
           </div>
+
         </div>
+
 
 
         <div class="form-grid">
 
-          <!-- Full Name -->
+
+          <!-- ================================= -->
+          <!-- PHONE -->
+          <!-- ================================= -->
+
           <div class="form-field full-width">
 
-            <label for="fullName">
-              Full Name
-              <span>*</span>
+            <label for="phone">
+
+              Phone Number
+
+              <span>
+                *
+              </span>
+
             </label>
+
+
+            <div class="phone-wrapper">
+
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="01XXXXXXXXX"
+                autocomplete="tel"
+                maxlength="11"
+                [class.invalid]="isInvalid('phone')"
+              />
+
+
+              <!-- Searching -->
+
+              @if (isSearchingClient()) {
+
+                <span class="searching">
+
+                  Searching...
+
+                </span>
+
+              }
+
+
+              <!-- Client Found -->
+
+              @if (clientFound()) {
+
+                <span class="client-found">
+
+                  ✓ Client found
+
+                </span>
+
+              }
+
+            </div>
+
+
+            @if (isInvalid('phone')) {
+
+              <small>
+
+                Enter a valid Egyptian phone number.
+
+              </small>
+
+            }
+
+
+            @if (clientFound()) {
+
+              <small class="client-message">
+
+                We found your information and
+                filled it automatically.
+
+              </small>
+
+            }
+
+          </div>
+
+
+
+          <!-- ================================= -->
+          <!-- FULL NAME -->
+          <!-- ================================= -->
+
+          <div class="form-field">
+
+            <label for="fullName">
+
+              Full Name
+
+              <span>
+                *
+              </span>
+
+            </label>
+
 
             <input
               id="fullName"
@@ -68,48 +206,37 @@
               [class.invalid]="isInvalid('fullName')"
             />
 
+
             @if (isInvalid('fullName')) {
+
               <small>
+
                 Please enter your full name.
+
               </small>
+
             }
 
           </div>
 
 
-          <!-- Phone -->
-          <div class="form-field">
 
-            <label for="phone">
-              Phone Number
-              <span>*</span>
-            </label>
+          <!-- ================================= -->
+          <!-- EMAIL -->
+          <!-- ================================= -->
 
-            <input
-              id="phone"
-              type="tel"
-              formControlName="phone"
-              placeholder="01XXXXXXXXX"
-              autocomplete="tel"
-              [class.invalid]="isInvalid('phone')"
-            />
-
-            @if (isInvalid('phone')) {
-              <small>
-                Enter a valid Egyptian phone number.
-              </small>
-            }
-
-          </div>
-
-
-          <!-- Email -->
           <div class="form-field">
 
             <label for="email">
+
               Email Address
-              <em>Optional</em>
+
+              <em>
+                Optional
+              </em>
+
             </label>
+
 
             <input
               id="email"
@@ -120,10 +247,15 @@
               [class.invalid]="isInvalid('email')"
             />
 
+
             @if (isInvalid('email')) {
+
               <small>
+
                 Please enter a valid email address.
+
               </small>
+
             }
 
           </div>
@@ -133,28 +265,53 @@
       </section>
 
 
-      <!-- Delivery Information -->
+
+      <!-- ===================================== -->
+      <!-- DELIVERY INFORMATION -->
+      <!-- ===================================== -->
+
       <section class="checkout-card">
 
+
         <div class="section-header">
-          <div class="section-icon">02</div>
+
+          <div class="section-icon">
+            02
+          </div>
 
           <div>
-            <h2>Delivery Information</h2>
-            <p>Where should we deliver your order?</p>
+
+            <h2>
+              Delivery Information
+            </h2>
+
+            <p>
+              Where should we deliver your order?
+            </p>
+
           </div>
+
         </div>
+
 
 
         <div class="form-grid">
 
-          <!-- City -->
+
+          <!-- ================================= -->
+          <!-- CITY -->
+          <!-- ================================= -->
+
           <div class="form-field">
 
             <label for="city">
+
               City / Governorate
-              <span>*</span>
+
+             
+
             </label>
+
 
             <input
               id="city"
@@ -165,22 +322,37 @@
               [class.invalid]="isInvalid('city')"
             />
 
+
             @if (isInvalid('city')) {
+
               <small>
+
                 Please enter your city.
+
               </small>
+
             }
 
           </div>
 
 
-          <!-- Apartment -->
+
+          <!-- ================================= -->
+          <!-- APARTMENT -->
+          <!-- ================================= -->
+
           <div class="form-field">
 
             <label for="apartment">
+
               Apartment / Building
-              <em>Optional</em>
+
+              <em>
+                Optional
+              </em>
+
             </label>
+
 
             <input
               id="apartment"
@@ -192,13 +364,23 @@
           </div>
 
 
-          <!-- Address -->
+
+          <!-- ================================= -->
+          <!-- ADDRESS -->
+          <!-- ================================= -->
+
           <div class="form-field full-width">
 
             <label for="address">
+
               Full Address
-              <span>*</span>
+
+              <span>
+                *
+              </span>
+
             </label>
+
 
             <textarea
               id="address"
@@ -209,22 +391,37 @@
               [class.invalid]="isInvalid('address')"
             ></textarea>
 
+
             @if (isInvalid('address')) {
+
               <small>
+
                 Please enter your delivery address.
+
               </small>
+
             }
 
           </div>
 
 
-          <!-- Notes -->
+
+          <!-- ================================= -->
+          <!-- NOTES -->
+          <!-- ================================= -->
+
           <div class="form-field full-width">
 
             <label for="notes">
+
               Delivery Notes
-              <em>Optional</em>
+
+              <em>
+                Optional
+              </em>
+
             </label>
+
 
             <textarea
               id="notes"
@@ -240,40 +437,80 @@
       </section>
 
 
-      <!-- Payment -->
+
+      <!-- ===================================== -->
+      <!-- PAYMENT -->
+      <!-- ===================================== -->
+
       <section class="checkout-card">
 
+
         <div class="section-header">
-          <div class="section-icon">03</div>
+
+          <div class="section-icon">
+            03
+          </div>
 
           <div>
-            <h2>Payment Method</h2>
-            <p>Choose how you want to pay</p>
+
+            <h2>
+              Payment Method
+            </h2>
+
+            <p>
+              Choose how you want to pay
+            </p>
+
           </div>
+
         </div>
 
 
+
+        <!-- Cash On Delivery -->
+
         <div class="payment-option selected">
 
+
           <div class="payment-radio">
+
             <div class="radio-dot"></div>
+
           </div>
+
+
 
           <div class="payment-content">
 
             <div class="payment-title">
-              <span class="payment-icon">₣</span>
+
+              <span class="payment-icon">
+                ₣
+              </span>
+
 
               <div>
-                <h3>Cash on Delivery</h3>
-                <p>Pay when your order arrives</p>
+
+                <h3>
+                  Cash on Delivery
+                </h3>
+
+                <p>
+                  Pay when your order arrives
+                </p>
+
               </div>
+
             </div>
 
           </div>
 
+
+
           <div class="payment-check">
+
             ✓
+
           </div>
 
         </div>
@@ -283,114 +520,287 @@
     </form>
 
 
-    <!-- Order Summary -->
+
+    <!-- ======================================= -->
+    <!-- ORDER SUMMARY -->
+    <!-- ======================================= -->
+
     <aside class="order-summary">
 
+
+      <!-- ===================================== -->
+      <!-- SUMMARY HEADER -->
+      <!-- ===================================== -->
+
       <div class="summary-header">
+
         <div>
-          <span class="summary-label">YOUR ORDER</span>
-          <h2>Order Summary</h2>
+
+          <span class="summary-label">
+            YOUR ORDER
+          </span>
+
+          <h2>
+            Order Summary
+          </h2>
+
         </div>
 
+
         <span class="items-count">
-          {{ totalItems }} items
+
+          {{ totalItems }}
+
+          {{ totalItems === 1 ? 'item' : 'items' }}
+
         </span>
+
       </div>
 
 
-      <!-- Products -->
-      <div class="summary-products">
 
-        @for (item of cartItems(); track item.id) {
+      <!-- ===================================== -->
+      <!-- EMPTY CART -->
+      <!-- ===================================== -->
 
-          <div class="summary-product">
+      @if (cartItems.length === 0) {
 
-            <div class="product-image">
-              <img
-                [src]="item.image"
-                [alt]="item.name"
-              />
+        <div class="empty-cart">
+
+          <span class="empty-cart-icon">
+            🛒
+          </span>
+
+          <h3>
+            Your cart is empty
+          </h3>
+
+          <p>
+            Add some products before checking out.
+          </p>
+
+
+          <button
+            type="button"
+            class="back-to-products"
+            (click)="goBackToCart()"
+          >
+            Back to Cart
+          </button>
+
+        </div>
+
+      }
+
+
+
+      <!-- ===================================== -->
+      <!-- PRODUCTS -->
+      <!-- ===================================== -->
+
+      @if (cartItems.length > 0) {
+
+        <div class="summary-products">
+
+
+          @for (
+            item of cartItems;
+            track item.product.id
+          ) {
+
+
+            <div class="summary-product">
+
+
+              <!-- Product Image -->
+
+              <div class="product-image">
+
+                <img
+                  [src]="item.product.imageUrl"
+                  [alt]="item.product.name"
+                />
+
+              </div>
+
+
+
+              <!-- Product Info -->
+
+              <div class="product-info">
+
+                <h3>
+                  {{ item.product.name }}
+                </h3>
+
+
+                <p>
+                  Qty: {{ item.quantity }}
+                </p>
+
+
+                <small>
+                  {{ item.product.price }} EGP each
+                </small>
+
+              </div>
+
+
+
+              <!-- Product Subtotal -->
+
+              <strong>
+
+                {{
+                  item.product.price *
+                  item.quantity
+                }}
+
+                EGP
+
+              </strong>
+
             </div>
 
-            <div class="product-info">
+          }
 
-              <h3>{{ item.name }}</h3>
+        </div>
 
-              <p>
-                Qty: {{ item.quantity }}
-              </p>
+      }
 
-            </div>
+
+
+      <!-- ===================================== -->
+      <!-- TOTALS -->
+      <!-- ===================================== -->
+
+      @if (cartItems.length > 0) {
+
+        <div class="summary-totals">
+
+
+          <!-- Subtotal -->
+
+          <div class="summary-row">
+
+            <span>
+              Subtotal
+            </span>
 
             <strong>
-              {{ item.price * item.quantity  }} EGP
+
+              {{ subtotal }}
+
+              EGP
+
             </strong>
 
           </div>
 
-        }
-
-      </div>
 
 
-      <!-- Totals -->
-      <div class="summary-totals">
+          <!-- Delivery -->
 
-        <div class="summary-row">
-          <span>Subtotal</span>
-          <strong>
-            {{ subtotal  }} EGP
-          </strong>
+          <div class="summary-row">
+
+            <span>
+              Delivery
+            </span>
+
+            <strong>
+
+              {{ deliveryFee() }}
+
+              EGP
+
+            </strong>
+
+          </div>
+
         </div>
 
-        <div class="summary-row">
-          <span>Delivery</span>
+
+
+        <!-- ================================= -->
+        <!-- FINAL TOTAL -->
+        <!-- ================================= -->
+
+        <div class="summary-total">
+
+          <span>
+            Total
+          </span>
+
           <strong>
-            {{ deliveryFee()  }} EGP
+
+            {{ total }}
+
+            EGP
+
           </strong>
+
         </div>
 
-      </div>
 
 
-      <div class="summary-total">
+        <!-- ================================= -->
+        <!-- PLACE ORDER BUTTON -->
+        <!-- ================================= -->
 
-        <span>Total</span>
-
-        <strong>
-          {{ total  }} EGP
-        </strong>
-
-      </div>
-
-
-      <!-- Place Order -->
-      <button
-        type="button"
-        class="place-order-button"
-        [disabled]="isSubmitting()"
-        (click)="placeOrder()"
-      >
-
-        @if (isSubmitting()) {
-
-          <span class="spinner"></span>
-          Processing...
-
-        } @else {
-
-          <span>Place Order</span>
-          <span class="button-arrow">→</span>
-
-        }
-
-      </button>
+        <button
+          type="button"
+          class="place-order-button"
+          [disabled]="
+            isSubmitting() ||
+            cartItems.length === 0
+          "
+          (click)="placeOrder()"
+        >
 
 
-      <div class="secure-note">
-        <span>🔒</span>
-        <span>Your information is secure and private.</span>
-      </div>
+          @if (isSubmitting()) {
+
+            <span class="spinner"></span>
+
+            <span>
+              Processing...
+            </span>
+
+          }
+
+          @else {
+
+            <span>
+              Place Order
+            </span>
+
+            <span class="button-arrow">
+              →
+            </span>
+
+          }
+
+        </button>
+
+
+
+        <!-- ================================= -->
+        <!-- SECURITY NOTE -->
+        <!-- ================================= -->
+
+        <div class="secure-note">
+
+          <span>
+            🔒
+          </span>
+
+          <span>
+            Your information is secure and private.
+          </span>
+
+        </div>
+
+      }
 
     </aside>
 

@@ -135,10 +135,7 @@ export class ProductListComponent
 
         next: (products) => {
 
-          console.log(
-            'Products:',
-            products
-          );
+       
 
 
           // --------------------------------------------------
@@ -228,10 +225,7 @@ export class ProductListComponent
 
         error: (error) => {
 
-          console.error(
-            'Error loading products:',
-            error
-          );
+        
 
           this.isLoading = false;
 
@@ -422,7 +416,9 @@ export class ProductListComponent
 
     event.stopPropagation();
 
-
+if( this.quantities[
+        product.id
+      ]!=0){
     const quantity =
       this.quantities[
         product.id
@@ -433,7 +429,7 @@ export class ProductListComponent
       product,
       quantity
     );
-
+  }
   }
 
 }

@@ -652,7 +652,9 @@ width: 300px;
   font-size: 18px;
 
 }
-
+.add-to-cart span {
+  color: white;
+}
 
 .add-to-cart:hover {
 

@@ -17,11 +17,11 @@ import { MaterialModule } from '../../shared/AngularMaterial';
   styleUrl: './product-modal.component.css'
 })
 export class ProductModalComponent {
-  quantity: number = 1;
+  quantity: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<ProductModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public product: Product,
+    @Inject(MAT_DIALOG_DATA) public product: any,
     private cartService: CartService
   ) {}
 

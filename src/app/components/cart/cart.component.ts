@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +21,9 @@ export class CartComponent implements OnInit {
 private readonly router = inject(Router);
   constructor(
     private cartService: CartService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+        private cdr: ChangeDetectorRef
+
   ) {}
 
   ngOnInit() {
@@ -56,6 +58,7 @@ back()
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.cartService.clearCart();
+        this.cdr.detectChanges();
       }
     });
   }

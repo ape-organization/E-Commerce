@@ -37,12 +37,10 @@
 .checkout-header {
   background: linear-gradient(
     135deg,
-    var(--navy-dark),
-    var(--navy)
-  );
+    white  );
 
-  color: white;
-  padding: 26px 30px;
+  color: var(--navy-dark);
+  padding: 6px 30px;
 
   box-shadow: 0 4px 18px rgba(7, 21, 41, 0.12);
 }
@@ -64,7 +62,7 @@
 .back-button {
   border: 0;
   background: transparent;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--navy-dark);
 
   display: flex;
   align-items: center;
