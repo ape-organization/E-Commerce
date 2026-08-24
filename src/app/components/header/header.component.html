@@ -1,71 +1,1066 @@
+<header class="main-header">
 
-<header class="header">
 
-  <!-- Main Header -->
-  <div class="container">
+  <!-- =====================================================
+       DESKTOP HEADER
+       ===================================================== -->
 
-    <!-- Logo -->
-    <div class="logo">
-      <a routerLink="/products">
-        <span class="logo-icon">✦</span>
-        <span class="logo-text">Cosmetics</span>
+  <div class="desktop-header">
+
+
+    <!-- LOGO -->
+
+    <a
+      routerLink="/"
+      class="logo"
+    >
+
+      <span class="logo-symbol">
+        ✦
+      </span>
+
+      <span class="logo-text">
+        Cosmetics
+      </span>
+
+    </a>
+
+
+    <!-- ===================================================
+         DESKTOP NAVIGATION
+         =================================================== -->
+
+    <nav class="desktop-nav">
+
+
+      <!-- HOME -->
+
+      <a
+        routerLink="/"
+        class="nav-link"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+
+        Home
+
       </a>
-    </div>
 
-    <!-- Navigation -->
-    <nav class="nav">
-      <ul>
-        <li>
-          <a routerLink="/products" routerLinkActive="active">
-            Home
-          </a>
-        </li>
 
-        <li>
-          <a routerLink="/products" routerLinkActive="active">
-            Products
-          </a>
-        </li>
+      <!-- PRODUCTS -->
 
-        <li>
-          <a [routerLink]="[]" fragment="footer">
-            Contact
-          </a>
-        </li>
+      <a
+        routerLink="/products"
+        class="nav-link"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
 
-        <!-- Cart -->
-        <li class="cart-link">
-          <a routerLink="/cart" class="cart-button">
+        Product
 
-            <button
-              mat-icon-button
-              [matBadge]="cartCount"
-              matBadgeColor="warn"
-              aria-label="Shopping cart">
+      </a>
 
-              <mat-icon fontSet="material-symbols-outlined">
-                shopping_bag
+
+      <!-- OFFERS -->
+
+      <button
+        type="button"
+        class="nav-link offers-link"
+        (click)="selectOffers()"
+      >
+
+        <mat-icon>
+          local_offer
+        </mat-icon>
+
+        <span>
+          Offers
+        </span>
+
+        <span class="desktop-offer-badge">
+          SALE
+        </span>
+
+      </button>
+
+
+      <!-- =================================================
+           CATEGORIES
+           ================================================= -->
+
+      <div
+        class="nav-dropdown"
+        (mouseenter)="openCategoryMenu()"
+        (mouseleave)="closeCategoryMenu()"
+      >
+
+        <button
+          type="button"
+          class="nav-link dropdown-trigger"
+          (click)="toggleCategoryMenu()"
+        >
+
+          <span>
+            Categories
+          </span>
+
+          <mat-icon>
+
+            {{
+              categoryMenuOpen()
+                ? 'keyboard_arrow_up'
+                : 'keyboard_arrow_down'
+            }}
+
+          </mat-icon>
+
+        </button>
+
+
+        @if (categoryMenuOpen()) {
+
+          <div
+            class="dropdown-menu category-dropdown"
+            (click)="$event.stopPropagation()"
+          >
+
+            <!-- HEADER -->
+
+            <div class="dropdown-header">
+
+              <div>
+
+                <span class="dropdown-title">
+                  Categories
+                </span>
+
+                <small>
+                  Explore our collection
+                </small>
+
+              </div>
+
+              <mat-icon>
+                category
               </mat-icon>
 
-            </button>
+            </div>
 
-            <span class="cart-text">Cart</span>
 
-          </a>
-        </li>
-      </ul>
+            <!-- LOADING -->
+
+            @if (isLoadingCategories()) {
+
+              <div class="menu-loading">
+
+                <mat-icon class="loading-icon">
+                  sync
+                </mat-icon>
+
+                <span>
+                  Loading categories...
+                </span>
+
+              </div>
+
+            }
+
+
+            <!-- ERROR -->
+
+            @if (categoryError()) {
+
+              <div class="menu-error">
+                {{ categoryError() }}
+              </div>
+
+            }
+
+
+            <!-- CATEGORIES -->
+
+            @if (
+              !isLoadingCategories() &&
+              !categoryError()
+            ) {
+
+              <div class="category-list">
+
+                @for (
+                  category of categories();
+                  track category.id
+                ) {
+
+                  <div class="category-item">
+
+                    <button
+                      type="button"
+                      class="category-button"
+                      (click)="toggleCategory(category.id)"
+                    >
+
+                      <span class="category-name">
+                        {{ category.name }}
+                      </span>
+
+                      @if (
+                        category.subCategories.length > 0
+                      ) {
+
+                        <mat-icon>
+
+                          {{
+                            expandedCategoryId() === category.id
+                              ? 'keyboard_arrow_up'
+                              : 'keyboard_arrow_down'
+                          }}
+
+                        </mat-icon>
+
+                      }
+
+                    </button>
+
+
+                    <!-- SUBCATEGORIES -->
+
+                    @if (
+                      expandedCategoryId() === category.id &&
+                      category.subCategories.length > 0
+                    ) {
+
+                      <div class="subcategory-list">
+
+                        @for (
+                          subCategory of category.subCategories;
+                          track subCategory.id
+                        ) {
+
+                          <button
+                            type="button"
+                            class="subcategory-button"
+                            (click)="selectSubCategory(subCategory.id)"
+                          >
+
+                            <span class="subcategory-dot">
+                              •
+                            </span>
+
+                            <span>
+                              {{ subCategory.name }}
+                            </span>
+
+                          </button>
+
+                        }
+
+                      </div>
+
+                    }
+
+                  </div>
+
+                }
+
+
+                @if (categories().length === 0) {
+
+                  <div class="menu-empty">
+                    No categories available.
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- =================================================
+           BRANDS
+           ================================================= -->
+
+      <div
+        class="nav-dropdown"
+        (mouseenter)="openBrandMenu()"
+        (mouseleave)="closeBrandMenu()"
+      >
+
+        <button
+          type="button"
+          class="nav-link dropdown-trigger"
+          (click)="toggleBrandMenu()"
+        >
+
+          <span>
+            Brands
+          </span>
+
+          <mat-icon>
+
+            {{
+              brandMenuOpen()
+                ? 'keyboard_arrow_up'
+                : 'keyboard_arrow_down'
+            }}
+
+          </mat-icon>
+
+        </button>
+
+
+        @if (brandMenuOpen()) {
+
+          <div
+            class="dropdown-menu brand-dropdown"
+            (click)="$event.stopPropagation()"
+          >
+
+            <!-- HEADER -->
+
+            <div class="dropdown-header">
+
+              <div>
+
+                <span class="dropdown-title">
+                  Brands
+                </span>
+
+                <small>
+                  Shop your favorite brands
+                </small>
+
+              </div>
+
+              <mat-icon>
+                sell
+              </mat-icon>
+
+            </div>
+
+
+            <!-- LOADING -->
+
+            @if (isLoadingBrands()) {
+
+              <div class="menu-loading">
+
+                <mat-icon class="loading-icon">
+                  sync
+                </mat-icon>
+
+                <span>
+                  Loading brands...
+                </span>
+
+              </div>
+
+            }
+
+
+            <!-- ERROR -->
+
+            @if (brandError()) {
+
+              <div class="menu-error">
+                {{ brandError() }}
+              </div>
+
+            }
+
+
+            <!-- BRANDS -->
+
+            @if (
+              !isLoadingBrands() &&
+              !brandError()
+            ) {
+
+              <div class="brand-list">
+
+                @for (
+                  brand of brands();
+                  track brand.id
+                ) {
+
+                  <button
+                    type="button"
+                    class="brand-button"
+                    (click)="selectBrand(brand.id)"
+                  >
+
+                    <span>
+                      {{ brand.name }}
+                    </span>
+
+                  </button>
+
+                }
+
+
+                @if (brands().length === 0) {
+
+                  <div class="menu-empty">
+                    No brands available.
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- ABOUT -->
+
+      <a
+        routerLink="/about"
+        class="nav-link"
+      >
+
+        About
+
+      </a>
+
+
+      <!-- CONTACT -->
+
+      <a
+        routerLink="/contact"
+        class="nav-link"
+      >
+
+        Contact
+
+      </a>
+
     </nav>
+
+
+    <!-- ===================================================
+         CART
+         =================================================== -->
+
+    <div class="header-actions">
+
+      <a
+        routerLink="/cart"
+        class="cart-button"
+      >
+
+        <mat-icon>
+          shopping_bag
+        </mat-icon>
+
+        <span class="cart-count">
+          {{ cartCount() }}
+        </span>
+
+      </a>
+
+    </div>
 
   </div>
 
-  <!-- Announcement Bar -->
-  <div class="info">
-    <span class="info-star">✦</span>
-    <strong>Shop Smart.</strong>
-    <span>Save More.</span>
-    <span class="info-star">✦</span>
+
+  <!-- =====================================================
+       MOBILE / TABLET HEADER
+       ===================================================== -->
+
+  <div class="mobile-header">
+
+
+    <!-- MENU -->
+
+    <button
+      type="button"
+      class="menu-button"
+      (click)="openMobileMenu()"
+    >
+
+      <mat-icon>
+        menu
+      </mat-icon>
+
+    </button>
+
+
+    <!-- LOGO -->
+
+    <a
+      routerLink="/"
+      class="logo"
+    >
+
+      <span class="logo-symbol">
+        ✦
+      </span>
+
+      <span class="logo-text">
+        Cosmetics
+      </span>
+
+    </a>
+
+
+    <!-- CART -->
+
+    <a
+      routerLink="/cart"
+      class="cart-button"
+    >
+
+      <mat-icon>
+        shopping_bag
+      </mat-icon>
+
+      <span class="cart-count">
+        {{ cartCount() }}
+      </span>
+
+    </a>
+
   </div>
 
 </header>
 
 
+
+<!-- =========================================================
+     MOBILE / TABLET SIDEBAR
+     ========================================================= -->
+
+@if (mobileMenuOpen()) {
+
+  <!-- OVERLAY -->
+
+  <div
+    class="sidebar-overlay"
+    (click)="closeMobileMenu()"
+  ></div>
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="mobile-sidebar">
+
+
+    <!-- SIDEBAR HEADER -->
+
+    <div class="sidebar-header">
+
+      <div class="sidebar-logo">
+
+        <span class="logo-symbol">
+          ✦
+        </span>
+
+        <span>
+          Cosmetics
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-button"
+        (click)="closeMobileMenu()"
+      >
+
+        <mat-icon>
+          close
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         MOBILE NAVIGATION
+         =================================================== -->
+
+    <nav class="mobile-nav">
+
+
+      <!-- HOME -->
+
+      <a
+        routerLink="/"
+        class="mobile-nav-link"
+        (click)="closeMobileMenu()"
+      >
+
+        <mat-icon>
+          home
+        </mat-icon>
+
+        <span>
+          Home
+        </span>
+
+      </a>
+
+
+      <!-- =================================================
+           OFFERS
+           ================================================= -->
+
+      <button
+        type="button"
+        class="mobile-nav-link mobile-offers"
+        (click)="selectOffers()"
+      >
+
+        <div class="mobile-link-content">
+
+          <mat-icon>
+            local_offer
+          </mat-icon>
+
+          <span>
+            Offers
+          </span>
+
+        </div>
+
+        <span class="mobile-sale-badge">
+          SALE
+        </span>
+
+      </button>
+
+
+      <!-- =================================================
+           CATEGORIES
+           ================================================= -->
+
+      <button
+        type="button"
+        class="mobile-nav-link"
+        (click)="toggleCategoryMenu()"
+      >
+
+        <div class="mobile-link-content">
+
+          <mat-icon>
+            category
+          </mat-icon>
+
+          <span>
+            Categories
+          </span>
+
+        </div>
+
+        <mat-icon>
+
+          {{
+            categoryMenuOpen()
+              ? 'keyboard_arrow_up'
+              : 'keyboard_arrow_down'
+          }}
+
+        </mat-icon>
+
+      </button>
+
+
+      <!-- MOBILE CATEGORIES -->
+
+      @if (categoryMenuOpen()) {
+
+        <div class="mobile-dropdown">
+
+
+          <!-- LOADING -->
+
+          @if (isLoadingCategories()) {
+
+            <div class="mobile-loading">
+
+              <mat-icon class="loading-icon">
+                sync
+              </mat-icon>
+
+              <span>
+                Loading categories...
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- ERROR -->
+
+          @if (categoryError()) {
+
+            <div class="mobile-error">
+              {{ categoryError() }}
+            </div>
+
+          }
+
+
+          <!-- CATEGORY LIST -->
+
+          @if (
+            !isLoadingCategories() &&
+            !categoryError()
+          ) {
+
+            @for (
+              category of categories();
+              track category.id
+            ) {
+
+              <div class="mobile-category">
+
+                <button
+                  type="button"
+                  class="mobile-category-button"
+                  (click)="toggleCategory(category.id)"
+                >
+
+                  <span>
+                    {{ category.name }}
+                  </span>
+
+
+                  @if (
+                    category.subCategories.length > 0
+                  ) {
+
+                    <mat-icon>
+
+                      {{
+                        expandedCategoryId() === category.id
+                          ? 'remove'
+                          : 'add'
+                      }}
+
+                    </mat-icon>
+
+                  }
+
+                </button>
+
+
+                <!-- SUBCATEGORIES -->
+
+                @if (
+                  expandedCategoryId() === category.id &&
+                  category.subCategories.length > 0
+                ) {
+
+                  <div class="mobile-subcategories">
+
+                    @for (
+                      subCategory of category.subCategories;
+                      track subCategory.id
+                    ) {
+
+                      <button
+                        type="button"
+                        class="mobile-subcategory"
+                        (click)="selectSubCategory(subCategory.id)"
+                      >
+
+                        <span>
+                          •
+                        </span>
+
+                        <span>
+                          {{ subCategory.name }}
+                        </span>
+
+                      </button>
+
+                    }
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          }
+
+        </div>
+
+      }
+
+
+      <!-- =================================================
+           BRANDS
+           ================================================= -->
+
+      <button
+        type="button"
+        class="mobile-nav-link"
+        (click)="toggleBrandMenu()"
+      >
+
+        <div class="mobile-link-content">
+
+          <mat-icon>
+            sell
+          </mat-icon>
+
+          <span>
+            Brands
+          </span>
+
+        </div>
+
+        <mat-icon>
+
+          {{
+            brandMenuOpen()
+              ? 'keyboard_arrow_up'
+              : 'keyboard_arrow_down'
+          }}
+
+        </mat-icon>
+
+      </button>
+
+
+      <!-- MOBILE BRANDS -->
+
+      @if (brandMenuOpen()) {
+
+        <div class="mobile-dropdown">
+
+
+          @if (isLoadingBrands()) {
+
+            <div class="mobile-loading">
+
+              <mat-icon class="loading-icon">
+                sync
+              </mat-icon>
+
+              <span>
+                Loading brands...
+              </span>
+
+            </div>
+
+          }
+
+
+          @if (brandError()) {
+
+            <div class="mobile-error">
+              {{ brandError() }}
+            </div>
+
+          }
+
+
+          @if (
+            !isLoadingBrands() &&
+            !brandError()
+          ) {
+
+            @for (
+              brand of brands();
+              track brand.id
+            ) {
+
+              <button
+                type="button"
+                class="mobile-brand"
+                (click)="selectBrand(brand.id)"
+              >
+
+                <span>
+                  {{ brand.name }}
+                </span>
+
+              </button>
+
+            }
+
+
+            @if (brands().length === 0) {
+
+              <div class="menu-empty">
+                No brands available.
+              </div>
+
+            }
+
+          }
+
+        </div>
+
+      }
+
+
+      <!-- ABOUT -->
+
+      <a
+        routerLink="/about"
+        class="mobile-nav-link"
+        (click)="closeMobileMenu()"
+      >
+
+        <mat-icon>
+          info
+        </mat-icon>
+
+        <span>
+          About
+        </span>
+
+      </a>
+
+
+      <!-- CONTACT -->
+
+      <a
+        routerLink="/contact"
+        class="mobile-nav-link"
+        (click)="closeMobileMenu()"
+      >
+
+        <mat-icon>
+          mail
+        </mat-icon>
+
+        <span>
+          Contact
+        </span>
+
+      </a>
+
+
+      <!-- CART -->
+
+      <a
+        routerLink="/cart"
+        class="mobile-nav-link"
+        (click)="closeMobileMenu()"
+      >
+
+        <mat-icon>
+          shopping_bag
+        </mat-icon>
+
+        <span>
+          Cart
+        </span>
+
+        <span class="cart-count mobile-cart-count">
+          {{ cartCount() }}
+        </span>
+
+      </a>
+
+    </nav>
+
+  </aside>
+
+}
+
+
+
+<!-- =========================================================
+     MOBILE BOTTOM NAVIGATION
+     ========================================================= -->
+
+@if (showBottomNav()) {
+
+  <nav
+    class="mobile-bottom-nav"
+    (click)="$event.stopPropagation()"
+  >
+
+
+    <!-- HOME -->
+
+    <a
+      routerLink="/"
+      class="bottom-nav-item"
+      routerLinkActive="bottom-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+
+      <mat-icon>
+        home
+      </mat-icon>
+
+      <span>
+        Home
+      </span>
+
+    </a>
+
+
+    <!-- ALL PRODUCTS -->
+
+    <button
+      type="button"
+      class="bottom-nav-item"
+      [class.bottom-active]="isProductsPage()"
+      (click)="selectAllProducts()"
+    >
+
+      <mat-icon>
+        inventory_2
+      </mat-icon>
+
+      <span>
+        Products
+      </span>
+
+    </button>
+
+
+    <!-- OFFERS -->
+
+    <button
+      type="button"
+      class="bottom-nav-item bottom-offers"
+      (click)="selectOffers()"
+    >
+
+      <span class="bottom-offer-icon">
+
+        <mat-icon>
+          local_offer
+        </mat-icon>
+
+        <span class="bottom-sale-dot">
+          !
+        </span>
+
+      </span>
+
+      <span>
+        Offers
+      </span>
+
+    </button>
+
+  </nav>
+
+}

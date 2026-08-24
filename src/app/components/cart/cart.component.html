@@ -1,255 +1,483 @@
-
 <main class="cart-container">
 
-  <!-- Cart Header -->
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
   <div class="cart-header">
+
     <div>
-      <span class="cart-label">YOUR SELECTION</span>
+
+      <span class="cart-label">
+        YOUR SELECTION
+      </span>
 
       <h1 class="cart-title">
         Shopping <span>Cart</span>
       </h1>
+
     </div>
 
+
     <div class="cart-count">
+
       {{ cartItems.length }}
-      <span>items</span>
+
+      <span>
+        items
+      </span>
+
     </div>
+
   </div>
 
 
-  <!-- Cart -->
+
+  <!-- =====================================================
+       CART
+       ===================================================== -->
+
   <div
     class="cart-content"
     *ngIf="cartItems.length > 0; else emptyCart"
   >
 
-    <!-- Products Table -->
-    <div class="table-wrapper">
 
-      <table class="cart-table">
+    <!-- ===================================================
+         PRODUCTS
+         =================================================== -->
 
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+    <div class="cart-items">
 
 
-        <tbody>
+      <div
+        *ngFor="let item of cartItems"
+        class="cart-item"
+      >
 
-          <tr
-            *ngFor="let item of cartItems"
-            class="cart-item-row"
+
+        <!-- ===============================================
+             IMAGE
+             =============================================== -->
+
+        <div class="product-image">
+
+          <img
+            [src]="getImageUrl(item.product.imageUrl)"
+            [alt]="item.product.name"
+          />
+
+        </div>
+
+
+
+        <!-- ===============================================
+             PRODUCT INFORMATION
+             =============================================== -->
+
+        <div class="product-info">
+
+
+          <!-- BRAND -->
+
+          <span class="product-brand">
+
+            {{ getBrandName(item.product) }}
+
+          </span>
+
+
+          <!-- NAME -->
+
+          <h2 class="product-name">
+
+            {{ item.product.name }}
+
+          </h2>
+
+
+          <!-- CATEGORY / SUBCATEGORY -->
+
+          <div class="product-category">
+
+            <span>
+
+              {{ getCategoryName(item.product) }}
+
+            </span>
+
+            <span class="separator">
+              /
+            </span>
+
+            <span>
+
+              {{ getSubCategoryName(item.product) }}
+
+            </span>
+
+          </div>
+
+
+
+
+        </div>
+
+
+
+        <!-- ===============================================
+             PRICE
+             =============================================== -->
+
+        <div class="price-section">
+
+
+          <!-- DISCOUNTED -->
+
+          <ng-container
+            *ngIf="
+              getDiscountPercentage(item.product) > 0;
+              else normalPrice
+            "
           >
 
-            <!-- Product -->
-            <td class="product-name">
-              {{ item.product.name }}
-            </td>
+
+            <!-- NEW PRICE -->
+
+            <div class="new-price">
+
+              {{ getNewPrice(item.product) | number:'1.0-2' }}
+
+              <span>
+                EGP
+              </span>
+
+            </div>
 
 
-            <!-- Price -->
-            <td class="product-price">
+            <!-- OLD PRICE -->
 
-              <strong>
-                {{ item.product.price }}
-              </strong>
+            <div class="old-price">
 
-              <span>EGP</span>
+              {{ getOldPrice(item.product) | number:'1.0-2' }}
 
-            </td>
+              <span>
+                EGP
+              </span>
 
-
-            <!-- Quantity -->
-            <td class="quantity-cell">
-
-              <div class="quantity-control">
-
-                <button
-                  type="button"
-                  class="quantity-btn"
-                  (click)="updateQuantity(
-                    item.product.id,
-                    item.quantity - 1
-                  )"
-                  [disabled]="item.quantity <= 1"
-                >
-                  −
-                </button>
-
-                <input
-                  type="number"
-                  [(ngModel)]="item.quantity"
-                  (change)="updateQuantity(
-                    item.product.id,
-                    item.quantity
-                  )"
-                  min="1"
-                  class="quantity-input"
-                />
-
-                <button
-                  type="button"
-                  class="quantity-btn"
-                  (click)="updateQuantity(
-                    item.product.id,
-                    item.quantity + 1
-                  )"
-                >
-                  +
-                </button>
-
-              </div>
-
-            </td>
+            </div>
 
 
-            <!-- Subtotal -->
-            <td class="subtotal">
+            <!-- DISCOUNT -->
 
-              <strong>
-                {{ item.product.price * item.quantity }}
-              </strong>
+            <div class="discount">
 
-              <span>EGP</span>
+              -{{ getDiscountPercentage(item.product) }}%
 
-            </td>
+            </div>
 
-
-            <!-- Delete -->
-            <td class="action-cell">
-
-              <button
-                type="button"
-                class="remove-btn"
-                (click)="removeFromCart(item.product.id)"
-                aria-label="Remove product"
-              >
-
-                <mat-icon>
-                  delete_outline
-                </mat-icon>
-
-              </button>
-
-            </td>
-
-          </tr>
+          </ng-container>
 
 
-          <!-- Total -->
-          <tr class="total-row">
 
-            <td
-              colspan="3"
-              class="total-label"
-            >
-              Total
-            </td>
+          <!-- NO DISCOUNT -->
 
-            <td
-              colspan="2"
-              class="total-price"
+          <ng-template #normalPrice>
+
+            <div class="new-price">
+
+              {{ getOldPrice(item.product) | number:'1.0-2' }}
+
+              <span>
+                EGP
+              </span>
+
+            </div>
+
+          </ng-template>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             QUANTITY
+             =============================================== -->
+
+        <div class="quantity-section">
+
+          <span class="quantity-label">
+            Quantity
+          </span>
+
+
+          <div class="quantity-control">
+
+
+            <button
+              type="button"
+              class="quantity-btn"
+
+              (click)="updateQuantity(
+                item.product.id,
+                item.quantity - 1
+              )"
+
+              [disabled]="item.quantity <= 1"
             >
 
-              {{ cartTotal }}
+              −
 
-              <span>EGP</span>
+            </button>
 
-            </td>
 
-          </tr>
+            <input
+              type="number"
 
-        </tbody>
+              [(ngModel)]="item.quantity"
 
-      </table>
+              (change)="updateQuantity(
+                item.product.id,
+                item.quantity
+              )"
+
+              min="1"
+
+              class="quantity-input"
+            />
+
+
+            <button
+              type="button"
+              class="quantity-btn"
+
+              (click)="updateQuantity(
+                item.product.id,
+                item.quantity + 1
+              )"
+            >
+
+              +
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             SUBTOTAL
+             =============================================== -->
+
+        <div class="subtotal-section">
+
+
+          <span class="subtotal-label">
+            Subtotal
+          </span>
+
+
+          <strong class="subtotal">
+
+            {{
+              getItemSubtotal(item)
+              | number:'1.0-2'
+            }}
+
+            <span>
+              EGP
+            </span>
+
+          </strong>
+
+        </div>
+
+
+
+        <!-- ===============================================
+             DELETE
+             =============================================== -->
+
+        <button
+          type="button"
+
+          class="remove-btn"
+
+          (click)="removeFromCart(item.product.id)"
+
+          aria-label="Remove product"
+        >
+
+          <mat-icon>
+            delete_outline
+          </mat-icon>
+
+        </button>
+
+
+      </div>
 
     </div>
 
 
-    <!-- Actions -->
-    <div class="cart-actions">
 
-      <!-- Shopping -->
-      <button
-        (click)="back()"
-        class="continue-shopping"
-      >
-        <mat-icon>
-          arrow_back
-        </mat-icon>
+    <!-- ===================================================
+         SUMMARY
+         =================================================== -->
 
-        Continue Shopping
-      </button>
+    <div class="cart-summary">
 
 
-      <div class="purchase-actions">
+      <!-- TOTAL -->
 
-  <!-- Checkout -->
-  <button
-    mat-raised-button
-    class="checkout-btn"
-    [disabled]="cartItems.length <= 0"
-    (click)="goToCheckout()"
-  >
-    <mat-icon>
-      shopping_bag
-    </mat-icon>
+      <div class="summary-total">
 
-    <span>
-      Checkout
-    </span>
-  </button>
+        <span>
+          Total
+        </span>
 
 
-  <!-- Clear -->
-  <button
-    mat-button
-    class="clear-btn"
-    [disabled]="cartItems.length <= 0"
-    (click)="clearCart()"
-  >
-    <mat-icon>
-      delete_outline
-    </mat-icon>
+        <strong>
 
-    <span>
-      Clear Cart
-    </span>
-  </button>
+          {{ getCartTotal() | number:'1.0-2' }}
 
-</div>
+          <small>
+            EGP
+          </small>
+
+        </strong>
+
+      </div>
+
+
+
+      <!-- ACTIONS -->
+
+      <div class="cart-actions">
+
+
+        <!-- CONTINUE SHOPPING -->
+
+        <button
+          type="button"
+
+          class="continue-shopping"
+
+          (click)="back()"
+        >
+
+          <mat-icon>
+            arrow_back
+          </mat-icon>
+
+          <span>
+            Continue Shopping
+          </span>
+
+        </button>
+
+
+
+        <!-- PURCHASE -->
+
+        <div class="purchase-actions">
+
+
+          <!-- CHECKOUT -->
+
+          <button
+            mat-raised-button
+
+            type="button"
+
+            class="checkout-btn"
+
+            (click)="goToCheckout()"
+          >
+
+            <mat-icon>
+              shopping_bag
+            </mat-icon>
+
+            <span>
+              Checkout
+            </span>
+
+          </button>
+
+
+
+          <!-- CLEAR -->
+
+          <button
+            mat-button
+
+            type="button"
+
+            class="clear-btn"
+
+            (click)="clearCart()"
+          >
+
+            <mat-icon>
+              delete_outline
+            </mat-icon>
+
+            <span>
+              Clear Cart
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
 
   </div>
 
 
-  <!-- Empty Cart -->
+
+  <!-- =====================================================
+       EMPTY CART
+       ===================================================== -->
+
   <ng-template #emptyCart>
 
     <div class="empty-cart">
 
+
       <div class="empty-icon">
-        shopping_bag
+
+        <mat-icon>
+          shopping_bag
+        </mat-icon>
+
       </div>
+
 
       <h2>
         Your cart is empty
       </h2>
 
-      <p>
+
+      <p class="empty-message">
+
         Discover something beautiful and add it to your collection.
+
       </p>
 
+
       <button
-        (click)="back()"
+        type="button"
+
         class="continue-shopping empty-shopping"
+
+        (click)="back()"
       >
 
         <mat-icon>
@@ -260,8 +488,10 @@
 
       </button>
 
+
     </div>
 
   </ng-template>
+
 
 </main>

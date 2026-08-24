@@ -1,29 +1,165 @@
 <main class="container">
 
+ <!-- ======================================================
+     ACTIVE FILTER SUMMARY
+     ====================================================== -->
 
-  <!-- ======================================================
-       PAGE TITLE
-       ====================================================== -->
+<div
+  class="active-filters"
+  *ngIf="
+    selectedCategoryId !== null ||
+    selectedSubCategoryId !== null ||
+    selectedBrandId !== null ||
+    showOffers
+  "
+>
 
-  <h1 class="page-title">
+  <!-- HEADER -->
+
+  <div class="active-filter-title">
+
+    <mat-icon class="filter-title-icon">
+      filter_alt
+    </mat-icon>
 
     <span>
-      Our
-    </span>
-
-    Products
-
-  </h1>
-
-
-  <div class="title-decoration">
-
-    <span>
-      ✦
+      Active Filters
     </span>
 
   </div>
 
+
+  <!-- FILTER CHIPS -->
+
+  <div class="active-filter-list">
+
+
+    <!-- CATEGORY -->
+
+    <div
+      class="filter-chip"
+      *ngIf="selectedCategoryId !== null"
+    >
+
+      <span class="filter-chip-label">
+        Category
+      </span>
+
+      <strong class="filter-chip-value">
+        {{ selectedCategoryName }}
+      </strong>
+
+      <button
+        type="button"
+        class="remove-filter"
+        (click)="clearCategory()"
+        aria-label="Remove category filter"
+      >
+
+        <mat-icon>
+          close
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- SUBCATEGORY -->
+
+    <div
+      class="filter-chip"
+      *ngIf="selectedSubCategoryId !== null"
+    >
+
+      <span class="filter-chip-label">
+        Subcategory
+      </span>
+
+      <strong class="filter-chip-value">
+        {{ selectedSubCategoryName }}
+      </strong>
+
+      <button
+        type="button"
+        class="remove-filter"
+        (click)="clearSubCategory()"
+        aria-label="Remove subcategory filter"
+      >
+
+        <mat-icon>
+          close
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- BRAND -->
+
+    <div
+      class="filter-chip"
+      *ngIf="selectedBrandId !== null"
+    >
+
+      <span class="filter-chip-label">
+        Brand
+      </span>
+
+      <strong class="filter-chip-value">
+        {{ selectedBrandName }}
+      </strong>
+
+      <button
+        type="button"
+        class="remove-filter"
+        (click)="clearBrand()"
+        aria-label="Remove brand filter"
+      >
+
+        <mat-icon>
+          close
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- OFFERS -->
+
+    <div
+      class="filter-chip offer-chip"
+      *ngIf="showOffers"
+    >
+
+      <mat-icon class="offer-icon">
+        local_offer
+      </mat-icon>
+
+      <strong class="filter-chip-value">
+        Offers
+      </strong>
+
+      <button
+        type="button"
+        class="remove-filter"
+        (click)="clearOffers()"
+        aria-label="Remove offers filter"
+      >
+
+        <mat-icon>
+          close
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
   <!-- ======================================================
@@ -33,105 +169,243 @@
   <div class="product-filters">
 
 
-    <!-- CATEGORY -->
+    <!-- ====================================================
+         PRODUCT NAME
+         ==================================================== -->
 
     <div class="filter-group">
 
-     
-
-
-      <select
-        id="category"
-
-        class="filter-select"
-
-        [(ngModel)]="selectedCategory"
-
-        (change)="onCategoryChange()"
+      <label
+        for="productName"
+        class="filter-label"
       >
+        Product Name
+      </label>
 
-        <option value="" class="options">
+      <div class="select-wrapper">
 
-          All Categories
+        <mat-icon class="filter-icon">
+          search
+        </mat-icon>
 
-        </option>
+        <input
+          id="productName"
+          type="text"
+          class="filter-input"
+          [(ngModel)]="searchName"
+          (input)="onNameChange()"
+          placeholder="Search product..."
+        />
 
-
-        <option class="options"
-          *ngFor="let category of categories"
-
-          [value]="category"
-        >
-
-          {{ category }}
-
-        </option>
-
-      </select>
+      </div>
 
     </div>
 
 
+    <!-- ====================================================
+         CATEGORY
+         ==================================================== -->
 
-    <!-- SUBCATEGORY -->
+    <div class="filter-group">
+
+      <label
+        for="category"
+        class="filter-label"
+      >
+        Category
+      </label>
+
+      <div class="select-wrapper">
+
+        <mat-icon class="filter-icon">
+          category
+        </mat-icon>
+
+        <select
+          id="category"
+          class="filter-select"
+          [(ngModel)]="selectedCategoryId"
+          (change)="onCategoryChange()"
+        >
+
+          <option
+            [ngValue]="null"
+            class="options"
+          >
+            All Categories
+          </option>
+
+          <option
+            *ngFor="let category of categories"
+            [ngValue]="category.id"
+            class="options"
+          >
+
+            {{ category.name }}
+
+          </option>
+
+        </select>
+
+        <mat-icon class="select-arrow">
+          keyboard_arrow_down
+        </mat-icon>
+
+      </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         SUBCATEGORY
+         ==================================================== -->
 
     <div
       class="filter-group"
-
-      *ngIf="selectedCategory"
+      *ngIf="
+        selectedCategoryId !== null ||
+        subCategories.length > 0
+      "
     >
 
-   
-
-
-      <select
-        id="subcategory"
-
-        class="filter-select"
-
-        [(ngModel)]="selectedSubCategory"
-
-        (change)="onSubCategoryChange()"
+      <label
+        for="subcategory"
+        class="filter-label"
       >
+        Subcategory
+      </label>
 
-        <option value="" class="options">
+      <div class="select-wrapper">
 
-          All Subcategories
+        <mat-icon class="filter-icon">
+          tune
+        </mat-icon>
 
-        </option>
-
-
-        <option class="options"
-          *ngFor="
-            let subCategory
-            of subCategories
-          "
-
-          [value]="subCategory"
+        <select
+          id="subcategory"
+          class="filter-select"
+          [(ngModel)]="selectedSubCategoryId"
+          (change)="onSubCategoryChange()"
         >
 
-          {{ subCategory }}
+          <option
+            [ngValue]="null"
+            class="options"
+          >
+            All Subcategories
+          </option>
 
-        </option>
+          <option
+            *ngFor="let subCategory of subCategories"
+            [ngValue]="subCategory.id"
+            class="options"
+          >
 
-      </select>
+            {{ subCategory.name }}
+
+          </option>
+
+        </select>
+
+        <mat-icon class="select-arrow">
+          keyboard_arrow_down
+        </mat-icon>
+
+      </div>
 
     </div>
 
 
+    <!-- ====================================================
+         BRAND
+         ==================================================== -->
 
-    <!-- CLEAR FILTERS -->
+    <div class="filter-group">
+
+      <label
+        for="brand"
+        class="filter-label"
+      >
+        Brand
+      </label>
+
+      <div class="select-wrapper">
+
+        <mat-icon class="filter-icon">
+          business
+        </mat-icon>
+
+        <select
+          id="brand"
+          class="filter-select"
+          [(ngModel)]="selectedBrandId"
+          (change)="onBrandChange()"
+        >
+
+          <option
+            [ngValue]="null"
+            class="options"
+          >
+            All Brands
+          </option>
+
+          <option
+            *ngFor="let brand of brands"
+            [ngValue]="brand.id"
+            class="options"
+          >
+
+            {{ brand.name }}
+
+          </option>
+
+        </select>
+
+        <mat-icon class="select-arrow">
+          keyboard_arrow_down
+        </mat-icon>
+
+      </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         OFFERS
+         ==================================================== -->
+
+    <button
+      type="button"
+      class="offers-filter"
+      [class.active]="showOffers"
+      (click)="toggleOffers()"
+    >
+
+      <mat-icon>
+        local_offer
+      </mat-icon>
+
+      <span>
+        Offers
+      </span>
+
+    </button>
+
+
+    <!-- ====================================================
+         CLEAR
+         ==================================================== -->
 
     <button
       *ngIf="
-        selectedCategory ||
-        selectedSubCategory
+        searchName ||
+        selectedCategoryId !== null ||
+        selectedSubCategoryId !== null ||
+        selectedBrandId !== null ||
+        showOffers
       "
-
       type="button"
-
       class="clear-filters"
-
       (click)="clearFilters()"
     >
 
@@ -145,9 +419,10 @@
 
     </button>
 
-
   </div>
 
+
+  
 
 
   <!-- ======================================================
@@ -156,27 +431,16 @@
 
   <div
     class="product-grid"
-
     *ngIf="
       !isLoading &&
       filteredProducts.length > 0
     "
   >
 
-
-    <!-- PRODUCT CARD -->
-
     <div
       class="product-card"
-
-      *ngFor="
-        let product
-        of filteredProducts
-      "
-
-      (click)="
-        openProductDetails(product)
-      "
+      *ngFor="let product of filteredProducts"
+      (click)="openProductDetails(product)"
     >
 
 
@@ -184,41 +448,80 @@
            IMAGE
            ================================================== -->
 
-      <div class="product-image">
+     <div class="product-image">
 
+  <!-- DISCOUNT -->
+  <div
+    class="discount-badge"
+    *ngIf="hasDiscount(product)"
+  >
+    -{{ product.discountPercentage }}%
+  </div>
 
-        <img
-          [src]="product.imageUrl"
-          [alt]="product.name"
-        />
+  <!-- PRODUCT IMAGE -->
+  <div class="image-wrapper">
 
+    <img
+      [src]="getImageUrl(product.imageUrl)"
+      [alt]="product.name"
+    />
 
-        <!-- CATEGORY BADGE -->
+  </div>
 
-        <div class="product-badge">
+  <!-- CATEGORY -->
+  <div class="product-badge">
 
-          {{
-            product
-              ?.subCategories?.[0]
-              ?.categoryName
-              || 'Uncategorized'
-          }}
+    {{
+      product?.subCategories?.[0]?.categoryName
+      || 'Uncategorized'
+    }}
 
-        </div>
+  </div>
+<!-- OUT OF STOCK BADGE -->
 
-
-      </div>
-
+<div
+  class="stock-badge out"
+  *ngIf="!product.isInStock"
+>
+  Out of Stock
+</div>
+</div>
 
 
       <!-- ==================================================
-           PRODUCT INFO
+           INFO
            ================================================== -->
 
       <div class="product-info">
 
-
         <div class="mainData">
+
+
+          <!-- BRAND -->
+
+          <div
+            class="product-brand"
+            *ngIf="product.brand"
+          >
+
+            {{ product.brand.name }}
+
+          </div>
+
+
+          <!-- FALLBACK BRAND -->
+
+          <div
+            class="product-brand"
+            *ngIf="
+              !product.brand &&
+              product.brandName
+            "
+          >
+
+            {{ product.brandName }}
+
+          </div>
 
 
           <!-- NAME -->
@@ -232,120 +535,145 @@
 
           <!-- DESCRIPTION -->
 
-          <p class="product-description">
+          <p
+            class="product-description"
+            *ngIf="product.description"
+          >
 
             {{ product.description }}
 
           </p>
 
 
-          <!-- PRICE -->
+          <!-- ==================================================
+               PRICE
+               ================================================== -->
 
-          <p class="product-price">
+          <div class="price-section">
 
-            {{ product.price }}
 
-            <span>
-              EGP
+            <!-- CURRENT / DISCOUNTED PRICE -->
+
+            <span class="current-price">
+
+              {{
+                getDiscountedPrice(product)
+                  | number:'1.2-2'
+              }}
+
+              <small>
+                EGP
+              </small>
+
             </span>
 
-          </p>
 
+            <!-- OLD PRICE -->
 
-        </div>
-
-
-
-        <!-- =================================================
-             OVERLAY
-             ================================================= -->
-
-        <div class="product-overlay">
-
-
-          <div class="product-actions">
-
-
-            <!-- QUANTITY -->
-
-            <div
-              class="quantity-wrapper"
-
-              (click)="
-                $event.stopPropagation()
-              "
+            <span
+              class="old-price"
+              *ngIf="hasDiscount(product)"
             >
 
-              <input
-                type="number"
+              {{
+                product.price
+                  | number:'1.2-2'
+              }}
 
-                [id]="'qty-' + product.id"
+              EGP
 
-                [(ngModel)]="
-                  quantities[product.id]
-                "
-
-                [ngModelOptions]="{
-                  standalone: true
-                }"
-
-                min="0"
-
-                step="1"
-
-                class="quantity-input"
-              />
-
-            </div>
-
-
-
-            <!-- ADD TO CART -->
-
-            <button
-              mat-button
-
-              type="button"
-
-              class="add-to-cart"
-
-              (click)="
-                addToCart(
-                  product,
-                  $event
-                )
-              "
-            >
-
-              <mat-icon>
-
-                add_shopping_cart
-
-              </mat-icon>
-
-
-              <span>
-
-                Add to Cart
-
-              </span>
-
-            </button>
-
+            </span>
 
           </div>
 
         </div>
 
 
-      </div>
+        <!-- ==================================================
+             OVERLAY
+             ================================================== -->
 
+        <div class="product-overlay">
+
+  <!-- ==================================================
+       IN STOCK
+       ================================================== -->
+
+  <div
+    class="product-actions"
+    *ngIf="product.isInStock"
+  >
+
+    <!-- QUANTITY -->
+
+    <div
+      class="quantity-wrapper"
+      (click)="$event.stopPropagation()"
+    >
+
+      <input
+        type="number"
+        [id]="'qty-' + product.id"
+        [(ngModel)]="quantities[product.id]"
+        [ngModelOptions]="{ standalone: true }"
+        min="0"
+        step="1"
+        class="quantity-input"
+        placeholder="Qty"
+      />
 
     </div>
 
 
+    <!-- ADD TO CART -->
+
+    <button
+      mat-button
+      type="button"
+      class="add-to-cart"
+      (click)="addToCart(product, $event)"
+    >
+
+      <mat-icon>
+        add_shopping_cart
+      </mat-icon>
+
+      <span>
+        Add to Cart
+      </span>
+
+    </button>
+
   </div>
 
+
+  <!-- ==================================================
+       OUT OF STOCK
+       ================================================== -->
+
+  <div
+    class="out-of-stock"
+    *ngIf="!product.isInStock"
+    (click)="$event.stopPropagation()"
+  >
+
+    <mat-icon>
+      remove_shopping_cart
+    </mat-icon>
+
+    <span>
+      Out of Stock
+    </span>
+
+  </div>
+
+</div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 
   <!-- ======================================================
@@ -354,20 +682,16 @@
 
   <div
     *ngIf="isLoading"
-
     class="loading-spinner"
   >
 
     <span class="loading-icon">
-
       ✦
-
     </span>
 
     Loading products...
 
   </div>
-
 
 
   <!-- ======================================================
@@ -379,16 +703,12 @@
       !isLoading &&
       filteredProducts.length === 0
     "
-
     class="no-products"
   >
 
     <span class="no-products-icon">
-
       ✦
-
     </span>
-
 
     <h3>
 
@@ -396,25 +716,23 @@
 
     </h3>
 
-
     <p>
 
-      No products match
-      the selected filters.
+      No products match the selected filters.
 
     </p>
 
 
     <button
       *ngIf="
-        selectedCategory ||
-        selectedSubCategory
+        searchName ||
+        selectedCategoryId !== null ||
+        selectedSubCategoryId !== null ||
+        selectedBrandId !== null ||
+        showOffers
       "
-
       type="button"
-
       class="clear-filters"
-
       (click)="clearFilters()"
     >
 
@@ -422,11 +740,12 @@
         refresh
       </mat-icon>
 
-      Show All Products
+      <span>
+        Show All Products
+      </span>
 
     </button>
 
   </div>
-
 
 </main>

@@ -1,4 +1,3 @@
-
 /* =========================
    COLOR PALETTE
    ========================= */
@@ -13,10 +12,13 @@
   --gold-dark: #b8941f;
 
   --white: #ffffff;
+
   --gray: #6f7782;
   --gray-light: #f5f6f8;
 
   --border: #e2e5e9;
+
+  display: block;
 }
 
 
@@ -29,7 +31,15 @@
 
   gap: 2.5rem;
 
+  width: 850px;
+
+  max-width: 100%;
+
+  min-height: 430px;
+
   padding: 2rem;
+
+  box-sizing: border-box;
 
   background:
     linear-gradient(
@@ -37,10 +47,6 @@
       #ffffff,
       #f5f6f8
     );
-
-  max-width: 850px;
-
-  min-height: 430px;
 }
 
 
@@ -63,7 +69,13 @@
 }
 
 
+/* =========================
+   IMAGE FRAME
+   ========================= */
+
 .image-frame {
+  position: relative;
+
   width: 100%;
 
   height: 360px;
@@ -75,6 +87,8 @@
   justify-content: center;
 
   padding: 1.2rem;
+
+  box-sizing: border-box;
 
   background:
     radial-gradient(
@@ -111,7 +125,55 @@
 }
 
 
-/* Image badge */
+/* =========================
+   OUT OF STOCK IMAGE
+   ========================= */
+
+.out-of-stock-image img {
+  filter: grayscale(100%);
+
+  opacity: 0.45;
+}
+
+
+.out-of-stock-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(7, 21, 41, 0.35);
+}
+
+
+.out-of-stock-text {
+  padding: 0.65rem 1rem;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.8);
+
+  border-radius: 6px;
+
+  background: rgba(7, 21, 41, 0.9);
+
+  color: #ffffff;
+
+  font-size: 0.85rem;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+}
+
+
+/* =========================
+   CATEGORY BADGE
+   ========================= */
 
 .image-label {
   position: absolute;
@@ -120,7 +182,13 @@
 
   top: 15px;
 
+  z-index: 3;
+
+  max-width: calc(100% - 30px);
+
   padding: 0.4rem 0.75rem;
+
+  box-sizing: border-box;
 
   background:
     rgba(11, 31, 58, 0.92);
@@ -137,6 +205,92 @@
   font-weight: 600;
 
   letter-spacing: 0.4px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+.category-symbol {
+  margin-right: 3px;
+
+  color: var(--gold);
+}
+
+
+/* =========================
+   DISCOUNT BADGE
+   ========================= */
+
+.discount-badge {
+  position: absolute;
+
+  right: 15px;
+
+  top: 15px;
+
+  z-index: 3;
+
+  min-width: 48px;
+
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0 8px;
+
+  box-sizing: border-box;
+
+  background: var(--gold);
+
+  color: var(--navy-dark);
+
+  border-radius: 50%;
+
+  font-size: 0.75rem;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 5px 15px
+    rgba(7, 21, 41, 0.15);
+}
+
+
+/* =========================
+   STOCK BADGE
+   ========================= */
+
+.stock-badge {
+  position: absolute;
+
+  right: 15px;
+
+  top: 15px;
+
+  z-index: 4;
+
+  padding: 0.45rem 0.7rem;
+
+  background:
+    rgba(125, 26, 26, 0.95);
+
+  color: #ffffff;
+
+  border-radius: 6px;
+
+  font-size: 0.65rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.6px;
 }
 
 
@@ -162,23 +316,37 @@
    ========================= */
 
 .details-header {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.1rem;
 }
 
 
-.product-category {
+/* =========================
+   BRAND
+   ========================= */
+
+.product-brand {
+  display: block;
+
+  margin-bottom: 5px;
+
   color: var(--gold-dark);
 
-  font-size: 0.68rem;
+  font-size: 0.7rem;
 
-  font-weight: 700;
+  font-weight: 800;
 
   letter-spacing: 1.5px;
+
+  text-transform: uppercase;
 }
 
 
+/* =========================
+   PRODUCT NAME
+   ========================= */
+
 .product-name {
-  margin: 0.4rem 0 0;
+  margin: 0.35rem 0 0;
 
   color: var(--navy);
 
@@ -187,8 +355,56 @@
   line-height: 1.3;
 
   font-weight: 700;
+
+  word-break: break-word;
 }
 
+
+/* =========================
+   CATEGORY / SUBCATEGORY
+   ========================= */
+
+.product-location {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 0.45rem;
+
+  margin-top: 0.55rem;
+
+  color: var(--gray);
+
+  font-size: 0.75rem;
+
+  font-weight: 500;
+}
+
+
+.category-name {
+  color: var(--navy-light);
+
+  font-weight: 600;
+}
+
+
+.subcategory-name {
+  color: var(--gray);
+}
+
+
+.product-location .separator {
+  color: var(--gold);
+
+  font-weight: 700;
+}
+
+
+/* =========================
+   TITLE LINE
+   ========================= */
 
 .title-line {
   width: 45px;
@@ -206,13 +422,106 @@
    ========================= */
 
 .product-description {
+  display: -webkit-box;
+
   margin: 0;
 
   color: var(--gray);
 
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 
-  line-height: 1.7;
+  line-height: 1.65;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+
+/* =========================
+   OFFER
+   ========================= */
+
+.offer-box {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.8rem;
+
+  margin-top: 1rem;
+
+  padding: 0.7rem 0.9rem;
+
+  box-sizing: border-box;
+
+  background:
+    rgba(212, 175, 55, 0.09);
+
+  border: 1px solid
+    rgba(212, 175, 55, 0.4);
+
+  border-radius: 8px;
+}
+
+
+.offer-icon {
+  width: 34px;
+
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--gold);
+
+  color: var(--navy-dark);
+
+  font-size: 0.85rem;
+
+  font-weight: 800;
+}
+
+
+.offer-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.1rem;
+
+  min-width: 0;
+}
+
+
+.offer-title {
+  color: var(--gold-dark);
+
+  font-size: 0.62rem;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+
+.offer-text {
+  color: var(--navy);
+
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  line-height: 1.4;
 }
 
 
@@ -223,11 +532,13 @@
 .price-section {
   display: flex;
 
-  align-items: baseline;
+  align-items: center;
 
-  gap: 0.4rem;
+  flex-wrap: wrap;
 
-  margin: 1.5rem 0;
+  gap: 0.8rem;
+
+  margin: 1.4rem 0;
 
   padding-bottom: 1.2rem;
 
@@ -235,23 +546,131 @@
 }
 
 
+.current-price-wrapper {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 0.35rem;
+}
+
+
 .price {
   color: var(--navy);
 
-  font-size: 1.7rem;
+  font-size: 1.8rem;
 
-  font-weight: 700;
+  font-weight: 800;
 }
 
 
 .currency {
   color: var(--gold-dark);
 
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 
   font-weight: 700;
+}
 
-  letter-spacing: 0.5px;
+
+.old-price-wrapper {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 0.25rem;
+}
+
+
+.old-price {
+  color: rgb(125, 26, 26);
+
+  font-size: 0.95rem;
+
+  font-weight: 500;
+
+  text-decoration: line-through;
+}
+
+
+.old-currency {
+  color: rgb(125, 26, 26);
+
+  font-size: 0.65rem;
+
+  text-decoration: line-through;
+}
+
+
+/* =========================
+   STOCK INFORMATION
+   ========================= */
+
+.stock-information {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.45rem;
+
+  margin-bottom: 1rem;
+
+  color: #357a45;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+}
+
+
+.stock-dot {
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #357a45;
+}
+
+
+/* =========================
+   OUT OF STOCK MESSAGE
+   ========================= */
+
+.out-of-stock-message {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.6rem;
+
+  margin-bottom: 1.2rem;
+
+  padding: 0.75rem 0.9rem;
+
+  border: 1px solid
+    rgba(125, 26, 26, 0.25);
+
+  border-radius: 7px;
+
+  background:
+    rgba(125, 26, 26, 0.06);
+
+  color: rgb(125, 26, 26);
+
+  font-size: 0.78rem;
+
+  font-weight: 600;
+}
+
+
+.out-of-stock-message mat-icon {
+  width: 19px;
+
+  height: 19px;
+
+  font-size: 19px;
 }
 
 
@@ -266,6 +685,8 @@
 
   justify-content: space-between;
 
+  gap: 1rem;
+
   margin-bottom: 1.5rem;
 }
 
@@ -279,10 +700,16 @@
 }
 
 
+/* =========================
+   QUANTITY CONTROL
+   ========================= */
+
 .quantity-control {
   display: flex;
 
   align-items: center;
+
+  width: 90px;
 
   border: 1px solid var(--border);
 
@@ -291,51 +718,38 @@
   background: var(--white);
 
   overflow: hidden;
-}
-
-
-.quantity-btn {
-  width: 34px;
-
-  height: 36px;
-
-  border: none;
-
-  background: var(--gray-light);
-
-  color: var(--navy);
-
-  font-size: 1.1rem;
-
-  cursor: pointer;
 
   transition:
-    background 0.2s ease,
-    color 0.2s ease;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 
-.quantity-btn:hover {
-  background: var(--gold);
+.quantity-control:focus-within {
+  border-color: var(--gold);
 
-  color: var(--navy-dark);
+  box-shadow:
+    0 0 0 3px
+    rgba(212, 175, 55, 0.12);
 }
 
+
+/* =========================
+   QUANTITY INPUT
+   ========================= */
 
 .quantity-input {
-  width: 45px;
+  width: 100%;
 
-  height: 36px;
+  height: 38px;
 
-  padding: 0;
+  padding: 0 8px;
 
   border: none;
 
-  border-left: 1px solid var(--border);
+  outline: none;
 
-  border-right: 1px solid var(--border);
-
-  background: var(--white);
+  background: transparent;
 
   color: var(--navy);
 
@@ -345,11 +759,9 @@
 
   font-weight: 600;
 
-  outline: none;
+  box-sizing: border-box;
 }
 
-
-/* Remove browser arrows */
 
 .quantity-input::-webkit-inner-spin-button,
 .quantity-input::-webkit-outer-spin-button {
@@ -374,7 +786,9 @@
 }
 
 
-/* Add to cart */
+/* =========================
+   ADD TO CART
+   ========================= */
 
 .add-btn {
   flex: 1;
@@ -389,6 +803,7 @@
 
   gap: 0.5rem;
 
+  border: none;
 
   border-radius: 7px;
 
@@ -405,19 +820,22 @@
   transition:
     background 0.25s ease,
     color 0.25s ease,
-    transform 0.25s ease,
-    border-color 0.25s ease;
+    transform 0.25s ease;
 }
 
 
 .add-btn mat-icon {
+  width: 20px;
+
+  height: 20px;
+
   color: var(--gold);
 
   font-size: 20px;
 }
 
 
-.add-btn:hover {
+.add-btn:hover:not(:disabled) {
   background: var(--gold);
 
   color: var(--navy-dark);
@@ -426,12 +844,32 @@
 }
 
 
-.add-btn:hover mat-icon {
+.add-btn:hover:not(:disabled) mat-icon {
   color: var(--navy-dark);
 }
 
 
-/* Close */
+.add-btn:disabled {
+  background: #c7cbd1;
+
+  color: #ffffff;
+
+  cursor: not-allowed;
+
+  opacity: 0.75;
+
+  transform: none;
+}
+
+
+.add-btn:disabled mat-icon {
+  color: #ffffff;
+}
+
+
+/* =========================
+   CLOSE
+   ========================= */
 
 .close-btn {
   min-height: 46px;
@@ -475,23 +913,52 @@
   .dialog-content {
     flex-direction: column;
 
+    width: 100%;
+
+    max-width: 500px;
+
+    min-height: auto;
+
     gap: 1.5rem;
 
     padding: 1.5rem;
-
-    max-width: 500px;
   }
+
 
   .product-image {
     min-width: 0;
+
+    width: 100%;
   }
+
 
   .image-frame {
     height: 280px;
   }
 
+
+  .product-details {
+    padding: 0;
+  }
+
+
   .product-name {
     font-size: 1.4rem;
+  }
+
+
+  .product-description {
+    font-size: 0.88rem;
+  }
+
+
+  .price-section {
+    margin: 1.2rem 0;
+  }
+
+
+  .price {
+    font-size: 1.55rem;
   }
 
 }
@@ -504,32 +971,150 @@
 @media (max-width: 480px) {
 
   .dialog-content {
+    width: 100%;
+
     padding: 1rem;
 
     gap: 1rem;
   }
 
+
   .image-frame {
     height: 220px;
 
+    padding: 0.8rem;
+
     border-radius: 12px;
   }
+
+
+  .image-label {
+    left: 10px;
+
+    top: 10px;
+
+    font-size: 0.62rem;
+  }
+
+
+  .discount-badge,
+  .stock-badge {
+    right: 10px;
+
+    top: 10px;
+  }
+
+
+  .discount-badge {
+    min-width: 42px;
+
+    height: 42px;
+
+    font-size: 0.68rem;
+  }
+
+
+  .stock-badge {
+    font-size: 0.58rem;
+
+    padding: 0.4rem 0.55rem;
+  }
+
+
+  .product-brand {
+    font-size: 0.62rem;
+
+    letter-spacing: 1.2px;
+  }
+
 
   .product-name {
     font-size: 1.25rem;
   }
 
-  .product-description {
-    font-size: 0.85rem;
+
+  .product-location {
+    font-size: 0.68rem;
+
+    gap: 0.35rem;
   }
+
+
+  .product-description {
+    font-size: 0.83rem;
+
+    line-height: 1.6;
+
+    -webkit-line-clamp: 3;
+  }
+
+
+  .offer-box {
+    gap: 0.6rem;
+
+    margin-top: 0.8rem;
+
+    padding: 0.6rem 0.7rem;
+  }
+
+
+  .offer-icon {
+    width: 28px;
+
+    height: 28px;
+
+    font-size: 0.75rem;
+  }
+
+
+  .offer-title {
+    font-size: 0.56rem;
+  }
+
+
+  .offer-text {
+    font-size: 0.72rem;
+  }
+
+
+  .price-section {
+    gap: 0.65rem;
+
+    margin: 1rem 0;
+
+    padding-bottom: 1rem;
+  }
+
 
   .price {
     font-size: 1.4rem;
   }
 
+
+  .currency {
+    font-size: 0.68rem;
+  }
+
+
+  .old-price {
+    font-size: 0.82rem;
+  }
+
+
+  .old-currency {
+    font-size: 0.58rem;
+  }
+
+
   .quantity-section {
     margin-bottom: 1rem;
   }
+
+
+  .quantity-section label {
+    font-size: 0.8rem;
+  }
+
 
   .dialog-actions {
     flex-direction: column;
@@ -537,9 +1122,11 @@
     width: 100%;
   }
 
+
   .add-btn,
   .close-btn {
     width: 100%;
   }
 
 }
+

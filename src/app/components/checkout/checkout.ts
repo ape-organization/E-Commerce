@@ -19,6 +19,7 @@ import {
 import { ClientService } from '../../services/client.service';
 import { OrderService } from '../../services/order.service';
 import { CartService, CartItem } from '../../services/cart.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -39,7 +40,6 @@ export class Checkout implements OnInit {
   private readonly orderService = inject(OrderService);
   private readonly cartService = inject(CartService);
 
-
   // ==========================================
   // STATE
   // ==========================================
@@ -50,7 +50,6 @@ export class Checkout implements OnInit {
 
   readonly clientFound = signal(false);
 
-
   // ==========================================
   // CART
   // ==========================================
@@ -58,7 +57,6 @@ export class Checkout implements OnInit {
   cartItems: CartItem[] = [];
 
   readonly deliveryFee = signal(50);
-
 
   // ==========================================
   // FORM
@@ -90,9 +88,7 @@ export class Checkout implements OnInit {
     ],
 
     city: [
-      '',
-      [
-      ]
+      ''
     ],
 
     address: [
@@ -109,7 +105,6 @@ export class Checkout implements OnInit {
 
   });
 
-
   // ==========================================
   // INITIALIZE
   // ==========================================
@@ -121,7 +116,6 @@ export class Checkout implements OnInit {
     this.watchPhoneNumber();
 
   }
-
 
   // ==========================================
   // LOAD CART
@@ -138,6 +132,58 @@ export class Checkout implements OnInit {
 
   }
 
+  // ==========================================
+  // DISCOUNTED PRICE
+  // ==========================================
+
+  getDiscountedPrice(item: CartItem): number {
+
+    const product = item.product;
+
+    const discount =
+      product.discountPercentage ?? 0;
+
+    if (discount <= 0) {
+
+      return product.price;
+
+    }
+
+    return product.price -
+      (product.price * discount / 100);
+
+  }
+
+  // ==========================================
+  // ORIGINAL PRICE
+  // ==========================================
+
+  getOriginalPrice(item: CartItem): number {
+
+    return item.product.price;
+
+  }
+
+  // ==========================================
+  // ITEM DISCOUNT
+  // ==========================================
+
+  getItemDiscount(item: CartItem): number {
+
+    return item.product.discountPercentage ?? 0;
+
+  }
+
+  // ==========================================
+  // ITEM SUBTOTAL
+  // ==========================================
+
+  getItemSubtotal(item: CartItem): number {
+
+    return this.getDiscountedPrice(item) *
+      item.quantity;
+
+  }
 
   // ==========================================
   // SEARCH CLIENT BY PHONE
@@ -181,11 +227,6 @@ export class Checkout implements OnInit {
 
         this.isSearchingClient.set(false);
 
-
-        // ======================================
-        // CLIENT NOT FOUND
-        // ======================================
-
         if (!client) {
 
           this.clientFound.set(false);
@@ -194,13 +235,7 @@ export class Checkout implements OnInit {
 
         }
 
-
-        // ======================================
-        // CLIENT FOUND
-        // ======================================
-
         this.clientFound.set(true);
-
 
         this.checkoutForm.patchValue({
 
@@ -216,7 +251,6 @@ export class Checkout implements OnInit {
 
   }
 
-
   // ==========================================
   // SUBTOTAL
   // ==========================================
@@ -225,13 +259,11 @@ export class Checkout implements OnInit {
 
     return this.cartItems.reduce(
       (total, item) =>
-        total +
-        (item.product.price * item.quantity),
+        total + this.getItemSubtotal(item),
       0
     );
 
   }
-
 
   // ==========================================
   // TOTAL
@@ -243,7 +275,6 @@ export class Checkout implements OnInit {
       this.deliveryFee();
 
   }
-
 
   // ==========================================
   // TOTAL ITEMS
@@ -259,6 +290,29 @@ export class Checkout implements OnInit {
 
   }
 
+  // ==========================================
+  // TOTAL SAVINGS
+  // ==========================================
+
+  get totalSavings(): number {
+
+    return this.cartItems.reduce(
+      (total, item) => {
+
+        const original =
+          this.getOriginalPrice(item);
+
+        const discounted =
+          this.getDiscountedPrice(item);
+
+        return total +
+          ((original - discounted) * item.quantity);
+
+      },
+      0
+    );
+
+  }
 
   // ==========================================
   // VALIDATION
@@ -277,16 +331,11 @@ export class Checkout implements OnInit {
 
   }
 
-
   // ==========================================
   // PLACE ORDER
   // ==========================================
 
   placeOrder(): void {
-
-    // ----------------------------------------
-    // Validate form
-    // ----------------------------------------
 
     if (this.checkoutForm.invalid) {
 
@@ -296,21 +345,11 @@ export class Checkout implements OnInit {
 
     }
 
-
-    // ----------------------------------------
-    // Prevent double click
-    // ----------------------------------------
-
     if (this.isSubmitting()) {
 
       return;
 
     }
-
-
-    // ----------------------------------------
-    // Check cart
-    // ----------------------------------------
 
     if (this.cartItems.length === 0) {
 
@@ -322,17 +361,10 @@ export class Checkout implements OnInit {
 
     }
 
-
     this.isSubmitting.set(true);
-
 
     const form =
       this.checkoutForm.getRawValue();
-
-
-    // ========================================
-    // BUILD FULL ADDRESS
-    // ========================================
 
     const fullAddress =
       this.buildFullAddress(
@@ -340,11 +372,6 @@ export class Checkout implements OnInit {
         form.address,
         form.apartment
       );
-
-
-    // ========================================
-    // BUILD ORDER REQUEST
-    // ========================================
 
     const request = {
 
@@ -370,24 +397,14 @@ export class Checkout implements OnInit {
 
     };
 
-
     console.log(
       'Order request:',
       request
     );
 
-
-    // ========================================
-    // SEND TO API
-    // ========================================
-
     this.orderService
       .createOrder(request)
       .subscribe({
-
-        // ------------------------------------
-        // SUCCESS
-        // ------------------------------------
 
         next: response => {
 
@@ -396,25 +413,15 @@ export class Checkout implements OnInit {
             response
           );
 
-
-          // Clear cart AFTER successful order
           this.cartService.clearCart();
-
 
           this.isSubmitting.set(false);
 
-
-          // Go to success page
           this.router.navigate(
             ['/order-success']
           );
 
         },
-
-
-        // ------------------------------------
-        // ERROR
-        // ------------------------------------
 
         error: error => {
 
@@ -423,9 +430,7 @@ export class Checkout implements OnInit {
             error
           );
 
-
           this.isSubmitting.set(false);
-
 
           alert(
             error?.error?.message ??
@@ -437,7 +442,6 @@ export class Checkout implements OnInit {
       });
 
   }
-
 
   // ==========================================
   // BUILD ADDRESS
@@ -452,7 +456,6 @@ export class Checkout implements OnInit {
     let result =
       `${city}, ${address}`;
 
-
     if (apartment.trim()) {
 
       result +=
@@ -460,11 +463,9 @@ export class Checkout implements OnInit {
 
     }
 
-
     return result;
 
   }
-
 
   // ==========================================
   // BACK TO CART
@@ -477,5 +478,31 @@ export class Checkout implements OnInit {
     );
 
   }
+// ========================================================
+  // IMAGE URL
+  // ========================================================
+api=environment.imageApiBaseUrl
+  getImageUrl(
+    imageUrl?: string | null
+  ): string {
 
+    if (!imageUrl) {
+
+      return 'assets/images/product-placeholder.png';
+
+    }
+
+
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
+    ) {
+
+      return imageUrl;
+
+    }
+
+    return `${this.api}${imageUrl}`;
+
+  }
 }

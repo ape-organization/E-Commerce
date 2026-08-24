@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://yourdomain.com/api',
-    imageApiBaseUrl: 'https://localhost:7256'
+  apiBaseUrl: 'https://ecommerceapi.ape-org.com/api',
+    imageApiBaseUrl: 'https://ecommerceapi.ape-org.com'
 
 };

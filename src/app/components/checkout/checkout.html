@@ -617,7 +617,7 @@
               <div class="product-image">
 
                 <img
-                  [src]="item.product.imageUrl"
+                  [src]="getImageUrl(item.product.imageUrl)"
                   [alt]="item.product.name"
                 />
 
@@ -639,9 +639,38 @@
                 </p>
 
 
-                <small>
-                  {{ item.product.price }} EGP each
-                </small>
+               <!-- Product Price -->
+
+<div class="product-pricing">
+
+  @if (item.product.discountPercentage > 0) {
+
+  
+    <div class="new-price">
+
+      {{ getDiscountedPrice(item) | number:'1.2-2' }}
+
+      EGP
+
+    </div>
+
+  
+
+  }
+
+  @else {
+
+    <div class="new-price">
+
+      {{ getDiscountedPrice(item) | number:'1.2-2' }}
+
+      EGP
+
+    </div>
+
+  }
+
+</div>
 
               </div>
 
@@ -649,16 +678,13 @@
 
               <!-- Product Subtotal -->
 
-              <strong>
+             <strong class="product-subtotal">
 
-                {{
-                  item.product.price *
-                  item.quantity
-                }}
+  {{ getItemSubtotal(item) | number:'1.2-2' }}
 
-                EGP
+  EGP
 
-              </strong>
+</strong>
 
             </div>
 

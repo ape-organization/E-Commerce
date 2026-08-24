@@ -22,6 +22,7 @@ export class CartService {
   }
 
   addToCart(product: Product, quantity: number = 1): void {
+    console.log(product)
     const currentCart = this.cartItems.value;
     const existingItem = currentCart.find(item => item.product.id === product.id);
 

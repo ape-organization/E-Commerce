@@ -1,0 +1,337 @@
+<section class="home">
+
+  <!-- =====================================================
+       HERO SLIDER
+       ===================================================== -->
+
+  <section class="hero">
+
+    <div
+      class="hero-slide"
+      *ngFor="let slide of slides; let i = index"
+      [class.active]="i === currentSlide()"
+    >
+
+      <img
+        [src]="slide.image"
+        [alt]="slide.title"
+        class="hero-image"
+      />
+
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+
+        <span class="hero-small-title">
+          ✦ BEAUTY & CARE ✦
+        </span>
+
+        <h1>
+          {{ slide.title }}
+        </h1>
+
+        <p>
+          {{ slide.description }}
+        </p>
+
+        <button
+          type="button"
+          class="hero-button"
+          (click)="shopNow()"
+        >
+          Shop Now
+          <mat-icon>
+            arrow_forward
+          </mat-icon>
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PREVIOUS -->
+
+    <button
+      type="button"
+      class="slider-arrow slider-prev"
+      (click)="previousSlide()"
+      aria-label="Previous slide"
+    >
+
+      <mat-icon>
+        chevron_left
+      </mat-icon>
+
+    </button>
+
+
+    <!-- NEXT -->
+
+    <button
+      type="button"
+      class="slider-arrow slider-next"
+      (click)="nextSlide()"
+      aria-label="Next slide"
+    >
+
+      <mat-icon>
+        chevron_right
+      </mat-icon>
+
+    </button>
+
+
+    <!-- DOTS -->
+
+    <div class="slider-dots">
+
+      <button
+        type="button"
+        *ngFor="let slide of slides; let i = index"
+        [class.active]="i === currentSlide()"
+        (click)="goToSlide(i)"
+        aria-label="Go to slide"
+      >
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       CATEGORIES
+       ===================================================== -->
+
+  <section class="categories-section">
+
+    <div class="section-heading">
+
+      <span class="section-small-title">
+        DISCOVER
+      </span>
+
+      <h2>
+        Shop By Category
+      </h2>
+
+      <div class="title-line">
+        <span>✦</span>
+      </div>
+
+      <p>
+        Explore our beauty collection
+      </p>
+
+    </div>
+
+
+    <!-- CATEGORY CAROUSEL -->
+
+    <div class="category-carousel">
+
+      <!-- LEFT -->
+
+      <button
+        type="button"
+        class="category-arrow category-prev"
+        (click)="scrollCategories('left')"
+        aria-label="Previous categories"
+      >
+
+        <mat-icon>
+          chevron_left
+        </mat-icon>
+
+      </button>
+
+
+      <!-- CATEGORY LIST -->
+
+      <div
+        class="category-track"
+        #categoryTrack
+      >
+
+        <div
+          class="category-card"
+          *ngFor="let category of categories()"
+          (click)="selectCategory(category)"
+        >
+
+          <div class="category-image">
+
+            <img
+              [src]="getCategoryImage(category)"
+              [alt]="category.name"
+            />
+
+          </div>
+
+          <h3>
+            {{ category.name }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT -->
+
+      <button
+        type="button"
+        class="category-arrow category-next"
+        (click)="scrollCategories('right')"
+        aria-label="Next categories"
+      >
+
+        <mat-icon>
+          chevron_right
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+<!-- =====================================================
+     BRANDS
+     ===================================================== -->
+
+<section class="brands-section">
+
+  <div class="section-heading">
+
+    <span class="section-small-title">
+      BEAUTY BRANDS
+    </span>
+
+    <h2>
+      Shop By Brand
+    </h2>
+
+    <div class="title-line">
+      <span>✦</span>
+    </div>
+
+    <p>
+      Discover your favorite beauty brands
+    </p>
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="brands-loading"
+    *ngIf="isLoadingBrands"
+  >
+
+    <span>✦</span>
+
+    Loading brands...
+
+  </div>
+
+
+  <!-- BRAND CAROUSEL -->
+
+  <div
+    class="brand-carousel"
+    *ngIf="
+      !isLoadingBrands &&
+      brands().length > 0
+    "
+  >
+
+    <!-- LEFT -->
+
+    <button
+      type="button"
+      class="brand-arrow brand-prev"
+
+      (click)="
+        scrollBrands('left')
+      "
+
+      aria-label="Previous brands"
+    >
+
+      <mat-icon>
+        chevron_left
+      </mat-icon>
+
+    </button>
+
+
+    <!-- BRAND TRACK -->
+
+    <div
+      class="brand-track"
+      #brandTrack
+    >
+
+      <div
+        class="brand-card"
+
+        *ngFor="
+          let brand of brands()
+        "
+
+        (click)="
+          selectBrand(brand)
+        "
+      >
+
+        <div class="brand-image">
+
+          <img
+            [src]="
+              getBrandImage(brand)
+            "
+
+            [alt]="brand.name"
+          />
+
+        </div>
+
+
+        <h3>
+          {{ brand.name }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+    <button
+      type="button"
+      class="brand-arrow brand-next"
+
+      (click)="
+        scrollBrands('right')
+      "
+
+      aria-label="Next brands"
+    >
+
+      <mat-icon>
+        chevron_right
+      </mat-icon>
+
+    </button>
+
+  </div>
+
+</section>
+
+</section>

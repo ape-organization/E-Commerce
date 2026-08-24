@@ -1,138 +1,386 @@
-
 <div class="dialog-content">
 
-  <!-- Product Image -->
+
+  <!-- =====================================================
+       PRODUCT IMAGE
+       ===================================================== -->
+
   <div class="product-image">
 
-    <div class="image-frame">
+
+    <!-- IMAGE FRAME -->
+
+    <div
+      class="image-frame"
+      [class.out-of-stock-image]="!product?.isInStock"
+    >
+
       <img
-        [src]="product.imageUrl"
+        [src]="getImageUrl(product.imageUrl)"
         [alt]="product.name"
       />
-    </div>
-
-    <div class="image-label">
-      ✦   {{
-            product
-              ?.subCategories?.[0]
-              ?.categoryName
-              || 'Uncategorized'
-          }}
-    </div>
-
-  </div>
 
 
-  <!-- Product Details -->
-  <div class="product-details">
+      <!-- OUT OF STOCK OVERLAY -->
 
-    <div class="details-header">
+      <div
+        class="out-of-stock-overlay"
+        *ngIf="!product?.isInStock"
+      >
 
-      <span class="product-category">
-        
-         {{
-            product
-              ?.subCategories?.[0]
-              ?.categoryName
-              || 'BEAUTY'
-          }}
-        COLLECTION
-      </span>
+        <span class="out-of-stock-text">
 
-      <h2 class="product-name">
-        {{ product.name }}
-      </h2>
+          OUT OF STOCK
 
-      <div class="title-line"></div>
-
-    </div>
-
-
-    <!-- Description -->
-    <p class="product-description">
-      {{ product.description }}
-    </p>
-
-
-    <!-- Price -->
-    <div class="price-section">
-
-      <span class="price">
-        {{ product.price }}
-      </span>
-
-      <span class="currency">
-        EGP
-      </span>
-
-    </div>
-
-
-    <!-- Quantity -->
-    <div class="quantity-section">
-
-      <label for="quantity">
-        Quantity
-      </label>
-
-      <div class="quantity-control">
-
-        <button
-          type="button"
-          class="quantity-btn"
-          (click)="quantity = quantity > 1 ? quantity - 1 : 1"
-        >
-          −
-        </button>
-
-        <input
-          id="quantity"
-          type="number"
-          [(ngModel)]="quantity"
-          min="0"
-          step="1"
-          class="quantity-input"
-        />
-
-        <button
-          type="button"
-          class="quantity-btn"
-          (click)="quantity = quantity + 1"
-        >
-          +
-        </button>
+        </span>
 
       </div>
 
     </div>
 
 
-    <!-- Actions -->
+    <!-- ===================================================
+         CATEGORY BADGE
+         =================================================== -->
+
+    <div class="image-label">
+
+      <span class="category-symbol">
+        ✦
+      </span>
+{{ product?.subCategories[0]?.categoryName
+ || 'Category' }}
+
+    </div>
+
+
+    <!-- ===================================================
+         DISCOUNT BADGE
+         =================================================== -->
+
+    <div
+      class="discount-badge"
+      *ngIf="
+        product?.discountPercentage > 0 &&
+        product?.isInStock
+      "
+    >
+
+      -{{ product.discountPercentage }}%
+
+    </div>
+
+
+    <!-- ===================================================
+         OUT OF STOCK BADGE
+         =================================================== -->
+
+    <div
+      class="stock-badge"
+      *ngIf="!product?.isInStock"
+    >
+
+      OUT OF STOCK
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       PRODUCT DETAILS
+       ===================================================== -->
+
+  <div class="product-details">
+
+
+    <!-- ===================================================
+         HEADER
+         =================================================== -->
+
+    <div class="details-header">
+
+
+      <!-- BRAND -->
+
+      <span class="product-brand">
+
+        {{ product?.brand?.name || 'BEAUTY BRAND' }}
+
+      </span>
+
+
+      <!-- PRODUCT NAME -->
+
+      <h2 class="product-name">
+
+        {{ product.name }}
+
+      </h2>
+
+
+      <!-- CATEGORY / SUBCATEGORY -->
+
+      <div class="product-location">
+
+        <span class="category-name">
+
+          {{ product?.subCategories[0]?.categoryName
+ || 'Category' }}
+
+        </span>
+
+
+        <span class="separator">
+          /
+        </span>
+
+
+        <span class="subcategory-name" *ngFor="let sub of product?.subCategories">
+
+          {{ sub?.name || 'Subcategory' }}
+
+        </span>
+
+      </div>
+
+
+      <!-- TITLE LINE -->
+
+      <div class="title-line"></div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         DESCRIPTION
+         =================================================== -->
+
+    <p class="product-description">
+
+      {{ product.description }}
+
+    </p>
+
+
+
+    <!-- ===================================================
+         OFFER
+         =================================================== -->
+
+    <div
+      class="offer-box"
+      *ngIf="
+        (
+          product?.discountPercentage > 0 ||
+          product?.offer
+        ) 
+      "
+    >
+
+      <div class="offer-icon">
+
+        %
+
+      </div>
+
+
+      <div class="offer-content">
+
+        <span class="offer-title">
+
+          SPECIAL OFFER
+
+        </span>
+
+
+        <span
+          class="offer-text"
+          *ngIf="
+            product?.discountPercentage > 0
+          "
+        >
+
+          {{ product.discountPercentage }}% OFF
+
+        </span>
+
+
+        <span
+          class="offer-text"
+          *ngIf="
+            product?.offer &&
+            product?.discountPercentage <= 0
+          "
+        >
+
+          {{ product.offer }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         PRICE
+         =================================================== -->
+
+    <div class="price-section">
+
+
+      <!-- CURRENT PRICE -->
+
+      <div class="current-price-wrapper">
+
+        <span class="price">
+
+          {{ newPrice | number:'1.0-2' }}
+
+        </span>
+
+        <span class="currency">
+
+          EGP
+
+        </span>
+
+      </div>
+
+
+      <!-- OLD PRICE -->
+
+      <div
+        class="old-price-wrapper"
+        *ngIf="hasDiscount"
+      >
+
+        <span class="old-price">
+
+          {{ oldPrice | number:'1.0-2' }}
+
+        </span>
+
+        <span class="old-currency">
+
+          EGP
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+    <!-- ===================================================
+         OUT OF STOCK MESSAGE
+         ===================================================== -->
+
+    <div
+      class="out-of-stock-message"
+      *ngIf="!product?.isInStock"
+    >
+
+      <mat-icon>
+        inventory_2
+      </mat-icon>
+
+      <span>
+
+        This product is currently out of stock.
+
+      </span>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         QUANTITY
+         ===================================================== -->
+
+    <div
+      class="quantity-section"
+      *ngIf="product?.isInStock"
+    >
+
+      <label for="quantity">
+
+        Quantity
+
+      </label>
+
+
+      <div class="quantity-control">
+
+        <input
+          id="quantity"
+          type="number"
+          [(ngModel)]="quantity"
+          [ngModelOptions]="{ standalone: true }"
+          min="0"
+         
+          step="1"
+          class="quantity-input"
+         
+        />
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ===================================================
+         ACTIONS
+         ===================================================== -->
+
     <div class="dialog-actions">
+
+
+      <!-- ADD TO CART -->
 
       <button
         mat-raised-button
-        (click)="addToCart()"
+        type="button"
         class="add-btn"
+        [disabled]="!canAddToCart"
+        (click)="addToCart()"
       >
 
         <mat-icon>
           add_shopping_cart
         </mat-icon>
 
+
         <span>
+
           Add to Cart
+
         </span>
 
       </button>
 
 
+      <!-- CLOSE -->
+
       <button
         mat-button
-        (click)="closeDialog()"
+        type="button"
         class="close-btn"
+        (click)="closeDialog()"
       >
+
         Close
+
       </button>
 
     </div>
