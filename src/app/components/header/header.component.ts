@@ -533,7 +533,6 @@ export class HeaderComponent
   selectSubCategory(
     subCategoryId: number
   ): void {
-
     this.closeAllMenus();
 
 
@@ -543,7 +542,7 @@ export class HeaderComponent
 
         queryParams: {
 
-          subCategory:
+          subcategory:
             subCategoryId
 
         }

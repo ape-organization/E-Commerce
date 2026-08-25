@@ -194,10 +194,7 @@ export class Home
 
         next: (response: any) => {
 
-          console.log(
-            'Categories:',
-            response
-          );
+         
 
 
           const data =
@@ -252,10 +249,7 @@ export class Home
 
         next: (response: any) => {
 
-          console.log(
-            'Brands:',
-            response
-          );
+          
 
 
           const data =
@@ -562,47 +556,32 @@ export class Home
   // =====================================================
   // CATEGORY SELECT
   // =====================================================
-
-  selectCategory(
-    category: Category
-  ): void {
-
+selectCategory(category: Category): void {
     this.router.navigate(
-
-      ['/products'],
-
-      {
-        queryParams: {
-          category: category.name
+        ['/products'],
+        {
+            queryParams: {
+                category: category.id
+            }
         }
-      }
-
     );
-
-  }
+}
 
 
   // =====================================================
   // BRAND SELECT
   // =====================================================
 
-  selectBrand(
-    brand: Brand
-  ): void {
-
+ selectBrand(brand: Brand): void {
     this.router.navigate(
-
-      ['/products'],
-
-      {
-        queryParams: {
-          brand: brand.name
+        ['/products'],
+        {
+            queryParams: {
+                brand: brand.id
+            }
         }
-      }
-
     );
-
-  }
+}
 
 
   // =====================================================
