@@ -1,62 +1,40 @@
 import {
   Component,
   OnInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  HostListener,
+  signal
 } from '@angular/core';
 
-import {
-  CommonModule
-} from '@angular/common';
-
-import {
-  FormsModule
-} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import {
   MatDialog,
   MatDialogModule
 } from '@angular/material/dialog';
 
-import {
-  MatButtonModule
-} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
 
-import {
-  ProductService
-} from '../../services/product.service';
+import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
+import { CategoryService } from '../../services/category.service';
+import { BrandService } from '../../services/brand.service';
 
-import {
-  CartService
-} from '../../services/cart.service';
-
-import {
-  CategoryService
-} from '../../services/category.service';
-
-import {
-  BrandService
-} from '../../services/brand.service';
-
-import {
-  Product
-} from '../../models/product.model';
+import { Product } from '../../models/product.model';
 
 import {
   ProductModalComponent
 } from '../product-modal/product-modal.component';
 
-import {
-  environment
-} from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
-import {
-  MaterialModule
-} from '../../shared/AngularMaterial';
+import { MaterialModule } from '../../shared/AngularMaterial';
 
 
 // ==========================================================
@@ -107,28 +85,27 @@ interface BrandFilter {
 })
 export class ProductListComponent implements OnInit {
 
-
   // ========================================================
-  // PRODUCT NAME FILTER
+  // SEARCH
   // ========================================================
 
-  searchName = '';
+  searchName = signal<string>('');
 
 
   // ========================================================
   // PRODUCTS
   // ========================================================
 
-  products: Product[] = [];
+  products = signal<Product[]>([]);
 
-  filteredProducts: Product[] = [];
+  filteredProducts = signal<Product[]>([]);
 
 
   // ========================================================
   // QUANTITIES
   // ========================================================
 
-  quantities: Record<number, number> = {};
+  quantities = signal<Record<number, number>>({});
 
 
   // ========================================================
@@ -142,45 +119,56 @@ export class ProductListComponent implements OnInit {
   // CATEGORIES
   // ========================================================
 
-  categories: CategoryFilter[] = [];
+  categories = signal<CategoryFilter[]>([]);
 
-  subCategories: SubCategoryFilter[] = [];
+  subCategories = signal<SubCategoryFilter[]>([]);
 
 
   // ========================================================
   // BRANDS
   // ========================================================
 
-  brands: BrandFilter[] = [];
+  brands = signal<BrandFilter[]>([]);
 
 
   // ========================================================
   // SELECTED FILTERS
   // ========================================================
 
-  selectedCategoryId: number | null = null;
+  selectedCategoryId = signal<number | null>(null);
 
-  selectedSubCategoryId: number | null = null;
+  selectedSubCategoryId = signal<number | null>(null);
 
-  selectedBrandId: number | null = null;
+  selectedBrandId = signal<number | null>(null);
 
 
   // ========================================================
   // OFFERS
   // ========================================================
 
-  showOffers = false;
+  showOffers = signal<boolean>(false);
 
 
   // ========================================================
   // LOADING
   // ========================================================
 
-  isLoading = true;
+  isLoading = signal<boolean>(true);
 
-  isLoadingCategories = true;
+  isLoadingCategories = signal<boolean>(true);
 
-  isLoadingBrands = true;
+  isLoadingBrands = signal<boolean>(true);
+
+
+  // ========================================================
+  // DROPDOWN
+  // ========================================================
+
+  openDropdown:
+    'category' |
+    'subcategory' |
+    'brand' |
+    null = null;
 
 
   // ========================================================
@@ -189,19 +177,12 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-
     private cartService: CartService,
-
     private categoryService: CategoryService,
-
     private brandService: BrandService,
-
     private dialog: MatDialog,
-
     private cdr: ChangeDetectorRef,
-
     private route: ActivatedRoute,
-
     private router: Router
   ) {}
 
@@ -212,103 +193,81 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
 
-  this.loadCategories();
+    this.loadCategories();
 
-  this.loadBrands();
+    this.loadBrands();
 
+    this.route.queryParams.subscribe(params => {
 
-  this.route.queryParams.subscribe(params => {
+      // CATEGORY
 
-    // ====================================================
-    // READ CATEGORY
-    // ====================================================
-
-    this.selectedCategoryId =
-      this.parseId(params['category']);
+      this.selectedCategoryId.set(
+        this.parseId(params['category'])
+      );
 
 
-    // ====================================================
-    // READ SUBCATEGORY
-    // ====================================================
+      // SUBCATEGORY
 
-    this.selectedSubCategoryId =
-      this.parseId(params['subcategory']);
-
-    // ====================================================
-    // READ BRAND
-    // ====================================================
-
-    this.selectedBrandId =
-      this.parseId(params['brand']);
+      this.selectedSubCategoryId.set(
+        this.parseId(params['subcategory'])
+      );
 
 
-    // ====================================================
-    // READ OFFERS
-    // ====================================================
+      // BRAND
 
-    this.showOffers =
-      params['offers'] === 'true';
-
-
-    // ====================================================
-    // UPDATE SUBCATEGORIES
-    // ====================================================
-
-    this.updateSubCategories();
+      this.selectedBrandId.set(
+        this.parseId(params['brand'])
+      );
 
 
-    // ====================================================
-    // LOAD FROM API
-    // ====================================================
+      // OFFERS
 
-    this.loadProducts();
+      this.showOffers.set(
+        params['offers'] === 'true'
+      );
 
-  });
 
-}
+      // UPDATE SUBCATEGORIES
+
+      this.updateSubCategories();
+
+
+      // LOAD PRODUCTS FROM API
+
+      this.loadProducts();
+
+    });
+
+  }
 
 
   // ========================================================
   // PARSE ID
   // ========================================================
 
-  private parseId(
-    value: any
-  ): number | null {
+  private parseId(value: unknown): number | null {
 
     if (
       value === undefined ||
       value === null ||
       value === ''
     ) {
-
       return null;
-
     }
 
-
     const id = Number(value);
-
 
     return Number.isNaN(id)
       ? null
       : id;
-
   }
 
 
   // ========================================================
-  // PRODUCT NAME SEARCH
+  // SEARCH
   // ========================================================
 
   onNameChange(): void {
-
-    /*
-     * Name search is still local.
-     *
-     * Category / SubCategory / Brand / Offers
-     * are already filtered by the API.
-     */
 
     this.applyNameFilter();
 
@@ -321,7 +280,7 @@ export class ProductListComponent implements OnInit {
 
   private loadCategories(): void {
 
-    this.isLoadingCategories = true;
+    this.isLoadingCategories.set(true);
 
     this.categoryService
       .getCategoriesMenu()
@@ -330,21 +289,14 @@ export class ProductListComponent implements OnInit {
         next: (response: any) => {
 
           const data =
-            response?.data ?? response;
+            response?.data ?? response ?? [];
 
 
-          this.categories =
-            (data ?? []).map(
-              (category: any) => ({
+          const mappedCategories: CategoryFilter[] =
+            (data as any[]).map(
+              (category: any) => {
 
-                id: Number(
-                  category.id
-                ),
-
-                name:
-                  category.name,
-
-                subCategories:
+                const subCategories =
                   (
                     category.subCategories ??
                     category.subcategories ??
@@ -360,22 +312,46 @@ export class ProductListComponent implements OnInit {
                         subCategory.name,
 
                       categoryId:
-                        Number(
-                          subCategory.categoryId
-                        )
+                        subCategory.categoryId != null
+                          ? Number(
+                              subCategory.categoryId
+                            )
+                          : Number(
+                              category.id
+                            )
 
                     })
-                  )
+                  );
 
-              })
+
+                return {
+
+                  id: Number(
+                    category.id
+                  ),
+
+                  name:
+                    category.name,
+
+                  subCategories
+
+                };
+
+              }
             );
+
+
+          this.categories.set(
+            mappedCategories
+          );
 
 
           this.updateSubCategories();
 
 
-          this.isLoadingCategories =
-            false;
+          this.isLoadingCategories.set(
+            false
+          );
 
 
           this.cdr.detectChanges();
@@ -390,13 +366,13 @@ export class ProductListComponent implements OnInit {
           );
 
 
-          this.categories = [];
+          this.categories.set([]);
 
-          this.subCategories = [];
+          this.subCategories.set([]);
 
-
-          this.isLoadingCategories =
-            false;
+          this.isLoadingCategories.set(
+            false
+          );
 
 
           this.cdr.detectChanges();
@@ -414,7 +390,7 @@ export class ProductListComponent implements OnInit {
 
   private loadBrands(): void {
 
-    this.isLoadingBrands = true;
+    this.isLoadingBrands.set(true);
 
     this.brandService
       .getBrands()
@@ -423,11 +399,11 @@ export class ProductListComponent implements OnInit {
         next: (response: any) => {
 
           const data =
-            response?.data ?? response;
+            response?.data ?? response ?? [];
 
 
-          this.brands =
-            (data ?? []).map(
+          const mappedBrands: BrandFilter[] =
+            (data as any[]).map(
               (brand: any) => ({
 
                 id: Number(
@@ -444,8 +420,14 @@ export class ProductListComponent implements OnInit {
             );
 
 
-          this.isLoadingBrands =
-            false;
+          this.brands.set(
+            mappedBrands
+          );
+
+
+          this.isLoadingBrands.set(
+            false
+          );
 
 
           this.cdr.detectChanges();
@@ -460,11 +442,11 @@ export class ProductListComponent implements OnInit {
           );
 
 
-          this.brands = [];
+          this.brands.set([]);
 
-
-          this.isLoadingBrands =
-            false;
+          this.isLoadingBrands.set(
+            false
+          );
 
 
           this.cdr.detectChanges();
@@ -478,66 +460,94 @@ export class ProductListComponent implements OnInit {
 
   // ========================================================
   // LOAD PRODUCTS
+  //
+  // Category
+  // Subcategory
+  // Brand
+  // Offers
+  //
+  // ALL COME FROM API.
   // ========================================================
 
- loadProducts(): void {
+  loadProducts(): void {
 
-  this.isLoading = true;
-
-  this.productService
-    .getProducts(
-      this.selectedCategoryId,
-      this.selectedSubCategoryId,
-      this.selectedBrandId,
-      this.showOffers
-    )
-    .subscribe({
-
-      next: (data) => {
-
-        this.products = data ?? [];
+    this.isLoading.set(true);
 
 
-        // Name search is the ONLY local filter.
-        this.applyNameFilter();
+    this.productService
+      .getProducts(
+        this.selectedCategoryId(),
+        this.selectedSubCategoryId(),
+        this.selectedBrandId(),
+        this.showOffers()
+      )
+      .subscribe({
+
+        next: (data: Product[]) => {
+
+          const products =
+            data ?? [];
 
 
-        // Reset quantities
-        this.quantities = {};
-
-        this.products.forEach(product => {
-
-          this.quantities[product.id] = 0;
-
-        });
+          this.products.set(
+            products
+          );
 
 
-        this.isLoading = false;
+          // Only product name is local.
 
-        this.cdr.detectChanges();
+          this.applyNameFilter();
 
-      },
 
-      error: (error) => {
+          // Reset quantities.
 
-        console.error(
-          'Error loading products:',
-          error
-        );
+          const quantityMap:
+            Record<number, number> = {};
 
-        this.products = [];
 
-        this.filteredProducts = [];
+          products.forEach(product => {
 
-        this.isLoading = false;
+            quantityMap[product.id] = 0;
 
-        this.cdr.detectChanges();
+          });
 
-      }
 
-    });
+          this.quantities.set(
+            quantityMap
+          );
 
-}
+
+          this.isLoading.set(false);
+
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error loading products:',
+            error
+          );
+
+
+          this.products.set([]);
+
+          this.filteredProducts.set([]);
+
+          this.quantities.set({});
+
+          this.isLoading.set(false);
+
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
+  }
 
 
   // ========================================================
@@ -546,39 +556,45 @@ export class ProductListComponent implements OnInit {
 
   private updateSubCategories(): void {
 
-    /*
-     * No category selected.
-     */
+    const categoryId =
+      this.selectedCategoryId();
 
-    if (
-      this.selectedCategoryId === null
-    ) {
+    const subCategoryId =
+      this.selectedSubCategoryId();
+
+
+    // ------------------------------------------------------
+    // NO CATEGORY SELECTED
+    // ------------------------------------------------------
+
+    if (categoryId === null) {
 
       /*
-       * If a subcategory was selected
-       * directly, find its category.
+       * A subcategory may have been selected directly
+       * from another page/header.
+       *
+       * Find its parent category.
        */
 
-      if (
-        this.selectedSubCategoryId !== null
-      ) {
+      if (subCategoryId !== null) {
 
         for (
-          const category of this.categories
+          const category of this.categories()
         ) {
 
           const found =
-            category.subCategories.find(
+            category.subCategories.some(
               subCategory =>
                 subCategory.id ===
-                this.selectedSubCategoryId
+                subCategoryId
             );
 
 
           if (found) {
 
-            this.subCategories =
-              category.subCategories;
+            this.subCategories.set(
+              category.subCategories
+            );
 
             return;
 
@@ -589,51 +605,152 @@ export class ProductListComponent implements OnInit {
       }
 
 
-      this.subCategories = [];
+      this.subCategories.set([]);
 
       return;
 
     }
 
 
-    /*
-     * Find selected category.
-     */
+    // ------------------------------------------------------
+    // CATEGORY SELECTED
+    // ------------------------------------------------------
 
     const selectedCategory =
-      this.categories.find(
+      this.categories().find(
         category =>
-          category.id ===
-          this.selectedCategoryId
+          category.id === categoryId
       );
 
 
-    /*
-     * Get its subcategories.
-     */
-
-    this.subCategories =
+    const availableSubCategories =
       selectedCategory?.subCategories ?? [];
 
 
-    /*
-     * Make sure selected
-     * subcategory belongs to
-     * selected category.
-     */
+    this.subCategories.set(
+      availableSubCategories
+    );
+
+
+    // ------------------------------------------------------
+    // CHECK SUBCATEGORY
+    // ------------------------------------------------------
 
     if (
-      this.selectedSubCategoryId !== null &&
-      !this.subCategories.some(
+      subCategoryId !== null &&
+      !availableSubCategories.some(
         subCategory =>
           subCategory.id ===
-          this.selectedSubCategoryId
+          subCategoryId
       )
     ) {
 
-      this.selectedSubCategoryId = null;
+      this.selectedSubCategoryId.set(
+        null
+      );
 
     }
+
+  }
+
+
+  // ========================================================
+  // DROPDOWN
+  // ========================================================
+
+  toggleDropdown(
+    dropdown:
+      'category' |
+      'subcategory' |
+      'brand'
+  ): void {
+
+    this.openDropdown =
+      this.openDropdown === dropdown
+        ? null
+        : dropdown;
+
+  }
+
+
+  // ========================================================
+  // OUTSIDE CLICK
+  // ========================================================
+
+  @HostListener(
+    'document:click',
+    ['$event']
+  )
+  closeDropdownOnOutsideClick(
+    event: MouseEvent
+  ): void {
+
+    const target =
+      event.target as HTMLElement;
+
+
+    if (
+      !target.closest('.custom-dropdown')
+    ) {
+
+      this.openDropdown = null;
+
+    }
+
+  }
+
+
+  // ========================================================
+  // SELECT CATEGORY
+  // ========================================================
+
+  selectCategoryFilter(
+    id: number | null
+  ): void {
+
+    this.selectedCategoryId.set(id);
+
+    this.selectedSubCategoryId.set(null);
+
+    this.updateSubCategories();
+
+    this.openDropdown = null;
+
+    this.updateQueryParams();
+
+  }
+
+
+  // ========================================================
+  // SELECT SUBCATEGORY
+  // ========================================================
+
+  selectSubCategoryFilter(
+    id: number | null
+  ): void {
+
+    this.selectedSubCategoryId.set(id);
+
+    this.openDropdown = null;
+
+    this.updateQueryParams();
+
+  }
+
+
+  // ========================================================
+  // SELECT BRAND
+  // ========================================================
+
+  selectBrandFilter(
+    id: number | null
+  ): void {
+
+    this.selectedBrandId.set(id);
+
+    this.openDropdown = null;
+
+    this.updateQueryParams();
 
   }
 
@@ -642,206 +759,178 @@ export class ProductListComponent implements OnInit {
   // CATEGORY CHANGE
   // ========================================================
 
- onCategoryChange(): void {
+  onCategoryChange(): void {
 
-  // Category changed, so reset subcategory
-  this.selectedSubCategoryId = null;
+    this.selectedSubCategoryId.set(null);
 
-  // Update available subcategories
-  this.updateSubCategories();
+    this.updateSubCategories();
 
-  // ONLY update URL.
-  // queryParams subscription will call loadProducts().
-  this.updateQueryParams();
-}
+    this.updateQueryParams();
+
+  }
 
 
   // ========================================================
   // SUBCATEGORY CHANGE
   // ========================================================
 
- onSubCategoryChange(): void {
+  onSubCategoryChange(): void {
 
-  // ONLY update URL.
-  this.updateQueryParams();
-}
+    this.updateQueryParams();
+
+  }
+
 
   // ========================================================
   // BRAND CHANGE
   // ========================================================
 
-onBrandChange(): void {
+  onBrandChange(): void {
 
-  // ONLY update URL.
-  this.updateQueryParams();
-}
+    this.updateQueryParams();
+
+  }
 
 
   // ========================================================
   // UPDATE QUERY PARAMS
+  //
+  // IMPORTANT:
+  // Navigation triggers queryParams subscription.
+  // That subscription calls loadProducts().
+  //
+  // Therefore we DON'T call loadProducts()
+  // manually here.
   // ========================================================
 
- private updateQueryParams(): void {
+  private updateQueryParams(): void {
 
-  const queryParams: any = {};
-
-  // ------------------------------------------------------
-  // CATEGORY
-  // ------------------------------------------------------
-
-  if (this.selectedCategoryId !== null) {
-
-    queryParams.category =
-      this.selectedCategoryId;
-
-  }
+    const queryParams: Record<string, string | null> = {};
 
 
-  // ------------------------------------------------------
-  // SUBCATEGORY
-  // ------------------------------------------------------
+    // CATEGORY
 
-  if (this.selectedSubCategoryId !== null) {
+    const categoryId =
+      this.selectedCategoryId();
 
-    queryParams.subcategory =
-      this.selectedSubCategoryId;
+    if (categoryId !== null) {
 
-  }
+      queryParams['category'] =
+        String(categoryId);
 
-
-  // ------------------------------------------------------
-  // BRAND
-  // ------------------------------------------------------
-
-  if (this.selectedBrandId !== null) {
-
-    queryParams.brand =
-      this.selectedBrandId;
-
-  }
-
-
-  // ------------------------------------------------------
-  // OFFERS
-  // ------------------------------------------------------
-
-  /*
-   * IMPORTANT:
-   *
-   * When offers is false, DON'T put:
-   *
-   * offers=false
-   *
-   * in the URL.
-   *
-   * We remove the parameter completely.
-   *
-   * Therefore:
-   *
-   * offers=true
-   *       ↓
-   * GET /api/products?offers=true
-   *
-   * remove offers
-   *       ↓
-   * GET /api/products
-   *
-   * or with another filter:
-   *
-   * GET /api/products?categoryId=5
-   */
-
-  if (this.showOffers) {
-
-    queryParams.offers = 'true';
-
-  }
-
-
-  // ------------------------------------------------------
-  // NAVIGATE
-  // ------------------------------------------------------
-
-  this.router.navigate(
-    ['/products'],
-    {
-      queryParams
     }
-  );
 
-}
+
+    // SUBCATEGORY
+
+    const subCategoryId =
+      this.selectedSubCategoryId();
+
+    if (subCategoryId !== null) {
+
+      queryParams['subcategory'] =
+        String(subCategoryId);
+
+    }
+
+
+    // BRAND
+
+    const brandId =
+      this.selectedBrandId();
+
+    if (brandId !== null) {
+
+      queryParams['brand'] =
+        String(brandId);
+
+    }
+
+
+    // OFFERS
+
+    if (this.showOffers()) {
+
+      queryParams['offers'] = 'true';
+
+    }
+
+
+    // NAVIGATE
+
+    this.router.navigate(
+      ['/products'],
+      {
+        queryParams
+      }
+    );
+
+  }
 
 
   // ========================================================
-  // NAME FILTER ONLY
+  // APPLY NAME FILTER
   // ========================================================
 
   private applyNameFilter(): void {
 
     const search =
-      this.searchName
+      this.searchName()
         .trim()
         .toLowerCase();
 
 
-    /*
-     * API has already filtered:
-     *
-     * category
-     * subcategory
-     * brand
-     * offers
-     *
-     * We ONLY filter name here.
-     */
-
     if (!search) {
 
-      this.filteredProducts =
-        [...this.products];
+      this.filteredProducts.set(
+        this.products()
+      );
 
       return;
 
     }
 
 
-    this.filteredProducts =
-      this.products.filter(
+    const filtered =
+      this.products().filter(
         product =>
-
           product.name
             ?.toLowerCase()
             .includes(search)
-
       );
 
 
-    this.cdr.detectChanges();
+    this.filteredProducts.set(
+      filtered
+    );
 
   }
 
 
   // ========================================================
-  // CLEAR FILTERS
+  // CLEAR ALL FILTERS
   // ========================================================
 
   clearFilters(): void {
 
-    this.searchName = '';
+    this.searchName.set('');
 
-    this.selectedCategoryId = null;
+    this.selectedCategoryId.set(null);
 
-    this.selectedSubCategoryId = null;
+    this.selectedSubCategoryId.set(null);
 
-    this.selectedBrandId = null;
+    this.selectedBrandId.set(null);
 
-    this.showOffers = false;
+    this.showOffers.set(false);
 
-    this.subCategories = [];
+    this.subCategories.set([]);
+
+    this.openDropdown = null;
 
 
     /*
-     * Clear URL.
+     * Let queryParams subscription load
+     * all products from API.
      */
 
     this.router.navigate(
@@ -851,48 +940,35 @@ onBrandChange(): void {
       }
     );
 
-
-    /*
-     * Load ALL products from API.
-     */
-
-    this.loadProducts();
-
   }
 
 
   // ========================================================
-  // CLEAR CATEGORY ONLY
+  // CLEAR CATEGORY
   // ========================================================
 
   clearCategory(): void {
 
-    this.selectedCategoryId = null;
+    this.selectedCategoryId.set(null);
 
-    this.selectedSubCategoryId = null;
+    this.selectedSubCategoryId.set(null);
 
-    this.subCategories = [];
-
+    this.subCategories.set([]);
 
     this.updateQueryParams();
-
-    this.loadProducts();
 
   }
 
 
   // ========================================================
-  // CLEAR BRAND ONLY
+  // CLEAR BRAND
   // ========================================================
 
   clearBrand(): void {
 
-    this.selectedBrandId = null;
-
+    this.selectedBrandId.set(null);
 
     this.updateQueryParams();
-
-    this.loadProducts();
 
   }
 
@@ -903,28 +979,22 @@ onBrandChange(): void {
 
   clearSubCategory(): void {
 
-    this.selectedSubCategoryId = null;
-
+    this.selectedSubCategoryId.set(null);
 
     this.updateQueryParams();
-
-    this.loadProducts();
 
   }
 
 
   // ========================================================
-  // TURN OFF OFFERS
+  // CLEAR OFFERS
   // ========================================================
 
   clearOffers(): void {
 
-    this.showOffers = false;
-
+    this.showOffers.set(false);
 
     this.updateQueryParams();
-
-    this.loadProducts();
 
   }
 
@@ -933,13 +1003,15 @@ onBrandChange(): void {
   // TOGGLE OFFERS
   // ========================================================
 
- toggleOffers(): void {
+  toggleOffers(): void {
 
-  this.showOffers = !this.showOffers;
+    this.showOffers.set(
+      !this.showOffers()
+    );
 
-  // ONLY update URL.
-  this.updateQueryParams();
-}
+    this.updateQueryParams();
+
+  }
 
 
   // ========================================================
@@ -948,19 +1020,20 @@ onBrandChange(): void {
 
   get selectedCategoryName(): string {
 
-    if (
-      this.selectedCategoryId === null
-    ) {
+    const id =
+      this.selectedCategoryId();
+
+
+    if (id === null) {
 
       return '';
 
     }
 
 
-    return this.categories.find(
+    return this.categories().find(
       category =>
-        category.id ===
-        this.selectedCategoryId
+        category.id === id
     )?.name ?? '';
 
   }
@@ -972,19 +1045,20 @@ onBrandChange(): void {
 
   get selectedSubCategoryName(): string {
 
-    if (
-      this.selectedSubCategoryId === null
-    ) {
+    const id =
+      this.selectedSubCategoryId();
+
+
+    if (id === null) {
 
       return '';
 
     }
 
 
-    return this.subCategories.find(
+    return this.subCategories().find(
       subCategory =>
-        subCategory.id ===
-        this.selectedSubCategoryId
+        subCategory.id === id
     )?.name ?? '';
 
   }
@@ -996,19 +1070,20 @@ onBrandChange(): void {
 
   get selectedBrandName(): string {
 
-    if (
-      this.selectedBrandId === null
-    ) {
+    const id =
+      this.selectedBrandId();
+
+
+    if (id === null) {
 
       return '';
 
     }
 
 
-    return this.brands.find(
+    return this.brands().find(
       brand =>
-        brand.id ===
-        this.selectedBrandId
+        brand.id === id
     )?.name ?? '';
 
   }
@@ -1022,33 +1097,30 @@ onBrandChange(): void {
     product: Product
   ): number {
 
+    const price =
+      Number(product.price || 0);
+
     const discount =
       Number(
         product.discountPercentage ?? 0
       );
 
 
-    if (
-      discount <= 0
-    ) {
+    if (discount <= 0) {
 
-      return product.price;
+      return price;
 
     }
 
 
-    const discountedPrice =
-      product.price -
-      (
-        product.price *
-        discount /
-        100
-      );
-
-
     return Math.max(
       0,
-      discountedPrice
+      price -
+      (
+        price *
+        discount /
+        100
+      )
     );
 
   }
@@ -1065,6 +1137,104 @@ onBrandChange(): void {
     return Number(
       product.discountPercentage ?? 0
     ) > 0;
+
+  }
+
+
+  // ========================================================
+  // QUANTITY
+  //
+  // IMPORTANT:
+  // This replaces:
+  //
+  // quantities.update(q => ...)
+  //
+  // in HTML.
+  // ========================================================
+
+  setQuantity(
+    productId: number,
+    value: number | string
+  ): void {
+
+    let quantity =
+      Number(value);
+
+
+    if (
+      Number.isNaN(quantity) ||
+      quantity < 0
+    ) {
+
+      quantity = 0;
+
+    }
+
+
+    quantity =
+      Math.floor(quantity);
+
+
+    this.quantities.update(
+      current => ({
+
+        ...current,
+
+        [productId]: quantity
+
+      })
+    );
+
+  }
+
+
+  // ========================================================
+  // GET QUANTITY
+  // ========================================================
+
+  getQuantity(
+    productId: number
+  ): number {
+
+    return this.quantities()[productId] ?? 0;
+
+  }
+
+
+  // ========================================================
+  // ADD TO CART
+  // ========================================================
+
+  addToCart(
+    product: Product,
+    event: Event
+  ): void {
+
+    event.stopPropagation();
+
+
+    if (!product.isInStock) {
+
+      return;
+
+    }
+
+
+    const quantity =
+      this.getQuantity(product.id);
+
+
+    if (quantity <= 0) {
+
+      return;
+
+    }
+
+
+    this.cartService.addToCart(
+      product,
+      quantity
+    );
 
   }
 
@@ -1090,56 +1260,6 @@ onBrandChange(): void {
         disableClose: false
 
       }
-    );
-
-  }
-
-
-  // ========================================================
-  // ADD TO CART
-  // ========================================================
-
-  addToCart(
-    product: Product,
-    event: Event
-  ): void {
-
-    event.stopPropagation();
-
-
-    // =====================================================
-    // OUT OF STOCK
-    // =====================================================
-
-    if (!product.isInStock) {
-
-      return;
-
-    }
-
-
-    // =====================================================
-    // QUANTITY
-    // =====================================================
-
-    const quantity =
-      this.quantities[product.id] || 0;
-
-
-    if (quantity <= 0) {
-
-      return;
-
-    }
-
-
-    // =====================================================
-    // ADD TO CART
-    // =====================================================
-
-    this.cartService.addToCart(
-      product,
-      quantity
     );
 
   }

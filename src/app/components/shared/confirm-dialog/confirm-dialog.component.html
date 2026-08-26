@@ -1,13 +1,9 @@
-
 <div class="confirm-dialog">
 
-  <!-- Dialog Icon -->
   <div class="dialog-icon">
     <mat-icon>help_outline</mat-icon>
   </div>
 
-
-  <!-- Message -->
   <div
     mat-dialog-content
     class="dialog-message"
@@ -15,8 +11,6 @@
     {{ data.message }}
   </div>
 
-
-  <!-- Actions -->
   <div
     mat-dialog-actions
     class="dialog-actions"
@@ -24,17 +18,18 @@
 
     <button
       mat-button
-      (click)="onCancel()"
+      type="button"
       class="cancel-btn"
+      (click)="onCancel()"
     >
       Cancel
     </button>
 
-
     <button
       mat-raised-button
-      (click)="onConfirm()"
+      type="button"
       class="confirm-btn"
+      (click)="onConfirm()"
     >
       <mat-icon>check</mat-icon>
       Confirm

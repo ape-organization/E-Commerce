@@ -1,0 +1,81 @@
+
+    <div class="section-heading">
+
+      <span class="section-small-title">
+        DISCOVER
+      </span>
+
+      <h2>
+        Shop By Category
+      </h2>
+
+      <div class="title-line">
+        <span>✦</span>
+      </div>
+
+      <p>
+        Explore our beauty collection
+      </p>
+
+    </div>
+
+
+    <!-- CATEGORY CAROUSEL -->
+
+    <div class="category-carousel">
+
+      <!-- LEFT -->
+
+    <button
+  type="button"
+  class="carousel-arrow category-arrow category-prev"
+  (click)="scrollCategories('left')"
+  aria-label="Previous categories"
+>
+  <mat-icon>chevron_left</mat-icon>
+</button>
+
+
+      <!-- CATEGORY LIST -->
+
+    <div
+  class="horizontal-track category-track"
+  #categoryTrack
+>
+
+        <div
+          class="category-card"
+          *ngFor="let category of categories()"
+          (click)="selectCategory(category)"
+        >
+
+          <div class="category-image">
+
+            <img
+              [src]="getCategoryImage(category)"
+              [alt]="category.name"
+            />
+
+          </div>
+
+          <h3>
+            {{ category.name }}
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <!-- RIGHT -->
+
+     <button
+  type="button"
+  class="carousel-arrow category-arrow category-next"
+  (click)="scrollCategories('right')"
+  aria-label="Next categories"
+>
+  <mat-icon>chevron_right</mat-icon>
+</button>
+
+    </div>

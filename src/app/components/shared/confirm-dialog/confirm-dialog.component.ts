@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MaterialModule } from '../../shared/AngularMaterial';
+import { MaterialModule } from '../../../shared/AngularMaterial';
 
 @Component({
   selector: 'app-confirm-dialog',

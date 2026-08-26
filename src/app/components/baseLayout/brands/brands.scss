@@ -1,0 +1,191 @@
+/* ============================================================
+   BRANDS
+   ============================================================ */
+
+.brands-section {
+  width: 100%;
+  padding: 70px 5%;
+
+  background: var(--color-surface);
+}
+
+
+/* ============================================================
+   BRAND CAROUSEL
+   ============================================================ */
+
+.brand-carousel {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 35px auto 0;
+
+  gap: 15px;
+}
+
+.brand-track {
+  flex: 1;
+
+  display: flex;
+
+  gap: 24px;
+
+  padding: 10px 5px 20px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  justify-content: flex-start;
+
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+
+  scrollbar-width: none;
+}
+
+.brand-track::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* ============================================================
+   BRAND CARD
+   ============================================================ */
+
+.brand-card {
+  flex: 0 0 180px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  scroll-snap-align: start;
+
+  transition: transform 0.25s ease;
+}
+
+.brand-card:hover {
+  transform: translateY(-5px);
+}
+
+
+/* ============================================================
+   BRAND IMAGE
+   ============================================================ */
+
+.brand-image {
+  width: 180px;
+  height: 150px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.brand-card:hover .brand-image {
+  border-color: var(--color-accent);
+
+  box-shadow: var(--shadow-md);
+}
+
+.brand-image img {
+  width: 100%;
+  height: 100%;
+
+  padding: 18px;
+
+  object-fit: contain;
+
+  transition: transform 0.3s ease;
+}
+
+.brand-card:hover .brand-image img {
+  transform: scale(1.05);
+}
+
+
+/* ============================================================
+   BRAND NAME
+   ============================================================ */
+
+.brand-card h3 {
+  margin: 15px 0 0;
+
+  color: var(--color-primary);
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: color 0.25s ease;
+}
+
+.brand-card:hover h3 {
+  color: var(--color-accent);
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  .brands-section {
+    padding: 50px 15px;
+  }
+
+  .brand-carousel {
+    gap: 8px;
+  }
+
+  .brand-card {
+    flex-basis: 145px;
+  }
+
+  .brand-image {
+    width: 145px;
+    height: 120px;
+  }
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+  .brand-card {
+    flex-basis: 130px;
+  }
+
+  .brand-image {
+    width: 130px;
+    height: 110px;
+  }
+
+  .brand-card h3 {
+    font-size: 14px;
+  }
+
+  .brand-arrow {
+    width: 34px;
+    height: 34px;
+  }
+}

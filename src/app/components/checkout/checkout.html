@@ -31,7 +31,7 @@
             Checkout
           </h1>
 
-          <p style="color: navy;">
+          <p>
             Complete your order
           </p>
 
@@ -298,70 +298,7 @@
         <div class="form-grid">
 
 
-          <!-- ================================= -->
-          <!-- CITY -->
-          <!-- ================================= -->
 
-          <div class="form-field">
-
-            <label for="city">
-
-              City / Governorate
-
-             
-
-            </label>
-
-
-            <input
-              id="city"
-              type="text"
-              formControlName="city"
-              placeholder="Enter your city"
-              autocomplete="address-level2"
-              [class.invalid]="isInvalid('city')"
-            />
-
-
-            @if (isInvalid('city')) {
-
-              <small>
-
-                Please enter your city.
-
-              </small>
-
-            }
-
-          </div>
-
-
-
-          <!-- ================================= -->
-          <!-- APARTMENT -->
-          <!-- ================================= -->
-
-          <div class="form-field">
-
-            <label for="apartment">
-
-              Apartment / Building
-
-              <em>
-                Optional
-              </em>
-
-            </label>
-
-
-            <input
-              id="apartment"
-              type="text"
-              formControlName="apartment"
-              placeholder="Building, floor, apartment..."
-            />
-
-          </div>
 
 
 
@@ -410,7 +347,7 @@
           <!-- NOTES -->
           <!-- ================================= -->
 
-          <div class="form-field full-width">
+        <!--   <div class="form-field full-width">
 
             <label for="notes">
 
@@ -430,7 +367,7 @@
               placeholder="Any special instructions for delivery?"
             ></textarea>
 
-          </div>
+          </div> -->
 
         </div>
 

@@ -1,11 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  CommonModule
+} from '@angular/common';
+
+import {
+  Component,
+  inject,
+  OnInit,
+  signal
+} from '@angular/core';
+
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
+
+import {
+  Router
+} from '@angular/router';
 
 import {
   debounceTime,
@@ -16,98 +28,170 @@ import {
   of
 } from 'rxjs';
 
-import { ClientService } from '../../services/client.service';
-import { OrderService } from '../../services/order.service';
-import { CartService, CartItem } from '../../services/cart.service';
-import { environment } from '../../../environments/environment';
+import {
+  ClientService
+} from '../../services/client.service';
+
+import {
+  OrderService
+} from '../../services/order.service';
+
+import {
+  CartService,
+  CartItem
+} from '../../services/cart.service';
+
+import {
+  environment
+} from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-checkout',
+
   standalone: true,
+
   imports: [
     CommonModule,
     ReactiveFormsModule
   ],
+
   templateUrl: './checkout.html',
+
   styleUrl: './checkout.scss',
 })
-export class Checkout implements OnInit {
+export class Checkout
+  implements OnInit {
 
-  private readonly fb = inject(FormBuilder);
-  private readonly router = inject(Router);
 
-  private readonly clientService = inject(ClientService);
-  private readonly orderService = inject(OrderService);
-  private readonly cartService = inject(CartService);
+  // ==========================================================
+  // SERVICES
+  // ==========================================================
 
-  // ==========================================
+  private readonly fb =
+    inject(FormBuilder);
+
+  private readonly router =
+    inject(Router);
+
+  private readonly clientService =
+    inject(ClientService);
+
+  private readonly orderService =
+    inject(OrderService);
+
+  private readonly cartService =
+    inject(CartService);
+
+
+  // ==========================================================
   // STATE
-  // ==========================================
+  // ==========================================================
 
-  readonly isSubmitting = signal(false);
+  readonly isSubmitting =
+    signal(false);
 
-  readonly isSearchingClient = signal(false);
+  readonly isSearchingClient =
+    signal(false);
 
-  readonly clientFound = signal(false);
+  readonly clientFound =
+    signal(false);
 
-  // ==========================================
+
+  // ==========================================================
   // CART
-  // ==========================================
+  // ==========================================================
 
   cartItems: CartItem[] = [];
 
-  readonly deliveryFee = signal(50);
 
-  // ==========================================
+  // ==========================================================
+  // DELIVERY
+  // ==========================================================
+
+  readonly deliveryFee =
+    signal(50);
+
+
+  // ==========================================================
+  // IMAGE API
+  // ==========================================================
+
+  api =
+    environment.imageApiBaseUrl;
+
+
+  // ==========================================================
   // FORM
-  // ==========================================
+  // ==========================================================
 
-  readonly checkoutForm = this.fb.nonNullable.group({
+  readonly checkoutForm =
+    this.fb.nonNullable.group({
 
-    fullName: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3)
+      fullName: [
+
+        '',
+
+        [
+          Validators.required,
+          Validators.minLength(3)
+        ]
+
+      ],
+
+      phone: [
+
+        '',
+
+        [
+          Validators.required,
+
+          Validators.pattern(
+            /^01[0125][0-9]{8}$/
+          )
+        ]
+
+      ],
+
+      email: [
+
+        '',
+
+        [
+          Validators.email
+        ]
+
+      ],
+
+      city: [
+        ''
+      ],
+
+      address: [
+
+        '',
+
+        [
+          Validators.required,
+          Validators.minLength(5)
+        ]
+
+      ],
+
+      apartment: [
+        ''
+      ],
+
+      notes: [
+        ''
       ]
-    ],
 
-    phone: [
-      '',
-      [
-        Validators.required,
-        Validators.pattern(/^01[0125][0-9]{8}$/)
-      ]
-    ],
+    });
 
-    email: [
-      '',
-      [
-        Validators.email
-      ]
-    ],
 
-    city: [
-      ''
-    ],
-
-    address: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(5)
-      ]
-    ],
-
-    apartment: [''],
-
-    notes: ['']
-
-  });
-
-  // ==========================================
+  // ==========================================================
   // INITIALIZE
-  // ==========================================
+  // ==========================================================
 
   ngOnInit(): void {
 
@@ -117,81 +201,96 @@ export class Checkout implements OnInit {
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // LOAD CART
-  // ==========================================
+  // ==========================================================
 
   private loadCart(): void {
 
-    this.cartService.cartItems$
+    this.cartService
+      .cartItems$
       .subscribe(items => {
 
-        this.cartItems = items;
+        this.cartItems =
+          items;
 
       });
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // DISCOUNTED PRICE
-  // ==========================================
+  // ==========================================================
 
-  getDiscountedPrice(item: CartItem): number {
+  getDiscountedPrice(
+    item: CartItem
+  ): number {
 
-    const product = item.product;
-
-    const discount =
-      product.discountPercentage ?? 0;
-
-    if (discount <= 0) {
-
-      return product.price;
-
-    }
-
-    return product.price -
-      (product.price * discount / 100);
+    return this.cartService
+      .getFinalPrice(
+        item.product
+      );
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // ORIGINAL PRICE
-  // ==========================================
+  // ==========================================================
 
-  getOriginalPrice(item: CartItem): number {
+  getOriginalPrice(
+    item: CartItem
+  ): number {
 
-    return item.product.price;
+    return Number(
+      item.product.price ?? 0
+    );
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // ITEM DISCOUNT
-  // ==========================================
+  // ==========================================================
 
-  getItemDiscount(item: CartItem): number {
+  getItemDiscount(
+    item: CartItem
+  ): number {
 
-    return item.product.discountPercentage ?? 0;
+    return Number(
+      item.product.discountPercentage ?? 0
+    );
 
   }
 
-  // ==========================================
-  // ITEM SUBTOTAL
-  // ==========================================
 
-  getItemSubtotal(item: CartItem): number {
+  // ==========================================================
+  // ITEM SUBTOTAL
+  // ==========================================================
+
+  getItemSubtotal(
+    item: CartItem
+  ): number {
 
     return this.getDiscountedPrice(item) *
       item.quantity;
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // SEARCH CLIENT BY PHONE
-  // ==========================================
+  // ==========================================================
 
   private watchPhoneNumber(): void {
 
-    this.checkoutForm.controls.phone.valueChanges
+    this.checkoutForm
+      .controls
+      .phone
+      .valueChanges
+
       .pipe(
 
         debounceTime(400),
@@ -204,15 +303,20 @@ export class Checkout implements OnInit {
 
         switchMap(phone => {
 
-          this.isSearchingClient.set(true);
+          this.isSearchingClient.set(
+            true
+          );
 
           return this.clientService
             .getByPhone(phone)
+
             .pipe(
 
               catchError(() => {
 
-                this.clientFound.set(false);
+                this.clientFound.set(
+                  false
+                );
 
                 return of(null);
 
@@ -223,27 +327,40 @@ export class Checkout implements OnInit {
         })
 
       )
+
       .subscribe(client => {
 
-        this.isSearchingClient.set(false);
+        this.isSearchingClient.set(
+          false
+        );
+
 
         if (!client) {
 
-          this.clientFound.set(false);
+          this.clientFound.set(
+            false
+          );
 
           return;
 
         }
 
-        this.clientFound.set(true);
+
+        this.clientFound.set(
+          true
+        );
+
 
         this.checkoutForm.patchValue({
 
-          fullName: client.name,
+          fullName:
+            client.name,
 
-          email: client.email ?? '',
+          email:
+            client.email ?? '',
 
-          address: client.address ?? ''
+          address:
+            client.address ?? ''
 
         });
 
@@ -251,23 +368,34 @@ export class Checkout implements OnInit {
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // SUBTOTAL
-  // ==========================================
+  // ==========================================================
 
   get subtotal(): number {
 
     return this.cartItems.reduce(
-      (total, item) =>
-        total + this.getItemSubtotal(item),
+      (
+        total,
+        item
+      ) => {
+
+        return total +
+          this.getItemSubtotal(
+            item
+          );
+
+      },
       0
     );
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // TOTAL
-  // ==========================================
+  // ==========================================================
 
   get total(): number {
 
@@ -276,37 +404,21 @@ export class Checkout implements OnInit {
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // TOTAL ITEMS
-  // ==========================================
+  // ==========================================================
 
   get totalItems(): number {
 
     return this.cartItems.reduce(
-      (total, item) =>
-        total + item.quantity,
-      0
-    );
-
-  }
-
-  // ==========================================
-  // TOTAL SAVINGS
-  // ==========================================
-
-  get totalSavings(): number {
-
-    return this.cartItems.reduce(
-      (total, item) => {
-
-        const original =
-          this.getOriginalPrice(item);
-
-        const discounted =
-          this.getDiscountedPrice(item);
+      (
+        total,
+        item
+      ) => {
 
         return total +
-          ((original - discounted) * item.quantity);
+          item.quantity;
 
       },
       0
@@ -314,30 +426,85 @@ export class Checkout implements OnInit {
 
   }
 
-  // ==========================================
-  // VALIDATION
-  // ==========================================
 
-  isInvalid(controlName: string): boolean {
+  // ==========================================================
+  // TOTAL SAVINGS
+  // ==========================================================
 
-    const control =
-      this.checkoutForm.get(controlName);
+  get totalSavings(): number {
 
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched)
+    return this.cartItems.reduce(
+      (
+        total,
+        item
+      ) => {
+
+        const original =
+          this.getOriginalPrice(
+            item
+          );
+
+        const discounted =
+          this.getDiscountedPrice(
+            item
+          );
+
+
+        return total +
+          (
+            (
+              original -
+              discounted
+            ) *
+            item.quantity
+          );
+
+      },
+      0
     );
 
   }
 
-  // ==========================================
+
+  // ==========================================================
+  // VALIDATION
+  // ==========================================================
+
+  isInvalid(
+    controlName: string
+  ): boolean {
+
+    const control =
+      this.checkoutForm.get(
+        controlName
+      );
+
+
+    return !!(
+      control &&
+      control.invalid &&
+      (
+        control.dirty ||
+        control.touched
+      )
+    );
+
+  }
+
+
+  // ==========================================================
   // PLACE ORDER
-  // ==========================================
+  // ==========================================================
 
   placeOrder(): void {
 
-    if (this.checkoutForm.invalid) {
+    // --------------------------------------------------------
+    // FORM VALIDATION
+    // --------------------------------------------------------
+
+    if (
+      this.checkoutForm.invalid
+    ) {
 
       this.checkoutForm.markAllAsTouched();
 
@@ -345,26 +512,86 @@ export class Checkout implements OnInit {
 
     }
 
-    if (this.isSubmitting()) {
+
+    // --------------------------------------------------------
+    // PREVENT DOUBLE SUBMIT
+    // --------------------------------------------------------
+
+    if (
+      this.isSubmitting()
+    ) {
 
       return;
 
     }
 
-    if (this.cartItems.length === 0) {
 
-      alert('Your cart is empty.');
+    // --------------------------------------------------------
+    // CART VALIDATION
+    // --------------------------------------------------------
 
-      this.router.navigate(['/cart']);
+    if (
+      this.cartItems.length === 0
+    ) {
+
+      alert(
+        'Your cart is empty.'
+      );
+
+      this.router.navigate([
+        '/cart'
+      ]);
 
       return;
 
     }
 
-    this.isSubmitting.set(true);
+
+    // --------------------------------------------------------
+    // GET ORDER ITEMS
+    // --------------------------------------------------------
+    //
+    // IMPORTANT:
+    //
+    // We get IDs directly from CartService.
+    //
+    // We DO NOT read localStorage here.
+    //
+    // --------------------------------------------------------
+
+    const items =
+      this.cartService.getOrderItems();
+
+
+    if (
+      items.length === 0
+    ) {
+
+      alert(
+        'Your cart contains no valid products.'
+      );
+
+      this.router.navigate([
+        '/cart'
+      ]);
+
+      return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // START SUBMIT
+    // --------------------------------------------------------
+
+    this.isSubmitting.set(
+      true
+    );
+
 
     const form =
       this.checkoutForm.getRawValue();
+
 
     const fullAddress =
       this.buildFullAddress(
@@ -373,37 +600,53 @@ export class Checkout implements OnInit {
         form.apartment
       );
 
+
+    // ========================================================
+    // EXACT CreateOrderDto STRUCTURE
+    // ========================================================
+
     const request = {
 
       client: {
 
-        name: form.fullName,
+        name:
+          form.fullName,
 
-        phoneNumber: form.phone,
+        phoneNumber:
+          form.phone,
 
-        address: fullAddress,
+        address:
+          fullAddress,
 
-        email: form.email || null
+        email:
+          form.email || null
 
       },
 
-      items: this.cartItems.map(item => ({
+      items:
 
-        productId: item.product.id,
-
-        quantity: item.quantity
-
-      }))
+        items
 
     };
 
+
+    // --------------------------------------------------------
+    // DEBUG
+    // --------------------------------------------------------
+
     console.log(
-      'Order request:',
+      'Create order request:',
       request
     );
 
+
+    // --------------------------------------------------------
+    // SEND TO API
+    // --------------------------------------------------------
+
     this.orderService
       .createOrder(request)
+
       .subscribe({
 
         next: response => {
@@ -413,15 +656,26 @@ export class Checkout implements OnInit {
             response
           );
 
-          this.cartService.clearCart();
 
-          this.isSubmitting.set(false);
+          // --------------------------------------------------
+          // ORDER SUCCESS
+          // --------------------------------------------------
 
-          this.router.navigate(
-            ['/order-success']
+          this.cartService
+            .clearCart();
+
+
+          this.isSubmitting.set(
+            false
           );
 
+
+          this.router.navigate([
+            '/order-success'
+          ]);
+
         },
+
 
         error: error => {
 
@@ -430,11 +684,18 @@ export class Checkout implements OnInit {
             error
           );
 
-          this.isSubmitting.set(false);
+
+          this.isSubmitting.set(
+            false
+          );
+
 
           alert(
+
             error?.error?.message ??
+
             'Failed to place order. Please try again.'
+
           );
 
         }
@@ -443,9 +704,10 @@ export class Checkout implements OnInit {
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // BUILD ADDRESS
-  // ==========================================
+  // ==========================================================
 
   private buildFullAddress(
     city: string,
@@ -456,32 +718,39 @@ export class Checkout implements OnInit {
     let result =
       `${city}, ${address}`;
 
-    if (apartment.trim()) {
+
+    if (
+      apartment.trim()
+    ) {
 
       result +=
         `, ${apartment}`;
 
     }
 
+
     return result;
 
   }
 
-  // ==========================================
+
+  // ==========================================================
   // BACK TO CART
-  // ==========================================
+  // ==========================================================
 
   goBackToCart(): void {
 
-    this.router.navigate(
-      ['/cart']
-    );
+    this.router.navigate([
+      '/cart'
+    ]);
 
   }
-// ========================================================
+
+
+  // ==========================================================
   // IMAGE URL
-  // ========================================================
-api=environment.imageApiBaseUrl
+  // ==========================================================
+
   getImageUrl(
     imageUrl?: string | null
   ): string {
@@ -494,15 +763,24 @@ api=environment.imageApiBaseUrl
 
 
     if (
-      imageUrl.startsWith('http://') ||
-      imageUrl.startsWith('https://')
+
+      imageUrl.startsWith(
+        'http://'
+      ) ||
+
+      imageUrl.startsWith(
+        'https://'
+      )
+
     ) {
 
       return imageUrl;
 
     }
 
+
     return `${this.api}${imageUrl}`;
 
   }
+
 }

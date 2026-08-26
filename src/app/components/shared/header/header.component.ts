@@ -1,3 +1,4 @@
+
 import {
   Component,
   HostListener,
@@ -15,94 +16,39 @@ import {
   RouterModule
 } from '@angular/router';
 
-import {
-  MaterialModule
-} from '../../shared/AngularMaterial';
+
 
 import {
   MatIconModule
 } from '@angular/material/icon';
-
-import {
-  CategoryService
-} from '../../services/category.service';
-
-import {
-  BrandService
-} from '../../services/brand.service';
-
-import {
-  CartService
-} from '../../services/cart.service';
-
-
-// ============================================================
-// MODELS
-// ============================================================
-
-interface SubCategory {
-
-  id: number;
-
-  name: string;
-
-}
-
-
-interface Category {
-
-  id: number;
-
-  name: string;
-
-  subCategories: SubCategory[];
-
-}
-
-
-interface Brand {
-
-  id: number;
-
-  name: string;
-
-  imageUrl?: string | null;
-
-}
-
+import { MaterialModule } from '../../../shared/AngularMaterial';
+import { CategoryService } from '../../../services/category.service';
+import { BrandService } from '../../../services/brand.service';
+import { CartService } from '../../../services/cart.service';
+import { Category } from '../../../models/category.model';
+import { Brand } from '../../../models/brand.model';
 
 // ============================================================
 // COMPONENT
 // ============================================================
 
 @Component({
-
   selector: 'app-header',
 
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     RouterModule,
-
     MaterialModule,
-
     MatIconModule
-
   ],
 
-  templateUrl:
-    './header.component.html',
+  templateUrl: './header.component.html',
 
-  styleUrl:
-    './header.component.css'
-
+  styleUrl: './header.component.css'
 })
-export class HeaderComponent
-  implements OnInit {
-
+export class HeaderComponent implements OnInit {
 
   // ==========================================================
   // SERVICES
@@ -125,47 +71,37 @@ export class HeaderComponent
   // CART
   // ==========================================================
 
-  cartCount =
-    signal(0);
+  cartCount = signal(0);
 
 
   // ==========================================================
   // MOBILE BOTTOM NAV
   // ==========================================================
 
-  showBottomNav =
-    signal(false);
+  showBottomNav = signal(false);
 
 
   // ==========================================================
   // MENU STATE
   // ==========================================================
 
-  categoryMenuOpen =
-    signal(false);
+  categoryMenuOpen = signal(false);
 
-  brandMenuOpen =
-    signal(false);
-
-  shopOpen =
-    signal(false);
+  brandMenuOpen = signal(false);
 
   expandedCategoryId =
     signal<number | null>(null);
 
-  mobileMenuOpen =
-    signal(false);
+  mobileMenuOpen = signal(false);
 
 
   // ==========================================================
   // CATEGORIES
   // ==========================================================
 
-  categories =
-    signal<Category[]>([]);
+  categories = signal<Category[]>([]);
 
-  isLoadingCategories =
-    signal(false);
+  isLoadingCategories = signal(false);
 
   categoryError =
     signal<string | null>(null);
@@ -175,11 +111,9 @@ export class HeaderComponent
   // BRANDS
   // ==========================================================
 
-  brands =
-    signal<Brand[]>([]);
+  brands = signal<Brand[]>([]);
 
-  isLoadingBrands =
-    signal(false);
+  isLoadingBrands = signal(false);
 
   brandError =
     signal<string | null>(null);
@@ -201,38 +135,7 @@ export class HeaderComponent
 
 
   // ==========================================================
-  // SCROLL
-  // ==========================================================
-
-  @HostListener(
-    'window:scroll',
-    []
-  )
-  onWindowScroll(): void {
-
-    /*
-     * Show bottom navigation after
-     * the user scrolls down.
-     *
-     * 100px is enough to avoid showing
-     * it immediately when the page opens.
-     */
-
-    if (window.scrollY > 100) {
-
-      this.showBottomNav.set(true);
-
-    } else {
-
-      this.showBottomNav.set(false);
-
-    }
-
-  }
-
-
-  // ==========================================================
-  // CART COUNT
+  // CART
   // ==========================================================
 
   private loadCartCount(): void {
@@ -248,12 +151,28 @@ export class HeaderComponent
 
 
   // ==========================================================
+  // SCROLL
+  // ==========================================================
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+
+    this.showBottomNav.set(
+      window.scrollY > 100
+    );
+
+  }
+
+
+  // ==========================================================
   // CATEGORY MENU
   // ==========================================================
 
   openCategoryMenu(): void {
 
     this.categoryMenuOpen.set(true);
+
+    this.brandMenuOpen.set(false);
 
   }
 
@@ -267,11 +186,18 @@ export class HeaderComponent
 
   toggleCategoryMenu(): void {
 
-    this.categoryMenuOpen.update(
-      value => !value
-    );
+    const open =
+      !this.categoryMenuOpen();
+
+    this.categoryMenuOpen.set(open);
 
     this.brandMenuOpen.set(false);
+
+    if (!open) {
+
+      this.expandedCategoryId.set(null);
+
+    }
 
   }
 
@@ -283,6 +209,10 @@ export class HeaderComponent
   openBrandMenu(): void {
 
     this.brandMenuOpen.set(true);
+
+    this.categoryMenuOpen.set(false);
+
+    this.expandedCategoryId.set(null);
 
   }
 
@@ -296,11 +226,14 @@ export class HeaderComponent
 
   toggleBrandMenu(): void {
 
-    this.brandMenuOpen.update(
-      value => !value
-    );
+    const open =
+      !this.brandMenuOpen();
+
+    this.brandMenuOpen.set(open);
 
     this.categoryMenuOpen.set(false);
+
+    this.expandedCategoryId.set(null);
 
   }
 
@@ -315,7 +248,6 @@ export class HeaderComponent
 
     this.categoryError.set(null);
 
-
     this.categoryService
       .getCategoriesMenu()
       .subscribe({
@@ -323,48 +255,40 @@ export class HeaderComponent
         next: (response: any) => {
 
           const data =
-            response?.data ?? response;
+            response?.data ?? response ?? [];
 
+          const mappedCategories: Category[] =
+            data.map((category: any) => ({
+
+              id: category.id,
+
+              name: category.name,
+
+              subCategories:
+                category.subCategories ??
+                category.subcategories ??
+                []
+
+            }));
 
           this.categories.set(
-
-            (data ?? []).map(
-              (category: any) => ({
-
-                id:
-                  category.id,
-
-                name:
-                  category.name,
-
-                subCategories:
-                  category.subCategories ??
-                  category.subcategories ??
-                  []
-
-              })
-            )
-
+            mappedCategories
           );
-
 
           this.isLoadingCategories.set(false);
 
         },
 
-
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error loading categories:',
             error
           );
 
-
           this.categoryError.set(
             'Unable to load categories.'
           );
-
 
           this.isLoadingCategories.set(false);
 
@@ -385,7 +309,6 @@ export class HeaderComponent
 
     this.brandError.set(null);
 
-
     this.brandService
       .getBrands()
       .subscribe({
@@ -393,31 +316,24 @@ export class HeaderComponent
         next: (response: any) => {
 
           const data =
-            response?.data ?? response;
+            response?.data ?? response ?? [];
 
-
-          this.brands.set(
-            data ?? []
-          );
-
+          this.brands.set(data);
 
           this.isLoadingBrands.set(false);
 
         },
 
-
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Error loading brands:',
             error
           );
 
-
           this.brandError.set(
             'Unable to load brands.'
           );
-
 
           this.isLoadingBrands.set(false);
 
@@ -429,47 +345,7 @@ export class HeaderComponent
 
 
   // ==========================================================
-  // SHOP
-  // ==========================================================
-
-  openShop(): void {
-
-    this.shopOpen.set(true);
-
-  }
-
-
-  closeShop(): void {
-
-    this.shopOpen.set(false);
-
-    this.expandedCategoryId.set(null);
-
-    this.brandMenuOpen.set(false);
-
-  }
-
-
-  toggleShop(): void {
-
-    this.shopOpen.update(
-      value => !value
-    );
-
-
-    if (!this.shopOpen()) {
-
-      this.expandedCategoryId.set(null);
-
-      this.brandMenuOpen.set(false);
-
-    }
-
-  }
-
-
-  // ==========================================================
-  // CATEGORY
+  // CATEGORY EXPANSION
   // ==========================================================
 
   toggleCategory(
@@ -487,35 +363,27 @@ export class HeaderComponent
 
     }
 
-
     this.expandedCategoryId.set(
       categoryId
     );
-
-
-    this.brandMenuOpen.set(false);
 
   }
 
 
   // ==========================================================
-  // ALL PRODUCTS
+  // PRODUCTS
   // ==========================================================
 
   selectAllProducts(): void {
 
     this.closeAllMenus();
 
-    this.router.navigate(
-      ['/products']
-    );
+    this.router.navigate([
+      '/products'
+    ]);
 
   }
 
-
-  // ==========================================================
-  // CHECK PRODUCTS PAGE
-  // ==========================================================
 
   isProductsPage(): boolean {
 
@@ -533,20 +401,15 @@ export class HeaderComponent
   selectSubCategory(
     subCategoryId: number
   ): void {
-    this.closeAllMenus();
 
+    this.closeAllMenus();
 
     this.router.navigate(
       ['/products'],
       {
-
         queryParams: {
-
-          subcategory:
-            subCategoryId
-
+          subcategory: subCategoryId
         }
-
       }
     );
 
@@ -561,17 +424,12 @@ export class HeaderComponent
 
     this.closeAllMenus();
 
-
     this.router.navigate(
       ['/products'],
       {
-
         queryParams: {
-
           offers: true
-
         }
-
       }
     );
 
@@ -588,18 +446,12 @@ export class HeaderComponent
 
     this.closeAllMenus();
 
-
     this.router.navigate(
       ['/products'],
       {
-
         queryParams: {
-
-          brand:
-            brandId
-
+          brand: brandId
         }
-
       }
     );
 
@@ -621,48 +473,26 @@ export class HeaderComponent
 
     this.mobileMenuOpen.set(false);
 
-    this.shopOpen.set(false);
-
-    this.expandedCategoryId.set(null);
+    this.categoryMenuOpen.set(false);
 
     this.brandMenuOpen.set(false);
 
-    this.categoryMenuOpen.set(false);
-
-  }
-
-
-  toggleMobileShop(): void {
-
-    this.shopOpen.update(
-      value => !value
-    );
-
-
-    if (!this.shopOpen()) {
-
-      this.expandedCategoryId.set(null);
-
-      this.brandMenuOpen.set(false);
-
-    }
+    this.expandedCategoryId.set(null);
 
   }
 
 
   // ==========================================================
-  // CLOSE ALL MENUS
+  // CLOSE EVERYTHING
   // ==========================================================
 
   private closeAllMenus(): void {
 
-    this.shopOpen.set(false);
-
-    this.expandedCategoryId.set(null);
+    this.categoryMenuOpen.set(false);
 
     this.brandMenuOpen.set(false);
 
-    this.categoryMenuOpen.set(false);
+    this.expandedCategoryId.set(null);
 
     this.mobileMenuOpen.set(false);
 
@@ -684,29 +514,19 @@ export class HeaderComponent
     const target =
       event.target as HTMLElement;
 
+    const insideHeader =
+      !!target.closest('.main-header');
 
-    const clickedInsideHeader =
-      target.closest(
-        '.main-header'
-      ) !== null;
+    const insideSidebar =
+      !!target.closest('.mobile-sidebar');
 
-
-    const clickedInsideSidebar =
-      target.closest(
-        '.mobile-sidebar'
-      ) !== null;
-
-
-    const clickedInsideBottomNav =
-      target.closest(
-        '.mobile-bottom-nav'
-      ) !== null;
-
+    const insideBottomNav =
+      !!target.closest('.mobile-bottom-nav');
 
     if (
-      !clickedInsideHeader &&
-      !clickedInsideSidebar &&
-      !clickedInsideBottomNav
+      !insideHeader &&
+      !insideSidebar &&
+      !insideBottomNav
     ) {
 
       this.closeAllMenus();
@@ -716,3 +536,4 @@ export class HeaderComponent
   }
 
 }
+

@@ -1,4 +1,9 @@
-import { Component, Inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  signal
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -11,10 +16,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 
 import { CartService } from '../../services/cart.service';
-
 import { MaterialModule } from '../../shared/AngularMaterial';
 import { environment } from '../../../environments/environment';
-
 
 @Component({
   selector: 'app-product-modal',
@@ -23,14 +26,13 @@ import { environment } from '../../../environments/environment';
 
   imports: [
     CommonModule,
+    FormsModule,
     MatDialogModule,
     MatButtonModule,
-    FormsModule,
     MaterialModule
   ],
 
   templateUrl: './product-modal.component.html',
-
   styleUrl: './product-modal.component.css'
 })
 export class ProductModalComponent {
@@ -39,11 +41,10 @@ export class ProductModalComponent {
   // QUANTITY
   // =====================================================
 
-  quantity: number = 0;
-
+  quantity = signal(0);
 
   // =====================================================
-  // API
+  // IMAGE API
   // =====================================================
 
   api = environment.imageApiBaseUrl;
@@ -56,7 +57,7 @@ export class ProductModalComponent {
     public product: any,
 
     private cartService: CartService
-  ) {console.log(product)}
+  ) {}
 
 
   // =====================================================
@@ -74,121 +75,95 @@ export class ProductModalComponent {
   }
 
 
-  // =====================================================
-  // OUT OF STOCK
-  // =====================================================
-
   get isOutOfStock(): boolean {
 
-    return this.product.isInStock;
+    return this.product?.isInStock !== true;
 
   }
 
-
-  // =====================================================
-  // CAN ADD TO CART
-  // =====================================================
 
   get canAddToCart(): boolean {
 
     return (
-      this.product.isInStock
+      this.product?.isInStock === true &&
+      this.quantity() > 0
     );
 
   }
 
 
   // =====================================================
-  // DISCOUNT
+  // PRICE
   // =====================================================
 
   get hasDiscount(): boolean {
 
-    return !!(
-      this.product?.discountPercentage &&
-      this.product.discountPercentage > 0
-    );
+    return Number(
+      this.product?.discountPercentage ?? 0
+    ) > 0;
 
   }
 
-
-  // =====================================================
-  // OLD PRICE
-  // =====================================================
 
   get oldPrice(): number {
 
     return Number(
-      this.product?.price || 0
+      this.product?.price ?? 0
+    );
+
+  }
+
+
+  get newPrice(): number {
+
+    if (!this.hasDiscount) {
+      return this.oldPrice;
+    }
+
+    const discount =
+      Number(
+        this.product?.discountPercentage ?? 0
+      );
+
+    return Math.max(
+      0,
+      this.oldPrice -
+      (this.oldPrice * discount / 100)
     );
 
   }
 
 
   // =====================================================
-  // NEW PRICE
+  // QUANTITY
   // =====================================================
 
-  get newPrice(): number {
+  setQuantity(value: number): void {
 
-    if (!this.hasDiscount) {
+    let quantity = Number(value);
 
-      return this.oldPrice;
-
+    if (!Number.isFinite(quantity)) {
+      quantity = 0;
     }
 
-    const discount =
-      Number(this.product.discountPercentage);
+    quantity = Math.floor(quantity);
 
-    return this.oldPrice -
-      (this.oldPrice * discount / 100);
+    if (quantity < 0) {
+      quantity = 0;
+    }
+
+    if (this.stock > 0 && quantity > this.stock) {
+      quantity = this.stock;
+    }
+
+    this.quantity.set(quantity);
 
   }
 
 
-  // =====================================================
-  // QUANTITY VALIDATION
-  // =====================================================
-
   validateQuantity(): void {
 
-    const value = Number(this.quantity);
-
-
-    // Invalid value
-
-    if (!Number.isFinite(value)) {
-
-      this.quantity = 0;
-
-      return;
-
-    }
-
-
-    // Quantity below zero
-
-    if (value < 0) {
-
-      this.quantity = 0;
-
-      return;
-
-    }
-
-
-    // Remove decimal values
-
-    this.quantity = Math.floor(value);
-
-
-    // Don't allow quantity greater than stock
-
-    if (this.quantity > this.stock) {
-
-      this.quantity = this.stock;
-
-    }
+    this.setQuantity(this.quantity());
 
   }
 
@@ -199,43 +174,26 @@ export class ProductModalComponent {
 
   addToCart(): void {
 
+    if (!this.product?.isInStock) {
+      return;
+    }
 
+    this.validateQuantity();
 
-  // ========================================================
-  // OUT OF STOCK
-  // ========================================================
+    const quantity = this.quantity();
 
-  if (!this.product.isInStock) {
+    if (quantity <= 0) {
+      return;
+    }
 
-    return;
+    if (this.stock > 0 && quantity > this.stock) {
+      return;
+    }
 
-  }
-
-
-  // ========================================================
-  // QUANTITY
-  // ========================================================
-
-  const quantity =
-    this.quantity || 0;
-
-
-  if (quantity <= 0) {
-
-    return;
-
-  }
-
-
-  // ========================================================
-  // ADD TO CART
-  // ========================================================
-
-  this.cartService.addToCart(
-    this.product,
-    quantity
-  );
-
+    this.cartService.addToCart(
+      this.product,
+      quantity
+    );
 
     this.dialogRef.close();
 
@@ -267,7 +225,6 @@ export class ProductModalComponent {
 
     }
 
-
     if (
       imageUrl.startsWith('http://') ||
       imageUrl.startsWith('https://')
@@ -277,8 +234,36 @@ export class ProductModalComponent {
 
     }
 
-
     return `${this.api}${imageUrl}`;
+
+  }
+
+
+  // =====================================================
+  // CATEGORY
+  // =====================================================
+
+  getCategoryName(): string {
+
+    return (
+      this.product?.subCategories?.[0]?.categoryName ||
+      'Category'
+    );
+
+  }
+
+
+  // =====================================================
+  // BRAND
+  // =====================================================
+
+  getBrandName(): string {
+
+    return (
+      this.product?.brand?.name ||
+      this.product?.brandName ||
+      'BEAUTY BRAND'
+    );
 
   }
 

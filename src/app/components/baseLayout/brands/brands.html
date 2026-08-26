@@ -1,0 +1,93 @@
+ <div class="section-heading">
+
+    <span class="section-small-title">
+      BEAUTY BRANDS
+    </span>
+
+    <h2>
+      Shop By Brand
+    </h2>
+
+    <div class="title-line">
+      <span>✦</span>
+    </div>
+
+    <p>
+      Discover your favorite beauty brands
+    </p>
+
+  </div>
+ 
+ <div
+    class="brand-carousel"
+    *ngIf="
+      !isLoadingBrands() &&
+      brands().length > 0
+    "
+  >
+
+    <!-- LEFT -->
+
+   <button
+  type="button"
+  class="carousel-arrow brand-arrow brand-prev"
+  (click)="scrollBrands('left')"
+  aria-label="Previous brands"
+>
+  <mat-icon>chevron_left</mat-icon>
+</button>
+
+
+    <!-- BRAND TRACK -->
+
+   <div
+  class="horizontal-track brand-track"
+  #brandTrack
+>
+
+      <div
+        class="brand-card"
+
+        *ngFor="
+          let brand of brands()
+        "
+
+        (click)="
+          selectBrand(brand)
+        "
+      >
+
+        <div class="brand-image">
+
+          <img
+            [src]="
+              getBrandImage(brand)
+            "
+
+            [alt]="brand.name"
+          />
+
+        </div>
+
+
+        <h3>
+          {{ brand.name }}
+        </h3>
+
+      </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+   <button
+  type="button"
+  class="carousel-arrow brand-arrow brand-next"
+  (click)="scrollBrands('right')"
+  aria-label="Next brands"
+>
+  <mat-icon>chevron_right</mat-icon>
+</button>
+
+  </div>

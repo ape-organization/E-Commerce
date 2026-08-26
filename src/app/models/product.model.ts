@@ -1,15 +1,7 @@
-export interface Brand {
-  id: number;
-  name: string;
-  imageUrl?: string | null;
-}
+import { Brand } from "./brand.model";
+import { SubCategory } from "./subCategory.model";
 
-export interface SubCategory {
-  id: number;
-  name: string;
-  categoryId: number;
-  categoryName: string;
-}
+
 
 export interface Product {
   id: number;

@@ -204,7 +204,7 @@
                       </span>
 
                       @if (
-                        category.subCategories.length > 0
+                        (category.subCategories?.length ?? 0) > 0
                       ) {
 
                         <mat-icon>
@@ -226,7 +226,7 @@
 
                     @if (
                       expandedCategoryId() === category.id &&
-                      category.subCategories.length > 0
+                      (category.subCategories?.length ?? 0) > 0
                     ) {
 
                       <div class="subcategory-list">
@@ -742,7 +742,7 @@
 
 
                   @if (
-                    category.subCategories.length > 0
+                    (category.subCategories?.length ?? 0) > 0
                   ) {
 
                     <mat-icon>
@@ -764,7 +764,7 @@
 
                 @if (
                   expandedCategoryId() === category.id &&
-                  category.subCategories.length > 0
+                  (category.subCategories?.length ?? 0) > 0
                 ) {
 
                   <div class="mobile-subcategories">

@@ -1,0 +1,132 @@
+<section class="home">
+
+  <!-- =====================================================
+       HERO SLIDER
+       ===================================================== -->
+
+  <section class="hero">
+
+    <div
+      class="hero-slide"
+      *ngFor="let slide of slides; let i = index"
+      [class.active]="i === currentSlide()"
+    >
+
+      <img
+        [src]="slide.image"
+        [alt]="slide.title"
+        class="hero-image"
+      />
+
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+
+        <span class="hero-small-title">
+          ✦ BEAUTY & CARE ✦
+        </span>
+
+        <h1>
+          {{ slide.title }}
+        </h1>
+
+        <p>
+          {{ slide.description }}
+        </p>
+
+        <button
+          type="button"
+          class="hero-button"
+          (click)="shopNow()"
+        >
+          Shop Now
+          <mat-icon>
+            arrow_forward
+          </mat-icon>
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PREVIOUS -->
+
+    <button
+      type="button"
+      class="slider-arrow slider-prev"
+      (click)="previousSlide()"
+      aria-label="Previous slide"
+    >
+
+      <mat-icon>
+        chevron_left
+      </mat-icon>
+
+    </button>
+
+
+    <!-- NEXT -->
+
+    <button
+      type="button"
+      class="slider-arrow slider-next"
+      (click)="nextSlide()"
+      aria-label="Next slide"
+    >
+
+      <mat-icon>
+        chevron_right
+      </mat-icon>
+
+    </button>
+
+
+    <!-- DOTS -->
+
+    <div class="slider-dots">
+
+      <button
+        type="button"
+        *ngFor="let slide of slides; let i = index"
+        [class.active]="i === currentSlide()"
+        (click)="goToSlide(i)"
+        aria-label="Go to slide"
+      >
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       CATEGORIES
+       ===================================================== -->
+
+  <section class="categories-section">
+<app-categories></app-categories>
+
+  </section>
+
+
+<!-- =====================================================
+     BRANDS
+     ===================================================== -->
+
+<section class="brands-section">
+
+  
+<app-brands></app-brands>
+
+ 
+
+
+  <!-- BRAND CAROUSEL -->
+
+ 
+
+</section>
+
+</section>

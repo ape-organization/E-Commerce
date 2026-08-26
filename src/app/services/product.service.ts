@@ -70,4 +70,14 @@ export class ProductService {
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  getProductsByIds(productIds: number[]): Observable<Product[]> {
+
+  return this.http.post<Product[]>(
+    `${this.apiUrl}/cart`,
+    {
+      productIds
+    }
+  );
+
+}
 }
