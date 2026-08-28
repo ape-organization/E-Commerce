@@ -154,7 +154,7 @@
 
 .desktop-offer-badge,
 .mobile-sale-badge {
-  padding: 3px 5px;
+  padding: 2px;
 
   border-radius: 4px;
 
@@ -165,7 +165,14 @@
   font-weight: 800;
   letter-spacing: .4px;
 }
+.mobile-cart-badge {
+  
 
+  color: var(--color-sale);
+
+  font-size: 25px;
+  font-weight: bold;
+}
 
 /* ============================================================
    DROPDOWNS
@@ -524,8 +531,8 @@
   top: 0;
   right: -1px;
 
-  min-width: 16px;
-  height: 16px;
+  min-width: 20px;
+  height: 20px;
 
   padding: 0 3px;
 
@@ -538,7 +545,7 @@
   background: var(--color-sale);
   color: #fff;
 
-  font-size: 7px;
+  font-size: 12px;
   font-weight: 800;
 
   border: 2px solid var(--color-surface);

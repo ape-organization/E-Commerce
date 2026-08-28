@@ -423,28 +423,10 @@
       </div>
 
 
-      <!-- ABOUT -->
-
-      <a
-        routerLink="/about"
-        class="nav-link"
-      >
-
-        About
-
-      </a>
+     
 
 
-      <!-- CONTACT -->
-
-      <a
-        routerLink="/contact"
-        class="nav-link"
-      >
-
-        Contact
-
-      </a>
+    
 
     </nav>
 
@@ -603,7 +585,7 @@
         class="mobile-nav-link"
         (click)="closeMobileMenu()"
       >
-
+<div class="mobile-link-content">
         <mat-icon>
           home
         </mat-icon>
@@ -611,7 +593,7 @@
         <span>
           Home
         </span>
-
+        </div>
       </a>
 
 
@@ -915,44 +897,6 @@
       }
 
 
-      <!-- ABOUT -->
-
-      <a
-        routerLink="/about"
-        class="mobile-nav-link"
-        (click)="closeMobileMenu()"
-      >
-
-        <mat-icon>
-          info
-        </mat-icon>
-
-        <span>
-          About
-        </span>
-
-      </a>
-
-
-      <!-- CONTACT -->
-
-      <a
-        routerLink="/contact"
-        class="mobile-nav-link"
-        (click)="closeMobileMenu()"
-      >
-
-        <mat-icon>
-          mail
-        </mat-icon>
-
-        <span>
-          Contact
-        </span>
-
-      </a>
-
-
       <!-- CART -->
 
       <a
@@ -960,6 +904,7 @@
         class="mobile-nav-link"
         (click)="closeMobileMenu()"
       >
+<div class="mobile-link-content">
 
         <mat-icon>
           shopping_bag
@@ -969,10 +914,11 @@
           Cart
         </span>
 
-        <span class="cart-count mobile-cart-count">
+       
+</div>
+<div> <span class="mobile-cart-badge">
           {{ cartCount() }}
-        </span>
-
+        </span></div>
       </a>
 
     </nav>
