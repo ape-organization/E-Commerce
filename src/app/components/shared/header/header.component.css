@@ -1033,9 +1033,8 @@
   .mobile-bottom-nav {
     left: 7px;
     right: 7px;
-    bottom: 137px;
+    bottom: 100px;
     height: 56px;
-    background-color: red;
   }
 
 }
