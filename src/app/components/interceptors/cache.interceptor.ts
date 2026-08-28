@@ -1,7 +1,9 @@
 import {
   HttpContextToken,
+  HttpEvent,
   HttpInterceptorFn,
-  HttpRequest
+  HttpRequest,
+  HttpResponse
 } from '@angular/common/http';
 
 import { signal } from '@angular/core';
@@ -11,7 +13,8 @@ import {
   of,
   tap,
   finalize,
-  shareReplay
+  shareReplay,
+  filter
 } from 'rxjs';
 
 
@@ -28,13 +31,16 @@ export const CACHE_REQUEST =
 // ============================================================
 
 interface CacheEntry {
-  response: unknown;
+
+  response: HttpResponse<unknown>;
+
   expiresAt: number;
+
 }
 
 
 // ============================================================
-// CACHE STORAGE
+// CACHE
 // ============================================================
 
 const cache =
@@ -43,20 +49,13 @@ const cache =
 
 // ============================================================
 // ACTIVE REQUESTS
-//
-// Prevents duplicate simultaneous GET requests.
-//
-// Example:
-//
-// Component A -> GET /Brands
-// Component B -> GET /Brands
-//
-// Only one request is sent to the API.
-// Both subscribers receive the same response.
 // ============================================================
 
 const activeRequests =
-  new Map<string, Observable<unknown>>();
+  new Map<
+    string,
+    Observable<HttpEvent<unknown>>
+  >();
 
 
 // ============================================================
@@ -72,7 +71,7 @@ export const cacheVersion =
 // ============================================================
 
 const CACHE_TTL =
-  30 * 60 * 1000; // 30 minutes
+  30 * 60 * 1000;
 
 
 // ============================================================
@@ -86,36 +85,38 @@ type CacheResource =
 
 
 // ============================================================
-// CHECK IF REQUEST SHOULD BE CACHED
+// CHECK CACHEABLE REQUEST
 // ============================================================
 
 function isCacheableRequest(
   req: HttpRequest<unknown>
 ): boolean {
 
-  // Only GET requests
   if (
     req.method.toUpperCase() !== 'GET'
   ) {
+
     return false;
+
   }
 
-  // Explicit cache request
   if (
     req.context.get(CACHE_REQUEST)
   ) {
+
     return true;
+
   }
 
-  // Automatic lookup cache
   return (
     getCacheResource(req.url) !== null
   );
+
 }
 
 
 // ============================================================
-// GET CACHE RESOURCE
+// GET RESOURCE
 // ============================================================
 
 function getCacheResource(
@@ -127,9 +128,6 @@ function getCacheResource(
       .toLowerCase()
       .split('?')[0];
 
-  // ----------------------------------------------------------
-  // BRANDS
-  // ----------------------------------------------------------
 
   if (
     isEndpoint(
@@ -137,14 +135,11 @@ function getCacheResource(
       '/brands'
     )
   ) {
+
     return 'brands';
+
   }
 
-  // ----------------------------------------------------------
-  // SUBCATEGORIES
-  //
-  // Must be checked before categories.
-  // ----------------------------------------------------------
 
   if (
     isEndpoint(
@@ -152,12 +147,11 @@ function getCacheResource(
       '/subcategories'
     )
   ) {
+
     return 'subcategories';
+
   }
 
-  // ----------------------------------------------------------
-  // CATEGORIES
-  // ----------------------------------------------------------
 
   if (
     isEndpoint(
@@ -165,15 +159,19 @@ function getCacheResource(
       '/categories'
     )
   ) {
+
     return 'categories';
+
   }
 
+
   return null;
+
 }
 
 
 // ============================================================
-// ENDPOINT CHECK
+// ENDPOINT
 // ============================================================
 
 function isEndpoint(
@@ -185,6 +183,7 @@ function isEndpoint(
     url.endsWith(endpoint) ||
     url.includes(`${endpoint}/`)
   );
+
 }
 
 
@@ -196,27 +195,17 @@ function getCacheKey(
   req: HttpRequest<unknown>
 ): string {
 
-  /*
-   * urlWithParams is important.
-   *
-   * Example:
-   *
-   * /subcategories?categoryId=1
-   * /subcategories?categoryId=2
-   *
-   * must have different cache entries.
-   */
-
   return (
     req.method.toUpperCase() +
     ':' +
     req.urlWithParams
   );
+
 }
 
 
 // ============================================================
-// CACHE KEY RESOURCE CHECK
+// RESOURCE CHECK
 // ============================================================
 
 function cacheKeyContainsResource(
@@ -227,6 +216,7 @@ function cacheKeyContainsResource(
   const normalized =
     key.toLowerCase();
 
+
   switch (resource) {
 
     case 'brands':
@@ -235,11 +225,13 @@ function cacheKeyContainsResource(
         '/brands'
       );
 
+
     case 'subcategories':
 
       return normalized.includes(
         '/subcategories'
       );
+
 
     case 'categories':
 
@@ -248,24 +240,23 @@ function cacheKeyContainsResource(
         !normalized.includes('/subcategories')
       );
 
+
     default:
 
       return false;
+
   }
+
 }
 
 
 // ============================================================
-// CLEAR RESOURCE CACHE
+// CLEAR CACHE
 // ============================================================
 
 function clearCacheForResource(
   resource: CacheResource
 ): void {
-
-  // ----------------------------------------------------------
-  // CLEAR CACHED RESPONSES
-  // ----------------------------------------------------------
 
   for (
     const key of cache.keys()
@@ -279,44 +270,21 @@ function clearCacheForResource(
     ) {
 
       cache.delete(key);
+
     }
+
   }
 
-  // ----------------------------------------------------------
-  // CLEAR ACTIVE REQUESTS
-  //
-  // Normally active requests finish naturally.
-  // Removing them here prevents future callers from
-  // attaching to an invalidated request.
-  // ----------------------------------------------------------
-
-  for (
-    const key of activeRequests.keys()
-  ) {
-
-    if (
-      cacheKeyContainsResource(
-        key,
-        resource
-      )
-    ) {
-
-      activeRequests.delete(key);
-    }
-  }
-
-  // ----------------------------------------------------------
-  // UPDATE SIGNAL
-  // ----------------------------------------------------------
 
   cacheVersion.update(
     value => value + 1
   );
+
 }
 
 
 // ============================================================
-// INVALIDATE CACHE AFTER MUTATION
+// INVALIDATE CACHE
 // ============================================================
 
 function invalidateCache(
@@ -326,9 +294,6 @@ function invalidateCache(
   const resource =
     getCacheResource(req.url);
 
-  // ----------------------------------------------------------
-  // BRAND
-  // ----------------------------------------------------------
 
   if (
     resource === 'brands'
@@ -339,11 +304,9 @@ function invalidateCache(
     );
 
     return;
+
   }
 
-  // ----------------------------------------------------------
-  // SUBCATEGORY
-  // ----------------------------------------------------------
 
   if (
     resource === 'subcategories'
@@ -353,20 +316,14 @@ function invalidateCache(
       'subcategories'
     );
 
-    /*
-     * Categories may contain their subcategories.
-     */
-
     clearCacheForResource(
       'categories'
     );
 
     return;
+
   }
 
-  // ----------------------------------------------------------
-  // CATEGORY
-  // ----------------------------------------------------------
 
   if (
     resource === 'categories'
@@ -379,7 +336,9 @@ function invalidateCache(
     clearCacheForResource(
       'subcategories'
     );
+
   }
+
 }
 
 
@@ -409,7 +368,7 @@ export const cacheInterceptor:
 
 
   // ==========================================================
-  // CACHEABLE GET REQUEST
+  // CACHEABLE GET
   // ==========================================================
 
   if (
@@ -421,11 +380,12 @@ export const cacheInterceptor:
 
 
     // ========================================================
-    // 1. CHECK VALID CACHE
+    // CHECK CACHE
     // ========================================================
 
     const cached =
       cache.get(cacheKey);
+
 
     if (
       cached &&
@@ -434,72 +394,79 @@ export const cacheInterceptor:
 
       return of(
         cached.response
-      ) as Observable<any>;
+      );
+
     }
 
 
     // ========================================================
-    // 2. REMOVE EXPIRED CACHE
+    // REMOVE EXPIRED CACHE
     // ========================================================
 
     if (cached) {
 
       cache.delete(cacheKey);
+
     }
 
 
     // ========================================================
-    // 3. CHECK ACTIVE REQUEST
+    // CHECK ACTIVE REQUEST
     // ========================================================
 
-    const activeRequest =
+    const active =
       activeRequests.get(cacheKey);
 
+
     if (
-      activeRequest
+      active
     ) {
 
-      return activeRequest as Observable<any>;
+      return active;
+
     }
 
 
     // ========================================================
-    // 4. SEND REQUEST
+    // CREATE REQUEST
     // ========================================================
 
     const request$ =
       next(req).pipe(
 
         // ----------------------------------------------------
-        // SAVE SUCCESSFUL RESPONSE
+        // ONLY CACHE HttpResponse
         // ----------------------------------------------------
 
         tap({
-          next: response => {
+          next: event => {
 
-            cache.set(
-              cacheKey,
-              {
-                response,
-                expiresAt:
-                  Date.now() +
-                  CACHE_TTL
-              }
-            );
+            if (
+              event instanceof HttpResponse
+            ) {
 
-            cacheVersion.update(
-              value => value + 1
-            );
+              cache.set(
+                cacheKey,
+                {
+                  response: event,
+                  expiresAt:
+                    Date.now() +
+                    CACHE_TTL
+                }
+              );
+
+              cacheVersion.update(
+                value => value + 1
+              );
+
+            }
+
           }
         }),
 
+
         // ----------------------------------------------------
         // ALWAYS REMOVE ACTIVE REQUEST
-        //
-        // Runs on:
-        // - success
-        // - error
-        // - unsubscribe
         // ----------------------------------------------------
 
         finalize(() => {
@@ -507,24 +474,24 @@ export const cacheInterceptor:
           activeRequests.delete(
             cacheKey
           );
+
         }),
 
+
         // ----------------------------------------------------
-        // SHARE HTTP REQUEST
-        //
-        // refCount:true prevents the shared observable from
-        // staying subscribed unnecessarily.
+        // SHARE REQUEST
         // ----------------------------------------------------
 
         shareReplay({
           bufferSize: 1,
-          refCount: true
+          refCount: false
         })
+
       );
 
 
     // ========================================================
-    // 5. STORE ACTIVE REQUEST
+    // STORE ACTIVE REQUEST
     // ========================================================
 
     activeRequests.set(
@@ -534,6 +501,7 @@ export const cacheInterceptor:
 
 
     return request$;
+
   }
 
 
@@ -547,17 +515,18 @@ export const cacheInterceptor:
 
       next: () => {
 
-        // ----------------------------------------------------
-        // INVALIDATE CACHE AFTER MUTATION
-        // ----------------------------------------------------
-
         if (
           isMutation
         ) {
 
           invalidateCache(req);
+
         }
+
       }
+
     })
+
   );
+
 };

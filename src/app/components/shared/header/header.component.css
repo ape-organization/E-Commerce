@@ -885,7 +885,7 @@
 
     left: 10px;
     right: 10px;
-    bottom: 10px;
+    bottom: 90px;
 
     z-index: 1500;
 
@@ -896,7 +896,6 @@
     align-items: stretch;
 
     background: rgba(255, 255, 255, .96);
-
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
 
@@ -1034,8 +1033,9 @@
   .mobile-bottom-nav {
     left: 7px;
     right: 7px;
-    bottom: 7px;
+    bottom: 137px;
     height: 56px;
+    background-color: red;
   }
 
 }

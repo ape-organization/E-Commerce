@@ -73,7 +73,7 @@ export class ProductService {
   getProductsByIds(productIds: number[]): Observable<Product[]> {
 
   return this.http.post<Product[]>(
-    `${this.apiUrl}/cart`,
+    `${this.apiUrl}/products/cart`,
     {
       productIds
     }

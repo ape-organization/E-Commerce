@@ -75,80 +75,48 @@ scrollBrands(direction: 'left' | 'right'): void {
   // LOAD BRANDS
   // =====================================================
 
- /*  private loadBrands(): void {
+ private loadBrands(): void {
 
-    this.brandService
-      .getBrands()
-      .subscribe({
-
-        next: (response: any) => {
-console.log(response)
-          
-
-
-          const data =
-            response?.data ?? response;
-
-
-          this.brands.set(
-
-            (data ?? []).filter(
-              (brand: Brand) =>
-                brand
-            )
-
-          );
-console.log(this.brands)
-
-          this.isLoadingBrands .set(
-            false)
-
-        },
-
-
-        error: (error) => {
-
-          console.error(
-            'Error loading brands:',
-            error
-          );
-
-
-          this.brands.set([]);
-
-          this.isLoadingBrands .set(
-            false)
-
-        }
-
-      });
-
-  } */
-private loadBrands(): void {
-
+  console.log('LOAD BRANDS');
 
   this.brandService.getBrands().subscribe({
 
     next: (response) => {
 
+      console.log('API RESPONSE:', response);
+
       const data = response?.data ?? response;
+
+      console.log('DATA:', data);
 
       this.brands.set(data ?? []);
 
+      console.log('BRANDS SIGNAL:', this.brands());
+
       this.isLoadingBrands.set(false);
+
+      console.log(
+        'LOADING:',
+        this.isLoadingBrands()
+      );
+
+      console.log(
+        'FINAL BRANDS:',
+        this.brands()
+      );
     },
 
     error: (error) => {
 
+      console.error('BRANDS ERROR:', error);
+
       this.brands.set([]);
+
       this.isLoadingBrands.set(false);
-    },
-
-    complete: () => {
     }
-
   });
 }
+
 
 
       // =====================================================
