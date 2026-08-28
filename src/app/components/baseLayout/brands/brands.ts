@@ -1,4 +1,4 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { Brand, BrandService } from '../../../services/brand.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './brands.html',
   styleUrl: './brands.scss',
 })
-export class Brands {
+export class Brands implements OnInit   {
   // =====================================================
   // BRAND IMAGE
   // =====================================================
@@ -75,14 +75,14 @@ scrollBrands(direction: 'left' | 'right'): void {
   // LOAD BRANDS
   // =====================================================
 
-  private loadBrands(): void {
+ /*  private loadBrands(): void {
 
     this.brandService
       .getBrands()
       .subscribe({
 
         next: (response: any) => {
-
+console.log(response)
           
 
 
@@ -98,7 +98,7 @@ scrollBrands(direction: 'left' | 'right'): void {
             )
 
           );
-
+console.log(this.brands)
 
           this.isLoadingBrands .set(
             false)
@@ -123,13 +123,39 @@ scrollBrands(direction: 'left' | 'right'): void {
 
       });
 
-  }
-// =====================================================
+  } */
+private loadBrands(): void {
+
+
+  this.brandService.getBrands().subscribe({
+
+    next: (response) => {
+
+      const data = response?.data ?? response;
+
+      this.brands.set(data ?? []);
+
+      this.isLoadingBrands.set(false);
+    },
+
+    error: (error) => {
+
+      this.brands.set([]);
+      this.isLoadingBrands.set(false);
+    },
+
+    complete: () => {
+    }
+
+  });
+}
+
+
+      // =====================================================
   // INIT
   // =====================================================
 
-  ngOnInit(): void {
-
+  ngOnInit() {
 
     this.loadBrands();
 

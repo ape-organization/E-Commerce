@@ -21,9 +21,9 @@ export class BrandService {
     `${environment.apiBaseUrl}/Brands`;
 
 
-  getBrands(): Observable<Brand[]> {
+  getBrands(): Observable<any> {
 
-    return this.http.get<Brand[]>(
+    return this.http.get<any>(
       this.apiUrl
     );
 

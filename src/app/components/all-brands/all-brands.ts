@@ -66,7 +66,6 @@ export class AllBrands implements OnInit {
   // =====================================================
 
   ngOnInit(): void {
-
     this.loadBrands();
 
   }

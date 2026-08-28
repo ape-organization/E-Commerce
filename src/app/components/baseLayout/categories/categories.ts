@@ -102,7 +102,6 @@ selectCategory(category: Category): void {
 
           );
 
-
           this.isLoadingCategories .set(
             false)
 
@@ -111,10 +110,6 @@ selectCategory(category: Category): void {
 
         error: (error) => {
 
-          console.error(
-            'Error loading categories:',
-            error
-          );
 
 
           this.categories.set([]);
