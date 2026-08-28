@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product.model';
 import { environment } from '../../environments/environment';
+import { PagedResponse } from '../models/PagedResponse.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,44 +13,45 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
- getProducts(
-  categoryId?: number | null,
-  subCategoryId?: number | null,
-  brandId?: number | null,
-  offers?: boolean
-): Observable<Product[]> {
+getProducts(
+  page: number = 1,
+  categoryId: number | null = null,
+  subCategoryId: number | null = null,
+  brandId: number | null = null,
+  offers: boolean = false
+) {
+  let params = new HttpParams()
+    .set('page', page);
 
-  let params = new HttpParams();
-
-  if (categoryId != null) {
+  if (categoryId !== null) {
     params = params.set(
       'categoryId',
       categoryId
     );
   }
 
-  if (subCategoryId != null) {
+  if (subCategoryId !== null) {
     params = params.set(
       'subCategoryId',
       subCategoryId
     );
   }
 
-  if (brandId != null) {
+  if (brandId !== null) {
     params = params.set(
       'brandId',
       brandId
     );
   }
 
-  if (offers === true) {
+  if (offers) {
     params = params.set(
       'offers',
       'true'
     );
   }
 
-  return this.http.get<Product[]>(
+  return this.http.get<PagedResponse<Product>>(
     `${this.apiUrl}/products`,
     { params }
   );

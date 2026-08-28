@@ -3,7 +3,8 @@ import {
   OnInit,
   ChangeDetectorRef,
   HostListener,
-  signal
+  signal,
+  computed
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -61,6 +62,20 @@ interface BrandFilter {
 
 
 // ==========================================================
+// PAGINATION RESPONSE
+// ==========================================================
+
+interface ProductPageResponse {
+  items: Product[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+
+// ==========================================================
 // COMPONENT
 // ==========================================================
 
@@ -96,68 +111,173 @@ export class ProductListComponent implements OnInit {
   // PRODUCTS
   // ========================================================
 
+  /*
+   * Products currently shown on the screen.
+   *
+   * This can be:
+   * - all currently loaded products
+   * - locally filtered products
+   * - products returned from a filtered API request
+   */
+
   products = signal<Product[]>([]);
 
   filteredProducts = signal<Product[]>([]);
 
 
   // ========================================================
+  // ALL UNFILTERED PRODUCTS LOADED SO FAR
+  // ========================================================
+
+  /*
+   * This stores the unfiltered product pages.
+   *
+   * Example:
+   *
+   * Page 1 = 100
+   * Page 2 = 100
+   * Page 3 = 100
+   *
+   * allLoadedProducts = 300 products
+   */
+
+  allLoadedProducts =
+    signal<Product[]>([]);
+
+  unfilteredTotalCount =
+    signal<number>(0);
+
+
+  // ========================================================
+  // PAGINATION
+  // ========================================================
+
+  private readonly PAGE_SIZE = 100;
+
+  private currentPage = 0;
+
+  hasMoreProducts =
+    signal<boolean>(true);
+
+  isLoadingMore =
+    signal<boolean>(false);
+
+
+  // ========================================================
   // QUANTITIES
   // ========================================================
 
-  quantities = signal<Record<number, number>>({});
+  quantities =
+    signal<Record<number, number>>({});
 
 
   // ========================================================
   // IMAGE API
   // ========================================================
 
-  api = environment.imageApiBaseUrl;
+  api =
+    environment.imageApiBaseUrl;
 
 
   // ========================================================
   // CATEGORIES
   // ========================================================
 
-  categories = signal<CategoryFilter[]>([]);
+  categories =
+    signal<CategoryFilter[]>([]);
 
-  subCategories = signal<SubCategoryFilter[]>([]);
+  subCategories =
+    signal<SubCategoryFilter[]>([]);
 
 
   // ========================================================
   // BRANDS
   // ========================================================
 
-  brands = signal<BrandFilter[]>([]);
+  brands =
+    signal<BrandFilter[]>([]);
 
 
   // ========================================================
   // SELECTED FILTERS
   // ========================================================
 
-  selectedCategoryId = signal<number | null>(null);
+  selectedCategoryId =
+    signal<number | null>(null);
 
-  selectedSubCategoryId = signal<number | null>(null);
+  selectedSubCategoryId =
+    signal<number | null>(null);
 
-  selectedBrandId = signal<number | null>(null);
+  selectedBrandId =
+    signal<number | null>(null);
 
 
   // ========================================================
   // OFFERS
   // ========================================================
 
-  showOffers = signal<boolean>(false);
+  showOffers =
+    signal<boolean>(false);
+
+
+  // ========================================================
+  // API FILTER ACTIVE?
+  // ========================================================
+
+  /*
+   * These are the filters handled by API/local product filtering:
+   *
+   * Category
+   * Subcategory
+   * Brand
+   * Offers
+   *
+   * Product-name search is NOT included here.
+   * Name search always stays local.
+   */
+
+  hasApiFilters =
+    computed(() =>
+      this.selectedCategoryId() !== null ||
+      this.selectedSubCategoryId() !== null ||
+      this.selectedBrandId() !== null ||
+      this.showOffers()
+    );
+
+
+  // ========================================================
+  // ALL UNFILTERED PRODUCTS LOADED?
+  // ========================================================
+
+  allUnfilteredProductsLoaded =
+    computed(() => {
+
+      const total =
+        this.unfilteredTotalCount();
+
+      const loaded =
+        this.allLoadedProducts().length;
+
+      if (total === 0) {
+        return false;
+      }
+
+      return loaded >= total;
+    });
 
 
   // ========================================================
   // LOADING
   // ========================================================
 
-  isLoading = signal<boolean>(true);
+  isLoading =
+    signal<boolean>(true);
 
-  isLoadingCategories = signal<boolean>(true);
+  isLoadingCategories =
+    signal<boolean>(true);
 
-  isLoadingBrands = signal<boolean>(true);
+  isLoadingBrands =
+    signal<boolean>(true);
 
 
   // ========================================================
@@ -169,6 +289,26 @@ export class ProductListComponent implements OnInit {
     'subcategory' |
     'brand' |
     null = null;
+
+
+  // ========================================================
+  // REQUEST VERSION
+  // ========================================================
+
+  /*
+   * Prevent an old request from overwriting a newer filter
+   * request.
+   *
+   * Example:
+   *
+   * Brand A request starts
+   * User immediately selects Brand B
+   * Brand B request starts
+   *
+   * If Brand A finishes later, it will be ignored.
+   */
+
+  private requestVersion = 0;
 
 
   // ========================================================
@@ -197,42 +337,55 @@ export class ProductListComponent implements OnInit {
 
     this.loadBrands();
 
+
     this.route.queryParams.subscribe(params => {
 
+      // ====================================================
       // CATEGORY
+      // ====================================================
 
       this.selectedCategoryId.set(
         this.parseId(params['category'])
       );
 
 
+      // ====================================================
       // SUBCATEGORY
+      // ====================================================
 
       this.selectedSubCategoryId.set(
         this.parseId(params['subcategory'])
       );
 
 
+      // ====================================================
       // BRAND
+      // ====================================================
 
       this.selectedBrandId.set(
         this.parseId(params['brand'])
       );
 
 
+      // ====================================================
       // OFFERS
+      // ====================================================
 
       this.showOffers.set(
         params['offers'] === 'true'
       );
 
 
+      // ====================================================
       // UPDATE SUBCATEGORIES
+      // ====================================================
 
       this.updateSubCategories();
 
 
-      // LOAD PRODUCTS FROM API
+      // ====================================================
+      // LOAD PRODUCTS
+      // ====================================================
 
       this.loadProducts();
 
@@ -245,7 +398,9 @@ export class ProductListComponent implements OnInit {
   // PARSE ID
   // ========================================================
 
-  private parseId(value: unknown): number | null {
+  private parseId(
+    value: unknown
+  ): number | null {
 
     if (
       value === undefined ||
@@ -289,10 +444,13 @@ export class ProductListComponent implements OnInit {
         next: (response: any) => {
 
           const data =
-            response?.data ?? response ?? [];
+            response?.data ??
+            response ??
+            [];
 
 
-          const mappedCategories: CategoryFilter[] =
+          const mappedCategories:
+            CategoryFilter[] =
             (data as any[]).map(
               (category: any) => {
 
@@ -370,6 +528,7 @@ export class ProductListComponent implements OnInit {
 
           this.subCategories.set([]);
 
+
           this.isLoadingCategories.set(
             false
           );
@@ -399,10 +558,13 @@ export class ProductListComponent implements OnInit {
         next: (response: any) => {
 
           const data =
-            response?.data ?? response ?? [];
+            response?.data ??
+            response ??
+            [];
 
 
-          const mappedBrands: BrandFilter[] =
+          const mappedBrands:
+            BrandFilter[] =
             (data as any[]).map(
               (brand: any) => ({
 
@@ -444,6 +606,7 @@ export class ProductListComponent implements OnInit {
 
           this.brands.set([]);
 
+
           this.isLoadingBrands.set(
             false
           );
@@ -460,65 +623,408 @@ export class ProductListComponent implements OnInit {
 
   // ========================================================
   // LOAD PRODUCTS
-  //
-  // Category
-  // Subcategory
-  // Brand
-  // Offers
-  //
-  // ALL COME FROM API.
   // ========================================================
+
+  /*
+   * This is the main decision method.
+   *
+   * CASE 1:
+   * Filter exists + all products already loaded
+   * → filter locally.
+   *
+   * CASE 2:
+   * Filter exists + not all products loaded
+   * → call API and get ALL matching products.
+   *
+   * CASE 3:
+   * No filter + products already loaded
+   * → use the cached products.
+   *
+   * CASE 4:
+   * First visit
+   * → load first 100.
+   */
 
   loadProducts(): void {
 
+    const requestVersion =
+      ++this.requestVersion;
+
+
+    // ======================================================
+    // CASE 1
+    // FILTER ACTIVE + EVERYTHING ALREADY LOADED
+    // ======================================================
+
+    if (
+      this.hasApiFilters() &&
+      this.allUnfilteredProductsLoaded()
+    ) {
+
+      this.applyLocalApiFilters();
+
+      this.isLoading.set(false);
+
+      return;
+    }
+
+
+    // ======================================================
+    // CASE 2
+    // FILTER ACTIVE + NOT EVERYTHING LOADED
+    // ======================================================
+
+    if (this.hasApiFilters()) {
+
+      this.loadFilteredProductsFromApi(
+        requestVersion
+      );
+
+      return;
+    }
+
+
+    // ======================================================
+    // CASE 3
+    // NO FILTER + PRODUCTS ALREADY LOADED
+    // ======================================================
+
+    if (
+      this.allLoadedProducts().length > 0
+    ) {
+
+      const cachedProducts =
+        this.allLoadedProducts();
+
+
+      this.products.set(
+        cachedProducts
+      );
+
+
+      this.applyNameFilter();
+
+
+      this.resetQuantities(
+        cachedProducts
+      );
+
+
+      this.isLoading.set(false);
+
+      return;
+    }
+
+
+    // ======================================================
+    // CASE 4
+    // FIRST LOAD
+    // ======================================================
+
+    this.loadFirstPage(
+      requestVersion
+    );
+
+  }
+
+
+  // ========================================================
+  // LOAD FIRST PAGE
+  // ========================================================
+
+  private loadFirstPage(
+    requestVersion: number
+  ): void {
+
     this.isLoading.set(true);
+
+    this.isLoadingMore.set(false);
+
+    this.currentPage = 1;
 
 
     this.productService
       .getProducts(
-        this.selectedCategoryId(),
-        this.selectedSubCategoryId(),
-        this.selectedBrandId(),
-        this.showOffers()
+        1,
+        null,
+        null,
+        null,
+        false
       )
       .subscribe({
 
-        next: (data: Product[]) => {
+        next: (
+          response: ProductPageResponse
+        ) => {
 
-          const products =
-            data ?? [];
+          // Ignore old request
+
+          if (
+            requestVersion !==
+            this.requestVersion
+          ) {
+            return;
+          }
 
 
-          this.products.set(
-            products
+          const loadedProducts =
+            response.items ?? [];
+
+
+          // =================================================
+          // STORE UNFILTERED PRODUCTS
+          // =================================================
+
+          this.allLoadedProducts.set(
+            loadedProducts
           );
 
 
-          // Only product name is local.
+          // =================================================
+          // TOTAL COUNT
+          // =================================================
+
+          this.unfilteredTotalCount.set(
+            response.totalCount ??
+            loadedProducts.length
+          );
+
+
+          // =================================================
+          // PAGINATION STATE
+          // =================================================
+
+          this.currentPage =
+            response.page ?? 1;
+
+
+          this.hasMoreProducts.set(
+            response.hasMore === true
+          );
+
+
+          // =================================================
+          // SHOW PRODUCTS
+          // =================================================
+
+          this.products.set(
+            loadedProducts
+          );
+
+
+          // =================================================
+          // NAME SEARCH
+          // =================================================
 
           this.applyNameFilter();
 
 
-          // Reset quantities.
+          // =================================================
+          // QUANTITIES
+          // =================================================
 
-          const quantityMap:
-            Record<number, number> = {};
-
-
-          products.forEach(product => {
-
-            quantityMap[product.id] = 0;
-
-          });
-
-
-          this.quantities.set(
-            quantityMap
+          this.resetQuantities(
+            loadedProducts
           );
 
 
           this.isLoading.set(false);
 
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          if (
+            requestVersion !==
+            this.requestVersion
+          ) {
+            return;
+          }
+
+
+          console.error(
+            'Error loading products:',
+            error
+          );
+
+
+          this.products.set([]);
+
+          this.filteredProducts.set([]);
+
+          this.allLoadedProducts.set([]);
+
+          this.unfilteredTotalCount.set(0);
+
+          this.quantities.set({});
+
+          this.hasMoreProducts.set(false);
+
+          this.isLoading.set(false);
+
+          this.isLoadingMore.set(false);
+
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
+  }
+
+
+  // ========================================================
+  // LOAD NEXT PAGE
+  // ========================================================
+
+  /*
+   * This is called by infinite scroll.
+   *
+   * Example:
+   *
+   * currentPage = 1
+   * next page = 2
+   *
+   * currentPage = 2
+   * next page = 3
+   */
+
+  private loadNextPage(): void {
+
+    // Don't load another request while loading
+
+    if (
+      this.isLoading() ||
+      this.isLoadingMore() ||
+      !this.hasMoreProducts()
+    ) {
+      return;
+    }
+
+
+    // Infinite scroll only applies to
+    // the unfiltered list.
+
+    if (this.hasApiFilters()) {
+      return;
+    }
+
+
+    const nextPage =
+      this.currentPage + 1;
+
+
+    this.isLoadingMore.set(true);
+
+
+    this.productService
+      .getProducts(
+        nextPage,
+        null,
+        null,
+        null,
+        false
+      )
+      .subscribe({
+
+        next: (
+          response: ProductPageResponse
+        ) => {
+
+          const newProducts =
+            response.items ?? [];
+
+
+          // =================================================
+          // EXISTING PRODUCTS
+          // =================================================
+
+          const existingProducts =
+            this.allLoadedProducts();
+
+
+          // =================================================
+          // PREVENT DUPLICATES
+          // =================================================
+
+          const existingIds =
+            new Set(
+              existingProducts.map(
+                product => product.id
+              )
+            );
+
+
+          const uniqueProducts =
+            newProducts.filter(
+              product =>
+                !existingIds.has(
+                  product.id
+                )
+            );
+
+
+          // =================================================
+          // APPEND
+          // =================================================
+
+          if (
+            uniqueProducts.length > 0
+          ) {
+
+            const updatedProducts = [
+              ...existingProducts,
+              ...uniqueProducts
+            ];
+
+
+            this.allLoadedProducts.set(
+              updatedProducts
+            );
+
+
+            this.products.set(
+              updatedProducts
+            );
+
+
+            // Apply local name search again
+
+            this.applyNameFilter();
+
+
+            // Add quantity entries for new products
+
+            this.addQuantities(
+              uniqueProducts
+            );
+          }
+
+
+          // =================================================
+          // UPDATE PAGINATION
+          // =================================================
+
+          this.currentPage =
+            response.page ??
+            nextPage;
+
+
+          this.unfilteredTotalCount.set(
+            response.totalCount ??
+            this.unfilteredTotalCount()
+          );
+
+
+          this.hasMoreProducts.set(
+            response.hasMore === true
+          );
+
+
+          this.isLoadingMore.set(false);
 
           this.cdr.detectChanges();
 
@@ -527,7 +1033,114 @@ export class ProductListComponent implements OnInit {
         error: (error) => {
 
           console.error(
-            'Error loading products:',
+            'Error loading next product page:',
+            error
+          );
+
+
+          this.isLoadingMore.set(false);
+
+        }
+
+      });
+
+  }
+
+
+  // ========================================================
+  // LOAD FILTERED PRODUCTS FROM API
+  // ========================================================
+
+  /*
+   * IMPORTANT:
+   *
+   * The backend must return ALL matching products when
+   * category/subcategory/brand/offers is supplied.
+   *
+   * page is still sent as 1, but the backend does NOT
+   * Take(100) for filtered requests.
+   */
+
+  private loadFilteredProductsFromApi(
+    requestVersion: number
+  ): void {
+
+    this.isLoading.set(true);
+
+    this.isLoadingMore.set(false);
+
+
+    this.productService
+      .getProducts(
+        1,
+        this.selectedCategoryId(),
+        this.selectedSubCategoryId(),
+        this.selectedBrandId(),
+        this.showOffers()
+      )
+      .subscribe({
+
+        next: (
+          response: ProductPageResponse
+        ) => {
+
+          // Ignore old request
+
+          if (
+            requestVersion !==
+            this.requestVersion
+          ) {
+            return;
+          }
+
+
+          const filtered =
+            response.items ?? [];
+
+
+          // =================================================
+          // SHOW FILTERED RESULTS
+          // =================================================
+
+          this.products.set(
+            filtered
+          );
+
+
+          // =================================================
+          // NAME SEARCH
+          // =================================================
+
+          this.applyNameFilter();
+
+
+          // =================================================
+          // QUANTITIES
+          // =================================================
+
+          this.resetQuantities(
+            filtered
+          );
+
+
+          this.isLoading.set(false);
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          if (
+            requestVersion !==
+            this.requestVersion
+          ) {
+            return;
+          }
+
+
+          console.error(
+            'Error loading filtered products:',
             error
           );
 
@@ -540,12 +1153,244 @@ export class ProductListComponent implements OnInit {
 
           this.isLoading.set(false);
 
+          this.isLoadingMore.set(false);
+
 
           this.cdr.detectChanges();
 
         }
 
       });
+
+  }
+
+
+  // ========================================================
+  // LOCAL API FILTER
+  // ========================================================
+
+  /*
+   * Used only when ALL unfiltered products have already
+   * been downloaded.
+   *
+   * This avoids unnecessary API requests.
+   */
+
+  private applyLocalApiFilters(): void {
+
+    const categoryId =
+      this.selectedCategoryId();
+
+    const subCategoryId =
+      this.selectedSubCategoryId();
+
+    const brandId =
+      this.selectedBrandId();
+
+    const offers =
+      this.showOffers();
+
+
+    const filtered =
+      this.allLoadedProducts().filter(
+        product => {
+
+          // ===============================================
+          // CATEGORY
+          // ===============================================
+
+          if (
+            categoryId !== null &&
+            !product.subCategories?.some(
+              subCategory =>
+                subCategory.categoryId ===
+                categoryId
+            )
+          ) {
+            return false;
+          }
+
+
+          // ===============================================
+          // SUBCATEGORY
+          // ===============================================
+
+          if (
+            subCategoryId !== null &&
+            !product.subCategories?.some(
+              subCategory =>
+                subCategory.id ===
+                subCategoryId
+            )
+          ) {
+            return false;
+          }
+
+
+          // ===============================================
+          // BRAND
+          // ===============================================
+
+          if (
+            brandId !== null &&
+            product.brandId !== brandId
+          ) {
+            return false;
+          }
+
+
+          // ===============================================
+          // OFFERS
+          // ===============================================
+
+          if (
+            offers &&
+            Number(
+              product.discountPercentage ?? 0
+            ) <= 0
+          ) {
+            return false;
+          }
+
+
+          return true;
+
+        }
+      );
+
+
+    this.products.set(
+      filtered
+    );
+
+
+    // Apply name search on top of the
+    // category/brand/etc. filter
+
+    this.applyNameFilter();
+
+
+    this.resetQuantities(
+      filtered
+    );
+
+
+    this.cdr.detectChanges();
+
+  }
+
+
+  // ========================================================
+  // INFINITE SCROLL
+  // ========================================================
+
+  @HostListener(
+    'window:scroll'
+  )
+  onWindowScroll(): void {
+
+    // Don't paginate while a filter is active.
+
+    if (this.hasApiFilters()) {
+      return;
+    }
+
+
+    if (
+      this.isLoading() ||
+      this.isLoadingMore() ||
+      !this.hasMoreProducts()
+    ) {
+      return;
+    }
+
+
+    const scrollPosition =
+      window.innerHeight +
+      window.scrollY;
+
+
+    const pageHeight =
+      document.documentElement.scrollHeight;
+
+
+    /*
+     * Start loading the next page when the user is
+     * 500px away from the bottom.
+     */
+
+    if (
+      scrollPosition >=
+      pageHeight - 500
+    ) {
+
+      this.loadNextPage();
+
+    }
+
+  }
+
+
+  // ========================================================
+  // RESET QUANTITIES
+  // ========================================================
+
+  private resetQuantities(
+    products: Product[]
+  ): void {
+
+    const quantityMap:
+      Record<number, number> = {};
+
+
+    products.forEach(product => {
+
+      quantityMap[product.id] = 0;
+
+    });
+
+
+    this.quantities.set(
+      quantityMap
+    );
+
+  }
+
+
+  // ========================================================
+  // ADD QUANTITIES
+  // ========================================================
+
+  private addQuantities(
+    products: Product[]
+  ): void {
+
+    this.quantities.update(
+      current => {
+
+        const updated = {
+          ...current
+        };
+
+
+        products.forEach(product => {
+
+          if (
+            updated[product.id] ===
+            undefined
+          ) {
+
+            updated[product.id] = 0;
+
+          }
+
+        });
+
+
+        return updated;
+
+      }
+    );
 
   }
 
@@ -563,15 +1408,15 @@ export class ProductListComponent implements OnInit {
       this.selectedSubCategoryId();
 
 
-    // ------------------------------------------------------
+    // ======================================================
     // NO CATEGORY SELECTED
-    // ------------------------------------------------------
+    // ======================================================
 
     if (categoryId === null) {
 
       /*
        * A subcategory may have been selected directly
-       * from another page/header.
+       * from the header or another page.
        *
        * Find its parent category.
        */
@@ -612,19 +1457,21 @@ export class ProductListComponent implements OnInit {
     }
 
 
-    // ------------------------------------------------------
+    // ======================================================
     // CATEGORY SELECTED
-    // ------------------------------------------------------
+    // ======================================================
 
     const selectedCategory =
       this.categories().find(
         category =>
-          category.id === categoryId
+          category.id ===
+          categoryId
       );
 
 
     const availableSubCategories =
-      selectedCategory?.subCategories ?? [];
+      selectedCategory?.subCategories ??
+      [];
 
 
     this.subCategories.set(
@@ -632,9 +1479,9 @@ export class ProductListComponent implements OnInit {
     );
 
 
-    // ------------------------------------------------------
+    // ======================================================
     // CHECK SUBCATEGORY
-    // ------------------------------------------------------
+    // ======================================================
 
     if (
       subCategoryId !== null &&
@@ -666,7 +1513,8 @@ export class ProductListComponent implements OnInit {
   ): void {
 
     this.openDropdown =
-      this.openDropdown === dropdown
+      this.openDropdown ===
+      dropdown
         ? null
         : dropdown;
 
@@ -690,7 +1538,9 @@ export class ProductListComponent implements OnInit {
 
 
     if (
-      !target.closest('.custom-dropdown')
+      !target.closest(
+        '.custom-dropdown'
+      )
     ) {
 
       this.openDropdown = null;
@@ -794,24 +1644,21 @@ export class ProductListComponent implements OnInit {
 
   // ========================================================
   // UPDATE QUERY PARAMS
-  //
-  // IMPORTANT:
-  // Navigation triggers queryParams subscription.
-  // That subscription calls loadProducts().
-  //
-  // Therefore we DON'T call loadProducts()
-  // manually here.
   // ========================================================
 
   private updateQueryParams(): void {
 
-    const queryParams: Record<string, string | null> = {};
+    const queryParams:
+      Record<string, string | null> = {};
 
 
+    // ======================================================
     // CATEGORY
+    // ======================================================
 
     const categoryId =
       this.selectedCategoryId();
+
 
     if (categoryId !== null) {
 
@@ -821,10 +1668,13 @@ export class ProductListComponent implements OnInit {
     }
 
 
+    // ======================================================
     // SUBCATEGORY
+    // ======================================================
 
     const subCategoryId =
       this.selectedSubCategoryId();
+
 
     if (subCategoryId !== null) {
 
@@ -834,10 +1684,13 @@ export class ProductListComponent implements OnInit {
     }
 
 
+    // ======================================================
     // BRAND
+    // ======================================================
 
     const brandId =
       this.selectedBrandId();
+
 
     if (brandId !== null) {
 
@@ -847,16 +1700,21 @@ export class ProductListComponent implements OnInit {
     }
 
 
+    // ======================================================
     // OFFERS
+    // ======================================================
 
     if (this.showOffers()) {
 
-      queryParams['offers'] = 'true';
+      queryParams['offers'] =
+        'true';
 
     }
 
 
+    // ======================================================
     // NAVIGATE
+    // ======================================================
 
     this.router.navigate(
       ['/products'],
@@ -871,6 +1729,17 @@ export class ProductListComponent implements OnInit {
   // ========================================================
   // APPLY NAME FILTER
   // ========================================================
+
+  /*
+   * Name search always works locally.
+   *
+   * Important:
+   *
+   * If only 100 unfiltered products have been loaded,
+   * name search searches those 100.
+   *
+   * Once all products are loaded, it searches everything.
+   */
 
   private applyNameFilter(): void {
 
@@ -929,8 +1798,12 @@ export class ProductListComponent implements OnInit {
 
 
     /*
-     * Let queryParams subscription load
-     * all products from API.
+     * Do NOT clear allLoadedProducts here.
+     *
+     * If we already loaded 500 products, we can show those
+     * immediately after clearing the filter.
+     *
+     * Infinite scroll will continue from page 5.
      */
 
     this.router.navigate(
@@ -1098,11 +1971,15 @@ export class ProductListComponent implements OnInit {
   ): number {
 
     const price =
-      Number(product.price || 0);
+      Number(
+        product.price || 0
+      );
+
 
     const discount =
       Number(
-        product.discountPercentage ?? 0
+        product.discountPercentage ??
+        0
       );
 
 
@@ -1135,21 +2012,15 @@ export class ProductListComponent implements OnInit {
   ): boolean {
 
     return Number(
-      product.discountPercentage ?? 0
+      product.discountPercentage ??
+      0
     ) > 0;
 
   }
 
 
   // ========================================================
-  // QUANTITY
-  //
-  // IMPORTANT:
-  // This replaces:
-  //
-  // quantities.update(q => ...)
-  //
-  // in HTML.
+  // SET QUANTITY
   // ========================================================
 
   setQuantity(
@@ -1180,7 +2051,8 @@ export class ProductListComponent implements OnInit {
 
         ...current,
 
-        [productId]: quantity
+        [productId]:
+          quantity
 
       })
     );
@@ -1196,7 +2068,10 @@ export class ProductListComponent implements OnInit {
     productId: number
   ): number {
 
-    return this.quantities()[productId] ?? 0;
+    return (
+      this.quantities()[productId] ??
+      0
+    );
 
   }
 
@@ -1221,7 +2096,9 @@ export class ProductListComponent implements OnInit {
 
 
     const quantity =
-      this.getQuantity(product.id);
+      this.getQuantity(
+        product.id
+      );
 
 
     if (quantity <= 0) {
