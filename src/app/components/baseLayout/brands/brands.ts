@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brands',
-  imports: [CommonModule,MatIconModule],
+  imports: [CommonModule,MatIconModule,TranslatePipe],
   templateUrl: './brands.html',
   styleUrl: './brands.scss',
 })

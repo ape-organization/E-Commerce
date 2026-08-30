@@ -5,10 +5,11 @@ import { environment } from '../../../../environments/environment';
 import { Category } from '../../../models/category.model';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-categories',
-  imports: [CommonModule,MatIconModule],
+  imports: [CommonModule,MatIconModule,TranslatePipe],
   templateUrl: './categories.html',
   styleUrl: './categories.scss',
 })

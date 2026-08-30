@@ -20,7 +20,7 @@
       </span>
 
       <span class="logo-text">
-        Cosmetics
+        {{'HEADER.TITLE' |translate}}
       </span>
 
     </a>
@@ -43,8 +43,8 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-
-        Home
+{{ 'HEADER.HOME' | translate }}
+        
 
       </a>
 
@@ -57,8 +57,8 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-
-        Product
+{{ 'HEADER.PRODUCTS' | translate }}
+       
 
       </a>
 
@@ -76,11 +76,13 @@
         </mat-icon>
 
         <span>
-          Offers
+          {{ 'HEADER.OFFERS' | translate }}
+          
         </span>
 
         <span class="desktop-offer-badge">
-          SALE
+          {{ 'HEADER.SALE' | translate }}
+          
         </span>
 
       </button>
@@ -103,7 +105,7 @@
         >
 
           <span>
-            Categories
+            {{ 'HEADER.CATEGORIES' | translate }}
           </span>
 
           <mat-icon>
@@ -133,11 +135,14 @@
               <div>
 
                 <span class="dropdown-title">
-                  Categories
+                              {{ 'HEADER.CATEGORIES' | translate }}
+
+                  
                 </span>
 
                 <small>
-                  Explore our collection
+                              {{ 'HEADER.Explore_our_collection' | translate }}
+
                 </small>
 
               </div>
@@ -160,7 +165,9 @@
                 </mat-icon>
 
                 <span>
-                  Loading categories...
+                  
+                  {{ 'COMMON.LOADING' | translate }}
+                
                 </span>
 
               </div>
@@ -268,7 +275,8 @@
                 @if (categories().length === 0) {
 
                   <div class="menu-empty">
-                    No categories available.
+                    {{ 'CATEGORY.No_categories_available' | translate }}
+                    
                   </div>
 
                 }
@@ -301,7 +309,8 @@
         >
 
           <span>
-            Brands
+            {{ 'HEADER.BRANDS' | translate }}
+            
           </span>
 
           <mat-icon>
@@ -331,11 +340,13 @@
               <div>
 
                 <span class="dropdown-title">
-                  Brands
+                  
+                  {{ 'HEADER.BRANDS' | translate }}
                 </span>
 
                 <small>
-                  Shop your favorite brands
+                  {{ 'HEADER.Shop_your_favorite_brands' | translate }}
+                  
                 </small>
 
               </div>
@@ -358,7 +369,7 @@
                 </mat-icon>
 
                 <span>
-                  Loading brands...
+                  {{ 'COMMON.LOADING' | translate }}
                 </span>
 
               </div>
@@ -409,7 +420,8 @@
                 @if (brands().length === 0) {
 
                   <div class="menu-empty">
-                    No brands available.
+                    {{ 'BRAND.No_brands_available' | translate }}
+                   
                   </div>
 
                 }
@@ -455,6 +467,26 @@
       </a>
 
     </div>
+
+<div class="header-actions">
+<button
+  type="button"
+  class="language-switcher"
+  (click)="languageService.toggleLanguage()">
+
+  <mat-icon>language</mat-icon>
+
+  <span>
+    {{
+      languageService.currentLanguage() === 'en'
+        ? ('HEADER.ARABIC' | translate)
+        : ('HEADER.ENGLISH' | translate)
+    }}
+  </span>
+
+</button>
+</div>
+
 </div>
   </div>
 
@@ -493,7 +525,7 @@
       </span>
 
       <span class="logo-text">
-        Cosmetics
+        {{ 'HEADER.TITLE' | translate }}
       </span>
 
     </a>
@@ -552,7 +584,7 @@
         </span>
 
         <span>
-          Cosmetics
+          {{ 'HEADER.TITLE' | translate }}
         </span>
 
       </div>
@@ -593,7 +625,7 @@
         </mat-icon>
 
         <span>
-          Home
+          {{ 'HEADER.HOME' | translate }}
         </span>
         </div>
       </a>
@@ -616,13 +648,15 @@
           </mat-icon>
 
           <span>
-            Offers
+                      {{ 'HEADER.OFFERS' | translate }}
+
           </span>
 
         </div>
 
         <span class="mobile-sale-badge">
-          SALE
+                    {{ 'HEADER.SALE' | translate }}
+
         </span>
 
       </button>
@@ -645,7 +679,8 @@
           </mat-icon>
 
           <span>
-            Categories
+                      {{ 'HEADER.CATEGORIES' | translate }}
+
           </span>
 
         </div>
@@ -681,7 +716,8 @@
               </mat-icon>
 
               <span>
-                Loading categories...
+                          {{ 'COMMON.LOADING' | translate }}
+
               </span>
 
             </div>
@@ -808,7 +844,8 @@
           </mat-icon>
 
           <span>
-            Brands
+                      {{ 'HEADER.BRANDS' | translate }}
+
           </span>
 
         </div>
@@ -842,7 +879,8 @@
               </mat-icon>
 
               <span>
-                Loading brands...
+                         {{ 'COMMON.LOADING' | translate }}
+
               </span>
 
             </div>
@@ -887,7 +925,8 @@
             @if (brands().length === 0) {
 
               <div class="menu-empty">
-                No brands available.
+                          {{ 'BRAND.No_brands_available' | translate }}
+
               </div>
 
             }
@@ -913,7 +952,8 @@
         </mat-icon>
 
         <span>
-          Cart
+                    {{ 'HEADER.CART' | translate }}
+
         </span>
 
        
@@ -957,7 +997,8 @@
       </mat-icon>
 
       <span>
-        Home
+                  {{ 'HEADER.HOME' | translate }}
+
       </span>
 
     </a>
@@ -977,7 +1018,8 @@
       </mat-icon>
 
       <span>
-        Products
+                  {{ 'HEADER.PRODUCTS' | translate }}
+
       </span>
 
     </button>
@@ -1004,7 +1046,8 @@
       </span>
 
       <span>
-        Offers
+                  {{ 'HEADER.OFFERS' | translate }}
+
       </span>
 
     </button>

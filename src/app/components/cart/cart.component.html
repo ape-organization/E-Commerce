@@ -10,11 +10,13 @@
     <div>
 
       <span class="cart-label">
-        YOUR SELECTION
+                {{'CART.YOUR_CART' | translate}}
+
       </span>
 
       <h1 class="cart-title">
-        Shopping <span>Cart</span>
+        {{'CART.TITLE' | translate}}
+      
       </h1>
 
     </div>
@@ -25,7 +27,9 @@
       {{ cartItems.length }}
 
       <span>
-        items
+                        {{'CART.PRODUCTS' | translate}}
+
+        
       </span>
 
     </div>
@@ -150,7 +154,7 @@
               {{ getNewPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                EGP
+                {{'COMMON.EGP' | translate}}
               </span>
 
             </div>
@@ -163,7 +167,7 @@
               {{ getOldPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                EGP
+                {{'COMMON.EGP' | translate}}
               </span>
 
             </div>
@@ -190,7 +194,7 @@
               {{ getOldPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                EGP
+                {{'COMMON.EGP' | translate}}
               </span>
 
             </div>
@@ -208,7 +212,7 @@
         <div class="quantity-section">
 
           <span class="quantity-label">
-            Quantity
+            {{'CART.QUANTITY' | translate}}
           </span>
 
 
@@ -276,7 +280,8 @@
 
 
           <span class="subtotal-label">
-            Subtotal
+            
+            {{'CART.Subtotal' | translate}}
           </span>
 
 
@@ -288,7 +293,7 @@
             }}
 
             <span>
-              EGP
+              {{'COMMON.EGP' | translate}}
             </span>
 
           </strong>
@@ -336,7 +341,7 @@
       <div class="summary-total">
 
         <span>
-          Total
+          {{'CART.TOTAL' | translate}}
         </span>
 
 
@@ -345,7 +350,7 @@
           {{ getCartTotal() | number:'1.0-2' }}
 
           <small>
-            EGP
+            {{'COMMON.EGP' | translate}}
           </small>
 
         </strong>
@@ -373,8 +378,10 @@
             arrow_back
           </mat-icon>
 
+
           <span>
-            Continue Shopping
+            {{'CART.CONTINUE_SHOPPING' | translate}}
+           
           </span>
 
         </button>
@@ -403,7 +410,7 @@
             </mat-icon>
 
             <span>
-              Checkout
+              {{'CHECKOUT.TITLE' | translate}}
             </span>
 
           </button>
@@ -427,7 +434,8 @@
             </mat-icon>
 
             <span>
-              Clear Cart
+              {{'CART.CLEAR_CART' | translate}}
+              
             </span>
 
           </button>
@@ -461,13 +469,14 @@
 
 
       <h2>
-        Your cart is empty
+        
+        {{'CART.EMPTY' | translate}}
       </h2>
 
 
       <p class="empty-message">
 
-        Discover something beautiful and add it to your collection.
+         {{'CART.EMPTY_MESSAGE' | translate}}
 
       </p>
 
@@ -484,7 +493,7 @@
           shopping_bag
         </mat-icon>
 
-        Continue Shopping
+        {{'CART.CONTINUE_SHOPPING' | translate}}
 
       </button>
 

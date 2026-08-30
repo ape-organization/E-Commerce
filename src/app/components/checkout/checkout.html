@@ -15,7 +15,7 @@
       >
         <span class="back-icon">←</span>
 
-        Back to Cart
+        {{'CHECKOUT.Back_to_Cart' | translate}}
       </button>
 
 
@@ -28,11 +28,11 @@
         <div>
 
           <h1>
-            Checkout
+            {{'CHECKOUT.TITLE' | translate}}
           </h1>
 
           <p>
-            Complete your order
+            {{'CHECKOUT.Complete_your_order' | translate }}
           </p>
 
         </div>
@@ -80,12 +80,10 @@
           <div>
 
             <h2>
-              Customer Information
+              {{'CHECKOUT.CUSTOMER_INFORMATION' | translate }}
             </h2>
 
-            <p>
-              Tell us how we can reach you
-            </p>
+            
 
           </div>
 
@@ -104,7 +102,7 @@
 
             <label for="phone">
 
-              Phone Number
+               {{'CHECKOUT.PHONE' | translate }}
 
               <span>
                 *
@@ -132,7 +130,7 @@
 
                 <span class="searching">
 
-                  Searching...
+                   {{'COMMON.Searching' | translate }}
 
                 </span>
 
@@ -145,7 +143,7 @@
 
                 <span class="client-found">
 
-                  ✓ Client found
+                  ✓  {{'COMMON.client-found' | translate }}
 
                 </span>
 
@@ -158,23 +156,14 @@
 
               <small>
 
-                Enter a valid Egyptian phone number.
+                 {{'CHECKOUT.INVALID_PHONE' | translate }}
 
               </small>
 
             }
 
 
-            @if (clientFound()) {
-
-              <small class="client-message">
-
-                We found your information and
-                filled it automatically.
-
-              </small>
-
-            }
+            
 
           </div>
 
@@ -188,7 +177,7 @@
 
             <label for="fullName">
 
-              Full Name
+              {{'CHECKOUT.FULL_NAME' | translate }}
 
               <span>
                 *
@@ -211,7 +200,7 @@
 
               <small>
 
-                Please enter your full name.
+                {{'CHECKOUT.INVALID_NAME' | translate }}
 
               </small>
 
@@ -229,10 +218,10 @@
 
             <label for="email">
 
-              Email Address
+              {{'CHECKOUT.EMAIL' | translate }}
 
               <em>
-                Optional
+                {{'CHECKOUT.OPTIONAL' | translate }}
               </em>
 
             </label>
@@ -252,7 +241,7 @@
 
               <small>
 
-                Please enter a valid email address.
+                {{'CHECKOUT.INVALID_EMAIL' | translate }}
 
               </small>
 
@@ -282,12 +271,9 @@
           <div>
 
             <h2>
-              Delivery Information
+              {{'CHECKOUT.DELIVERY_INFORMATION' | translate }}
             </h2>
 
-            <p>
-              Where should we deliver your order?
-            </p>
 
           </div>
 
@@ -310,7 +296,7 @@
 
             <label for="address">
 
-              Full Address
+               {{'CHECKOUT.ADDRESS' | translate }}
 
               <span>
                 *
@@ -333,7 +319,7 @@
 
               <small>
 
-                Please enter your delivery address.
+                {{'CHECKOUT.INVALID_ADDRESS' | translate }}
 
               </small>
 
@@ -391,12 +377,10 @@
           <div>
 
             <h2>
-              Payment Method
+              {{'CHECKOUT.PAYMENT_METHOD' | translate }}
             </h2>
 
-            <p>
-              Choose how you want to pay
-            </p>
+         
 
           </div>
 
@@ -429,11 +413,11 @@
               <div>
 
                 <h3>
-                  Cash on Delivery
+                  {{'CHECKOUT.CASH_ON_DELIVERY' | translate }}
                 </h3>
 
                 <p>
-                  Pay when your order arrives
+                   {{'CHECKOUT.CASH_ON_DELIVERY_DESCRIPTION' | translate }}
                 </p>
 
               </div>
@@ -474,11 +458,13 @@
         <div>
 
           <span class="summary-label">
-            YOUR ORDER
+            {{'CHECKOUT.YOUR_ORDER' | translate }}
+            
           </span>
 
           <h2>
-            Order Summary
+            {{'CHECKOUT.Order_Summary' | translate }}
+            
           </h2>
 
         </div>
@@ -488,7 +474,7 @@
 
           {{ totalItems }}
 
-          {{ totalItems === 1 ? 'item' : 'items' }}
+          {{ totalItems === 1 ? ('CART.ITEM' | translate) : ('CART.ITEMS' | translate) }}
 
         </span>
 
@@ -509,11 +495,12 @@
           </span>
 
           <h3>
-            Your cart is empty
+            {{'CART.EMPTY' | translate }}
           </h3>
 
           <p>
-            Add some products before checking out.
+            {{'CART.EMPTY_MESSAGE' | translate }}
+       
           </p>
 
 
@@ -522,7 +509,7 @@
             class="back-to-products"
             (click)="goBackToCart()"
           >
-            Back to Cart
+            {{'CHECKOUT.Back_to_Cart' | translate }}
           </button>
 
         </div>
@@ -572,7 +559,8 @@
 
 
                 <p>
-                  Qty: {{ item.quantity }}
+                  {{'CHECKOUT.Qty' | translate }}
+                  : {{ item.quantity }}
                 </p>
 
 
@@ -587,7 +575,7 @@
 
       {{ getDiscountedPrice(item) | number:'1.2-2' }}
 
-      EGP
+      {{'COMMON.EGP' | translate }}
 
     </div>
 
@@ -601,7 +589,7 @@
 
       {{ getDiscountedPrice(item) | number:'1.2-2' }}
 
-      EGP
+      {{'COMMON.EGP' | translate }}
 
     </div>
 
@@ -619,7 +607,7 @@
 
   {{ getItemSubtotal(item) | number:'1.2-2' }}
 
-  EGP
+  {{'COMMON.EGP' | translate }}
 
 </strong>
 
@@ -647,14 +635,14 @@
           <div class="summary-row">
 
             <span>
-              Subtotal
+              {{'CART.Subtotal' | translate }}
             </span>
 
             <strong>
 
               {{ subtotal }}
 
-              EGP
+              {{'COMMON.EGP' | translate }}
 
             </strong>
 
@@ -667,14 +655,14 @@
           <div class="summary-row">
 
             <span>
-              Delivery
+              {{'CHECKOUT.DELIVERY_FEE' | translate }}
             </span>
 
             <strong>
 
               {{ deliveryFee() }}
 
-              EGP
+              {{'COMMON.EGP' | translate }}
 
             </strong>
 
@@ -691,14 +679,14 @@
         <div class="summary-total">
 
           <span>
-            Total
+            {{'CART.TOTAL' | translate }}
           </span>
 
           <strong>
 
             {{ total }}
 
-            EGP
+            {{'COMMON.EGP' | translate }}
 
           </strong>
 
@@ -726,7 +714,7 @@
             <span class="spinner"></span>
 
             <span>
-              Processing...
+              {{'COMMON.LOADING' | translate }}
             </span>
 
           }
@@ -734,7 +722,7 @@
           @else {
 
             <span>
-              Place Order
+              {{'CHECKOUT.PLACE_ORDER' | translate }}
             </span>
 
             <span class="button-arrow">
@@ -758,7 +746,8 @@
           </span>
 
           <span>
-            Your information is secure and private.
+            
+            {{'CHECKOUT.INFO' |translate}}
           </span>
 
         </div>

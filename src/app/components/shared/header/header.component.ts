@@ -27,6 +27,8 @@ import { BrandService } from '../../../services/brand.service';
 import { CartService } from '../../../services/cart.service';
 import { Category } from '../../../models/category.model';
 import { Brand } from '../../../models/brand.model';
+import { LanguageService } from '../../../services/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 // ============================================================
 // COMPONENT
@@ -41,7 +43,8 @@ import { Brand } from '../../../models/brand.model';
     CommonModule,
     RouterModule,
     MaterialModule,
-    MatIconModule
+    MatIconModule,
+    TranslatePipe
   ],
 
   templateUrl: './header.component.html',
@@ -65,7 +68,7 @@ export class HeaderComponent implements OnInit {
 
   private readonly router =
     inject(Router);
-
+public languageService=inject( LanguageService)
 
   // ==========================================================
   // CART

@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CartService } from '../../services/cart.service';
 import { MaterialModule } from '../../shared/AngularMaterial';
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-modal',
@@ -25,6 +26,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     FormsModule,
     MatDialogModule,

@@ -23,7 +23,7 @@
         *ngIf="isOutOfStock"
       >
         <span>
-          OUT OF STOCK
+          {{'PRODUCT.OUT_OF_STOCK'|translate}}
         </span>
       </div>
 
@@ -62,7 +62,7 @@
       *ngIf="isOutOfStock"
     >
 
-      OUT OF STOCK
+      {{'PRODUCT.OUT_OF_STOCK'|translate}}
 
     </div>
 
@@ -183,7 +183,8 @@
       <div class="offer-content">
 
         <span class="offer-title">
-          SPECIAL OFFER
+          {{'PRODUCT.SPECIAL_OFFER'|translate}}
+          
         </span>
 
 
@@ -230,7 +231,7 @@
         </span>
 
         <span class="currency">
-          EGP
+          {{'COMMON.EGP' |translate}}
         </span>
 
       </div>
@@ -248,7 +249,7 @@
         </span>
 
         <span class="old-currency">
-          EGP
+           {{'COMMON.EGP' |translate}}
         </span>
 
       </div>
@@ -271,7 +272,8 @@
       </mat-icon>
 
       <span>
-        This product is currently out of stock.
+         {{'PRODUCT.PRODUCT_OUT' |translate}}
+      
       </span>
 
     </div>
@@ -288,7 +290,7 @@
     >
 
       <label for="quantity">
-        Quantity
+        {{'PRODUCT.QUANTITY' |translate}}
       </label>
 
 
@@ -319,7 +321,7 @@
         *ngIf="stock > 0"
       >
 
-        {{ stock }} available
+        {{ stock }} {{'PRODUCT.AVAILABLE' |translate}}
 
       </small>
 
@@ -348,7 +350,7 @@
         </mat-icon>
 
         <span>
-          Add to Cart
+         {{'PRODUCT.ADD_TO_CART' |translate}}
         </span>
 
       </button>
@@ -363,7 +365,7 @@
         (click)="closeDialog()"
       >
 
-        Close
+        {{'COMMON.CLOSE' |translate}}
 
       </button>
 

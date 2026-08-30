@@ -36,6 +36,7 @@ import {
 import { environment } from '../../../environments/environment';
 
 import { MaterialModule } from '../../shared/AngularMaterial';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 // ==========================================================
@@ -85,6 +86,7 @@ interface ProductPageResponse {
   standalone: true,
 
   imports: [
+    TranslatePipe,
     CommonModule,
     FormsModule,
     MatButtonModule,

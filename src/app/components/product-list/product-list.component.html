@@ -21,7 +21,7 @@
       </mat-icon>
 
       <span>
-        Active Filters
+        {{'FILTER.Active_Filters' | translate}}
       </span>
 
     </div>
@@ -37,7 +37,7 @@
       >
 
         <span>
-          Category
+          {{'FILTER.CATEGORY' | translate}}
         </span>
 
         <strong>
@@ -68,7 +68,7 @@
       >
 
         <span>
-          Subcategory
+          {{'FILTER.SUBCATEGORY' | translate}}
         </span>
 
         <strong>
@@ -99,7 +99,7 @@
       >
 
         <span>
-          Brand
+          {{'FILTER.BRAND' | translate}}
         </span>
 
         <strong>
@@ -134,7 +134,7 @@
         </mat-icon>
 
         <strong>
-          Offers
+          {{'FILTER.OFFERS' | translate}}
         </strong>
 
         <button
@@ -174,7 +174,7 @@
         for="productName"
         class="filter-label"
       >
-        Product
+        {{'FILTER.PRODUCT' | translate}}
       </label>
 
       <div class="select-wrapper">
@@ -189,7 +189,8 @@
           class="filter-input"
           [ngModel]="searchName()"
           (ngModelChange)="searchName.set($event); onNameChange()"
-          placeholder="Search product..."
+        
+          [placeholder]="'PRODUCT.SEARCH_PLACEHOLDER' | translate"
           autocomplete="off"
         />
 
@@ -205,7 +206,7 @@
     <div class="filter-group">
 
       <label class="filter-label">
-        Category
+        {{'FILTER.CATEGORY' | translate}}
       </label>
 
       <div class="custom-dropdown">
@@ -225,7 +226,7 @@
 
             {{
               selectedCategoryId() === null
-                ? 'All Categories'
+                ? ('PRODUCT.CATEGORY'| translate)
                 : selectedCategoryName
             }}
 
@@ -255,7 +256,8 @@
           >
 
             <span>
-              All Categories
+              {{'FILTER.All_Categories' | translate}}
+              
             </span>
 
             <mat-icon
@@ -315,7 +317,7 @@
     >
 
       <label class="filter-label">
-        Subcategory
+        {{'FILTER.SUBCATEGORY' | translate}}
       </label>
 
       <div class="custom-dropdown">
@@ -337,7 +339,7 @@
 
             {{
               selectedSubCategoryId() === null
-                ? 'All Subcategories'
+                ? ('PRODUCT.SUBCATEGORY' | translate)
                 : selectedSubCategoryName
             }}
 
@@ -371,7 +373,7 @@
           >
 
             <span>
-              All Subcategories
+             {{'COMMON.ALL' | translate}}
             </span>
 
             <mat-icon
@@ -433,7 +435,7 @@
     <div class="filter-group">
 
       <label class="filter-label">
-        Brand
+        {{'FILTER.BRAND' | translate}}
       </label>
 
       <div class="custom-dropdown">
@@ -455,7 +457,7 @@
 
             {{
               selectedBrandId() === null
-                ? 'All Brands'
+                ? ('PRODUCT.BRAND' | translate)
                 : selectedBrandName
             }}
 
@@ -487,7 +489,7 @@
           >
 
             <span>
-              All Brands
+              {{'COMMON.ALL' | translate}}
             </span>
 
             <mat-icon
@@ -552,7 +554,7 @@
       </mat-icon>
 
       <span>
-        Offers
+        {{'FILTER.OFFERS' | translate}}
       </span>
 
     </button>
@@ -580,7 +582,7 @@
       </mat-icon>
 
       <span>
-        Clear
+        {{'COMMON.CLEAR' | translate}}
       </span>
 
     </button>
@@ -645,7 +647,7 @@
           class="stock-badge"
           *ngIf="!product.isInStock"
         >
-          Out of Stock
+         {{'PRODUCT.OUT_OF_STOCK' | translate}}
         </div>
 
 
@@ -725,7 +727,7 @@
             }}
 
             <small>
-              EGP
+               {{'COMMON.EGP' | translate}}
             </small>
 
           </span>
@@ -768,7 +770,7 @@
     </span>
 
     <span>
-      Loading products...
+       {{'COMMON.LOADING' | translate}}
     </span>
 
   </div>
@@ -791,11 +793,13 @@
     </span>
 
     <h3>
-      No Products Found
+       {{'PRODUCT.No_Products_Found' | translate}}
+      
     </h3>
 
     <p>
-      No products match the selected filters.
+      {{'PRODUCT.FILTER_DISMATCH' | translate}}
+      
     </p>
 
 
@@ -817,7 +821,8 @@
       </mat-icon>
 
       <span>
-        Show All Products
+        {{'PRODUCT.Show_All_Products' | translate}}
+       
       </span>
 
     </button>

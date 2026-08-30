@@ -44,6 +44,7 @@ import {
 import {
   environment
 } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -53,7 +54,8 @@ import {
 
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslatePipe
   ],
 
   templateUrl: './checkout.html',

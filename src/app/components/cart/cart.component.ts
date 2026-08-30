@@ -50,6 +50,7 @@ import {
 import {
   environment
 } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
@@ -61,7 +62,7 @@ import {
     CommonModule,
     FormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,TranslatePipe
   ],
 
   templateUrl: './cart.component.html',
