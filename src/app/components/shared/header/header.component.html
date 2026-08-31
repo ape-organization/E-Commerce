@@ -516,7 +516,7 @@
     <!-- LOGO -->
 
     <a
-      routerLink="/"
+     
       class="logo"
     >
 
@@ -547,7 +547,22 @@
       </span>
 
     </a>
+<button
+  type="button"
+  class="language-switcher"
+  (click)="languageService.toggleLanguage()">
 
+  <mat-icon>language</mat-icon>
+
+  <span>
+    {{
+      languageService.currentLanguage() === 'en'
+        ? ('HEADER.ARABIC' | translate)
+        : ('HEADER.ENGLISH' | translate)
+    }}
+  </span>
+
+</button>
   </div>
 
 </header>
