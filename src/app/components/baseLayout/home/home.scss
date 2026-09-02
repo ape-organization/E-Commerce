@@ -89,13 +89,12 @@
 .hero-content {
   position: absolute;
 
-  left: 9%;
-  top: 50%;
+  left: 50%;
+  top: 80%;
 
   transform: translateY(-50%);
 
   z-index: 2;
-
   width: min(560px, 80%);
 
   color: var(--color-surface);
@@ -106,7 +105,7 @@
 
   margin-bottom: 15px;
 
-  color: var(--color-accent-light);
+  color: var(--color-surface);
 
   font-size: 12px;
   font-weight: 700;
@@ -174,11 +173,10 @@
 }
 
 .hero-button:hover {
-  background: transparent;
-
+  background: var(--color-accent);
   border-color: var(--color-accent-light);
 
-  color: var(--color-accent-light);
+  color: var(--color-primary-dark);
 }
 
 .hero-button mat-icon {

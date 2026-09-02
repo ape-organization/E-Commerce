@@ -1,43 +1,36 @@
 import {
   Component,
-  ElementRef,
+  inject,
   OnDestroy,
   OnInit,
-  signal,
-  ViewChild
+  signal
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-
 import { MatIconModule } from '@angular/material/icon';
-
 import { Router } from '@angular/router';
+
 import { Categories } from '../categories/categories';
 import { Brands } from '../brands/brands';
-
-
-
+import { SliderService } from '../../../services/slider.service';
+import { environment } from '../../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface HomeSlide {
-  image: string;
-  title: string;
-  description: string;
+  id: number;
+  imageUrl: string;
 }
-
-
-
-
 
 @Component({
   selector: 'app-home',
-
   standalone: true,
 
   imports: [
     CommonModule,
     MatIconModule,
     Categories,
-    Brands
+    Brands,
+    TranslatePipe
   ],
 
   templateUrl: './home.html',
@@ -46,91 +39,89 @@ interface HomeSlide {
     './home.scss'
   ]
 })
-export class Home
-  implements OnInit, OnDestroy {
+export class Home implements OnInit, OnDestroy {
 
+  // =====================================================
+  // SERVICES
+  // =====================================================
 
- 
+  private readonly sliderService = inject(SliderService);
 
+  constructor(
+    private router: Router
+  ) {}
 
   // =====================================================
   // SLIDER
   // =====================================================
 
-  currentSlide =
-    signal(0);
+  currentSlide = signal(0);
 
+  slides = signal<HomeSlide[]>([]);
 
   private sliderInterval:
     ReturnType<typeof setInterval> | null = null;
 
-
-  slides: HomeSlide[] = [
-
-    {
-      image: 'assets/images/slider2.jpg',
-
-      title: 'Beauty Begins With You',
-
-      description:
-        'Discover our carefully selected collection of beauty and skincare products.'
-    },
-
-    {
-      image: 'assets/images/slider1.jpg',
-
-      title: 'Feel Beautiful Every Day',
-
-      description:
-        'Everything you need for your daily beauty routine.'
-    },
-
-    {
-      image: 'assets/images/slider3.jpg',
-
-      title: 'Your Beauty Collection',
-
-      description:
-        'Explore products designed to make every moment feel special.'
-    }
-
-  ];
-
-
-
-
-
-
-  // =====================================================
-  // CONSTRUCTOR
-  // =====================================================
-
-  constructor(
-
-
-    private router:
-      Router
-
-  ) {}
-
+  api = environment.imageApiBaseUrl;
 
   // =====================================================
   // INIT
   // =====================================================
 
   ngOnInit(): void {
-
-  
-
-    this.startSlider();
-
+    this.loadSliders();
   }
 
+  // =====================================================
+  // LOAD SLIDERS
+  // =====================================================
 
+  private loadSliders(): void {
 
+    this.sliderService.getSliders()
+      .subscribe({
 
+        next: (response: HomeSlide[]) => {
 
+          console.log('Sliders:', response);
 
+          this.slides.set(response ?? []);
+
+          // Reset current slide
+          this.currentSlide.set(0);
+
+          // Start automatic slider
+          this.startSlider();
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load sliders:',
+            error
+          );
+
+          this.slides.set([]);
+        }
+
+      });
+  }
+
+  // =====================================================
+  // GET IMAGE
+  // =====================================================
+
+  getCategoryImage(slider: HomeSlide): string {
+
+    if (
+      !slider.imageUrl ||
+      slider.imageUrl.trim() === ''
+    ) {
+      return 'assets/images/category-placeholder.jpg';
+    }
+
+    return this.api + slider.imageUrl;
+  }
 
   // =====================================================
   // START SLIDER
@@ -138,18 +129,20 @@ export class Home
 
   private startSlider(): void {
 
+    // Stop existing timer first
     this.stopSlider();
 
+    // No need for timer with 0 or 1 slide
+    if (this.slides().length <= 1) {
+      return;
+    }
 
-    this.sliderInterval =
-      setInterval(() => {
+    this.sliderInterval = setInterval(() => {
 
-        this.nextSlide(false);
+      this.nextSlide(false);
 
-      }, 4000);
-
+    }, 4000);
   }
-
 
   // =====================================================
   // STOP SLIDER
@@ -157,20 +150,15 @@ export class Home
 
   private stopSlider(): void {
 
-    if (
-      this.sliderInterval !== null
-    ) {
+    if (this.sliderInterval !== null) {
 
       clearInterval(
         this.sliderInterval
       );
 
       this.sliderInterval = null;
-
     }
-
   }
-
 
   // =====================================================
   // NEXT SLIDE
@@ -180,35 +168,22 @@ export class Home
     restartTimer: boolean = true
   ): void {
 
-    if (
-      this.slides.length === 0
-    ) {
+    const slides = this.slides();
 
+    if (slides.length <= 1) {
       return;
-
     }
-
 
     const next =
-      (
-        this.currentSlide() + 1
-      ) %
-      this.slides.length;
+      (this.currentSlide() + 1) %
+      slides.length;
 
-
-    this.currentSlide.set(
-      next
-    );
-
+    this.currentSlide.set(next);
 
     if (restartTimer) {
-
       this.startSlider();
-
     }
-
   }
-
 
   // =====================================================
   // PREVIOUS SLIDE
@@ -216,63 +191,41 @@ export class Home
 
   previousSlide(): void {
 
-    if (
-      this.slides.length === 0
-    ) {
+    const slides = this.slides();
 
+    if (slides.length <= 1) {
       return;
-
     }
-
 
     const previous =
       this.currentSlide() === 0
-
-        ? this.slides.length - 1
-
+        ? slides.length - 1
         : this.currentSlide() - 1;
 
-
-    this.currentSlide.set(
-      previous
-    );
-
+    this.currentSlide.set(previous);
 
     this.startSlider();
-
   }
-
 
   // =====================================================
   // GO TO SLIDE
   // =====================================================
 
-  goToSlide(
-    index: number
-  ): void {
+  goToSlide(index: number): void {
+
+    const slides = this.slides();
 
     if (
       index < 0 ||
-      index >= this.slides.length
+      index >= slides.length
     ) {
-
       return;
-
     }
 
-
-    this.currentSlide.set(
-      index
-    );
-
+    this.currentSlide.set(index);
 
     this.startSlider();
-
   }
-
-
-
-
 
   // =====================================================
   // SHOP NOW
@@ -283,9 +236,7 @@ export class Home
     this.router.navigate([
       '/products'
     ]);
-
   }
-
 
   // =====================================================
   // DESTROY
@@ -294,7 +245,5 @@ export class Home
   ngOnDestroy(): void {
 
     this.stopSlider();
-
   }
-
 }

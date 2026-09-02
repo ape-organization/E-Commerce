@@ -33,7 +33,6 @@
   flex: 1;
 
   display: flex;
-
   gap: 22px;
 
   padding: 5px 5px 15px;
@@ -41,12 +40,21 @@
   overflow-x: auto;
   overflow-y: hidden;
 
-  justify-content: flex-start;
-
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
 
   scrollbar-width: none;
+}
+
+/* Center categories when they fit */
+.category-track {
+  justify-content: center;
+}
+
+/* When content becomes wider than the container,
+   allow it to behave naturally as a scrollable list */
+.category-track:has(.category-card:nth-child(7)) {
+  justify-content: flex-start;
 }
 
 .category-track::-webkit-scrollbar {

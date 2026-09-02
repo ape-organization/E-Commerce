@@ -15,17 +15,17 @@ import {
 
 import { MatButtonModule } from '@angular/material/button';
 
-import { CartService } from '../../services/cart.service';
-import { LanguageService } from '../../services/language.service';
+import { CartService } from '../../../services/cart.service';
+import { LanguageService } from '../../../services/language.service';
 
-import { MaterialModule } from '../../shared/AngularMaterial';
+import { MaterialModule } from '../../../shared/AngularMaterial';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Product } from '../../models/product.model';
-import { SubCategory } from '../../models/subCategory.model';
+import { Product } from '../../../models/product.model';
+import { SubCategory } from '../../../models/subCategory.model';
 
 
 @Component({

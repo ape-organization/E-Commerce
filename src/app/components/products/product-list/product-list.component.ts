@@ -22,37 +22,37 @@ import {
   Router
 } from '@angular/router';
 
-import { ProductService } from '../../services/product.service';
-import { CartService } from '../../services/cart.service';
-import { CategoryService } from '../../services/category.service';
-import { BrandService } from '../../services/brand.service';
-import { LanguageService } from '../../services/language.service';
+import { ProductService } from '../../../services/product.service';
+import { CartService } from '../../../services/cart.service';
+import { CategoryService } from '../../../services/category.service';
+import { BrandService } from '../../../services/brand.service';
+import { LanguageService } from '../../../services/language.service';
 
 import {
   Product,
   ProductFilterValue
-} from '../../models/product.model';
+} from '../../../models/product.model';
 
-import { ProductModalComponent } from '../product-modal/product-modal.component';
+import { ProductModalComponent } from '../../shared/product-modal/product-modal.component';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
-import { MaterialModule } from '../../shared/AngularMaterial';
+import { MaterialModule } from '../../../shared/AngularMaterial';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
 import {
   ProductCardComponent
-} from '../products/product-card.component/product-card.component';
+} from '../product-card.component/product-card.component';
 
 import {
   ProductFiltersComponent
-} from '../products/product-filters.component/product-filters.component';
+} from '../product-filters.component/product-filters.component';
 
-import { CategoryFilter } from '../../models/category.model';
-import { SubCategoryFilter } from '../../models/subCategory.model';
-import { BrandFilter } from '../../models/brand.model';
-import { ProductPageResponse } from '../../models/pagination.model';
+import { CategoryFilter } from '../../../models/category.model';
+import { SubCategoryFilter } from '../../../models/subCategory.model';
+import { BrandFilter } from '../../../models/brand.model';
+import { ProductPageResponse } from '../../../models/pagination.model';
 
 
 @Component({

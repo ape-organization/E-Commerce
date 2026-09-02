@@ -8,13 +8,12 @@
 
     <div
       class="hero-slide"
-      *ngFor="let slide of slides; let i = index"
+      *ngFor="let slide of slides(); let i = index"
       [class.active]="i === currentSlide()"
     >
-
       <img
-        [src]="slide.image"
-        [alt]="slide.title"
+        [src]="getCategoryImage(slide)"
+        
         class="hero-image"
       />
 
@@ -23,16 +22,16 @@
       <div class="hero-content">
 
         <span class="hero-small-title">
-          ✦ BEAUTY & CARE ✦
+          ✦ {{'HEADER.TITLE'|translate}} ✦
         </span>
 
-        <h1>
+       <!--  <h1>
           {{ slide.title }}
         </h1>
 
         <p>
           {{ slide.description }}
-        </p>
+        </p> -->
 
         <button
           type="button"
@@ -88,7 +87,7 @@
 
       <button
         type="button"
-        *ngFor="let slide of slides; let i = index"
+        *ngFor="let slide of slides(); let i = index"
         [class.active]="i === currentSlide()"
         (click)="goToSlide(i)"
         aria-label="Go to slide"

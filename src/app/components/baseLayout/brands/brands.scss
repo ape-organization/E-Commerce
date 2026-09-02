@@ -30,7 +30,6 @@
   flex: 1;
 
   display: flex;
-
   gap: 24px;
 
   padding: 10px 5px 20px;
@@ -38,12 +37,21 @@
   overflow-x: auto;
   overflow-y: hidden;
 
-  justify-content: flex-start;
+  justify-content: center;
 
   scroll-behavior: smooth;
   scroll-snap-type: x proximity;
 
   scrollbar-width: none;
+}
+
+.brand-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* When there are many brands, allow normal scrolling */
+.brand-track:has(.brand-card:nth-child(7)) {
+  justify-content: flex-start;
 }
 
 .brand-track::-webkit-scrollbar {
