@@ -542,7 +542,7 @@
 
                 <img
                   [src]="getImageUrl(item.product.imageUrl)"
-                  [alt]="item.product.name"
+                  [alt]="getProductName(item)"
                 />
 
               </div>
@@ -554,7 +554,7 @@
               <div class="product-info">
 
                 <h3>
-                  {{ item.product.name }}
+                  {{ getProductName(item) }}
                 </h3>
 
 

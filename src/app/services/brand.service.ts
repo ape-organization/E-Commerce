@@ -3,12 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { Brand } from '../models/brand.model';
 
-export interface Brand {
-  id: number;
-  name: string;
-  imageUrl?: string;
-}
+
 
 @Injectable({
   providedIn: 'root'

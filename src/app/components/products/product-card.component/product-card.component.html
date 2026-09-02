@@ -1,0 +1,85 @@
+<article
+  class="product-card"
+  (click)="openDetails()"
+>
+
+  <!-- IMAGE -->
+
+  <div class="product-image">
+
+    <img
+      [src]="getImageUrl(product.imageUrl)"
+      [alt]="getProductName()"
+      loading="lazy"
+    />
+
+
+    <!-- DISCOUNT -->
+
+    <span
+      class="discount-badge"
+      *ngIf="hasDiscount()"
+    >
+      -{{ product.discountPercentage }}%
+    </span>
+
+
+    <!-- OUT OF STOCK -->
+
+    <span
+      class="stock-badge out-of-stock"
+      *ngIf="!product.isInStock"
+    >
+      {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
+    </span>
+
+
+    <!-- ADD TO CART -->
+
+    <button
+      type="button"
+      class="add-cart-button"
+      [disabled]="!product.isInStock"
+      (click)="addToCart($event)"
+      [attr.aria-label]="'PRODUCT.ADD_TO_CART' | translate"
+    >
+
+      <mat-icon>
+        shopping_cart
+      </mat-icon>
+
+    </button>
+
+  </div>
+
+
+  <!-- CONTENT -->
+
+  <div class="product-content">
+
+    <h3 class="product-name">
+      {{ getProductName() }}
+    </h3>
+
+
+    <!-- PRICE -->
+
+    <div class="product-price">
+
+      <span
+        class="old-price"
+        *ngIf="hasDiscount()"
+      >
+        {{ product.price | number:'1.2-2' }}
+      </span>
+
+
+      <span class="current-price">
+        {{ getDiscountedPrice() | number:'1.2-2' }}
+      </span>
+
+    </div>
+
+  </div>
+
+</article>

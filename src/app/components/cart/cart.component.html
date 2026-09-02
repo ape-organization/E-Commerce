@@ -10,13 +10,11 @@
     <div>
 
       <span class="cart-label">
-                {{'CART.YOUR_CART' | translate}}
-
+        {{ 'CART.YOUR_CART' | translate }}
       </span>
 
       <h1 class="cart-title">
-        {{'CART.TITLE' | translate}}
-      
+        {{ 'CART.TITLE' | translate }}
       </h1>
 
     </div>
@@ -27,15 +25,12 @@
       {{ cartItems.length }}
 
       <span>
-                        {{'CART.PRODUCTS' | translate}}
-
-        
+        {{ 'CART.PRODUCTS' | translate }}
       </span>
 
     </div>
 
   </div>
-
 
 
   <!-- =====================================================
@@ -61,24 +56,19 @@
       >
 
 
-        <!-- ===============================================
-             IMAGE
-             =============================================== -->
+        <!-- IMAGE -->
 
         <div class="product-image">
 
           <img
             [src]="getImageUrl(item.product.imageUrl)"
-            [alt]="item.product.name"
+            [alt]="getProductName(item.product)"
           />
 
         </div>
 
 
-
-        <!-- ===============================================
-             PRODUCT INFORMATION
-             =============================================== -->
+        <!-- PRODUCT INFORMATION -->
 
         <div class="product-info">
 
@@ -96,7 +86,7 @@
 
           <h2 class="product-name">
 
-            {{ item.product.name }}
+            {{ getProductName(item.product) }}
 
           </h2>
 
@@ -124,15 +114,10 @@
           </div>
 
 
-
-
         </div>
 
 
-
-        <!-- ===============================================
-             PRICE
-             =============================================== -->
+        <!-- PRICE -->
 
         <div class="price-section">
 
@@ -146,34 +131,27 @@
             "
           >
 
-
-            <!-- NEW PRICE -->
-
             <div class="new-price">
 
               {{ getNewPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                {{'COMMON.EGP' | translate}}
+                {{ 'COMMON.EGP' | translate }}
               </span>
 
             </div>
 
-
-            <!-- OLD PRICE -->
 
             <div class="old-price">
 
               {{ getOldPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                {{'COMMON.EGP' | translate}}
+                {{ 'COMMON.EGP' | translate }}
               </span>
 
             </div>
 
-
-            <!-- DISCOUNT -->
 
             <div class="discount">
 
@@ -182,7 +160,6 @@
             </div>
 
           </ng-container>
-
 
 
           <!-- NO DISCOUNT -->
@@ -194,7 +171,7 @@
               {{ getOldPrice(item.product) | number:'1.0-2' }}
 
               <span>
-                {{'COMMON.EGP' | translate}}
+                {{ 'COMMON.EGP' | translate }}
               </span>
 
             </div>
@@ -204,15 +181,12 @@
         </div>
 
 
-
-        <!-- ===============================================
-             QUANTITY
-             =============================================== -->
+        <!-- QUANTITY -->
 
         <div class="quantity-section">
 
           <span class="quantity-label">
-            {{'CART.QUANTITY' | translate}}
+            {{ 'CART.QUANTITY' | translate }}
           </span>
 
 
@@ -271,17 +245,14 @@
         </div>
 
 
-
-        <!-- ===============================================
-             SUBTOTAL
-             =============================================== -->
+        <!-- SUBTOTAL -->
 
         <div class="subtotal-section">
 
-
           <span class="subtotal-label">
-            
-            {{'CART.Subtotal' | translate}}
+
+            {{ 'CART.SUBTOTAL' | translate }}
+
           </span>
 
 
@@ -293,7 +264,7 @@
             }}
 
             <span>
-              {{'COMMON.EGP' | translate}}
+              {{ 'COMMON.EGP' | translate }}
             </span>
 
           </strong>
@@ -301,19 +272,17 @@
         </div>
 
 
-
-        <!-- ===============================================
-             DELETE
-             =============================================== -->
+        <!-- DELETE -->
 
         <button
           type="button"
-
           class="remove-btn"
 
           (click)="removeFromCart(item.product.id)"
 
-          aria-label="Remove product"
+          [attr.aria-label]="
+            'CART.REMOVE_PRODUCT' | translate
+          "
         >
 
           <mat-icon>
@@ -328,7 +297,6 @@
     </div>
 
 
-
     <!-- ===================================================
          SUMMARY
          =================================================== -->
@@ -341,7 +309,7 @@
       <div class="summary-total">
 
         <span>
-          {{'CART.TOTAL' | translate}}
+          {{ 'CART.TOTAL' | translate }}
         </span>
 
 
@@ -350,13 +318,12 @@
           {{ getCartTotal() | number:'1.0-2' }}
 
           <small>
-            {{'COMMON.EGP' | translate}}
+            {{ 'COMMON.EGP' | translate }}
           </small>
 
         </strong>
 
       </div>
-
 
 
       <!-- ACTIONS -->
@@ -368,9 +335,7 @@
 
         <button
           type="button"
-
           class="continue-shopping"
-
           (click)="back()"
         >
 
@@ -380,12 +345,10 @@
 
 
           <span>
-            {{'CART.CONTINUE_SHOPPING' | translate}}
-           
+            {{ 'CART.CONTINUE_SHOPPING' | translate }}
           </span>
 
         </button>
-
 
 
         <!-- PURCHASE -->
@@ -397,11 +360,8 @@
 
           <button
             mat-raised-button
-
             type="button"
-
             class="checkout-btn"
-
             (click)="goToCheckout()"
           >
 
@@ -410,22 +370,18 @@
             </mat-icon>
 
             <span>
-              {{'CHECKOUT.TITLE' | translate}}
+              {{ 'CHECKOUT.TITLE' | translate }}
             </span>
 
           </button>
-
 
 
           <!-- CLEAR -->
 
           <button
             mat-button
-
             type="button"
-
             class="clear-btn"
-
             (click)="clearCart()"
           >
 
@@ -434,8 +390,7 @@
             </mat-icon>
 
             <span>
-              {{'CART.CLEAR_CART' | translate}}
-              
+              {{ 'CART.CLEAR_CART' | translate }}
             </span>
 
           </button>
@@ -447,7 +402,6 @@
     </div>
 
   </div>
-
 
 
   <!-- =====================================================
@@ -469,23 +423,20 @@
 
 
       <h2>
-        
-        {{'CART.EMPTY' | translate}}
+        {{ 'CART.EMPTY' | translate }}
       </h2>
 
 
       <p class="empty-message">
 
-         {{'CART.EMPTY_MESSAGE' | translate}}
+        {{ 'CART.EMPTY_MESSAGE' | translate }}
 
       </p>
 
 
       <button
         type="button"
-
         class="continue-shopping empty-shopping"
-
         (click)="back()"
       >
 
@@ -493,7 +444,7 @@
           shopping_bag
         </mat-icon>
 
-        {{'CART.CONTINUE_SHOPPING' | translate}}
+        {{ 'CART.CONTINUE_SHOPPING' | translate }}
 
       </button>
 

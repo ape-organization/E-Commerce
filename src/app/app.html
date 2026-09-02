@@ -1,13 +1,93 @@
+<div class="app-shell">
 
+  <!-- HEADER -->
 
 <app-header></app-header>
 
-<main class="app-content" >
-  <router-outlet></router-outlet>
-  <div class="whatsapp">
- 
-     <img src="assets/images/whatsapp.png"  (click)="sendToWhatsApp()"/>
+  <!-- PAGE CONTENT -->
+
+  <main class="app-content">
+
+
+<router-outlet></router-outlet>
+
+<!-- WHATSAPP -->
+<div class="whatsapp">
+  <img
+    src="../assets/images/whatsapp (2).png"
+    alt="WhatsApp"
+    (click)="sendToWhatsApp()"
+  />
 </div>
-</main>
+
+
+  </main>
+
+  <!-- FOOTER -->
 
 <app-footer></app-footer>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+
+@if (showBottomNav()) {
+<nav
+class="mobile-bottom-nav"
+(click)="$event.stopPropagation()"
+>
+
+  <!-- HOME -->
+  <a
+    routerLink="/"
+    class="bottom-nav-item"
+    routerLinkActive="bottom-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <mat-icon>home</mat-icon>
+
+    <span>
+      {{ 'HEADER.HOME' | translate }}
+    </span>
+  </a>
+
+  <!-- ALL PRODUCTS -->
+  <button
+    type="button"
+    class="bottom-nav-item"
+    [class.bottom-active]="isProductsPage()"
+    (click)="selectAllProducts()"
+  >
+    <mat-icon>inventory_2</mat-icon>
+
+    <span>
+      {{ 'HEADER.PRODUCTS' | translate }}
+    </span>
+  </button>
+
+  <!-- OFFERS -->
+  <button
+    type="button"
+    class="bottom-nav-item bottom-offers"
+    (click)="selectOffers()"
+  >
+    <span class="bottom-offer-icon">
+
+      <mat-icon>
+        local_offer
+      </mat-icon>
+
+      <span class="bottom-sale-dot">
+        !
+      </span>
+
+    </span>
+
+    <span>
+      {{ 'HEADER.OFFERS' | translate }}
+    </span>
+  </button>
+
+</nav>
+
+}
+
+</div>

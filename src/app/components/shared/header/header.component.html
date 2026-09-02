@@ -1,524 +1,408 @@
+
 <header class="main-header">
 
-
-  <!-- =====================================================
-       DESKTOP HEADER
-       ===================================================== -->
+  <!-- ==================== DESKTOP HEADER ==================== -->
 
   <div class="desktop-header">
 
-
     <!-- LOGO -->
-
-    <a
-      routerLink="/"
-      class="logo"
-    >
-
-      <span class="logo-symbol">
-        ✦
-      </span>
-
+    <a routerLink="/" class="logo">
+      <span class="logo-symbol">✦</span>
       <span class="logo-text">
-        {{'HEADER.TITLE' |translate}}
+        {{ 'HEADER.TITLE' | translate }}
       </span>
-
     </a>
 
+    <!-- DESKTOP NAVIGATION -->
+    <div class="headSection">
+      <nav class="desktop-nav">
 
-    <!-- ===================================================
-         DESKTOP NAVIGATION
-         =================================================== -->
-<div class="headSection">
+        <!-- HOME -->
+        <a
+          routerLink="/"
+          class="nav-link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ 'HEADER.HOME' | translate }}
+        </a>
 
+        <!-- PRODUCTS -->
+        <a
+          routerLink="/products"
+          class="nav-link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ 'HEADER.PRODUCTS' | translate }}
+        </a>
 
-    <nav class="desktop-nav">
-
-
-      <!-- HOME -->
-
-      <a
-        routerLink="/"
-        class="nav-link"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-{{ 'HEADER.HOME' | translate }}
-        
-
-      </a>
-
-
-      <!-- PRODUCTS -->
-
-      <a
-        routerLink="/products"
-        class="nav-link"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-{{ 'HEADER.PRODUCTS' | translate }}
-       
-
-      </a>
-
-
-      <!-- OFFERS -->
-
-      <button
-        type="button"
-        class="nav-link offers-link"
-        (click)="selectOffers()"
-      >
-
-        <mat-icon>
-          local_offer
-        </mat-icon>
-
-        <span>
-          {{ 'HEADER.OFFERS' | translate }}
-          
-        </span>
-
-        <span class="desktop-offer-badge">
-          {{ 'HEADER.SALE' | translate }}
-          
-        </span>
-
-      </button>
-
-
-      <!-- =================================================
-           CATEGORIES
-           ================================================= -->
-
-      <div
-        class="nav-dropdown"
-        (mouseenter)="openCategoryMenu()"
-        (mouseleave)="closeCategoryMenu()"
-      >
-
+        <!-- OFFERS -->
         <button
           type="button"
-          class="nav-link dropdown-trigger"
-          (click)="toggleCategoryMenu()"
+          class="nav-link offers-link"
+          (click)="selectOffers()"
         >
+          <mat-icon>local_offer</mat-icon>
 
           <span>
-            {{ 'HEADER.CATEGORIES' | translate }}
+            {{ 'HEADER.OFFERS' | translate }}
           </span>
 
-          <mat-icon>
-
-            {{
-              categoryMenuOpen()
-                ? 'keyboard_arrow_up'
-                : 'keyboard_arrow_down'
-            }}
-
-          </mat-icon>
-
+          <span class="desktop-offer-badge">
+            {{ 'HEADER.SALE' | translate }}
+          </span>
         </button>
 
+        <!-- CATEGORIES -->
+        <div
+          class="nav-dropdown"
+          (mouseenter)="openCategoryMenu()"
+          (mouseleave)="closeCategoryMenu()"
+        >
 
-        @if (categoryMenuOpen()) {
-
-          <div
-            class="dropdown-menu category-dropdown"
-            (click)="$event.stopPropagation()"
+          <button
+            type="button"
+            class="nav-link dropdown-trigger"
+            (click)="toggleCategoryMenu()"
           >
+            <span>
+              {{ 'HEADER.CATEGORIES' | translate }}
+            </span>
 
-            <!-- HEADER -->
+            <mat-icon>
+              {{
+                categoryMenuOpen()
+                  ? 'keyboard_arrow_up'
+                  : 'keyboard_arrow_down'
+              }}
+            </mat-icon>
+          </button>
 
-            <div class="dropdown-header">
+          @if (categoryMenuOpen()) {
 
-              <div>
+            <div
+              class="dropdown-menu category-dropdown"
+              (click)="$event.stopPropagation()"
+            >
 
-                <span class="dropdown-title">
-                              {{ 'HEADER.CATEGORIES' | translate }}
+              <div class="dropdown-header">
+                <div>
+                  <span class="dropdown-title">
+                    {{ 'HEADER.CATEGORIES' | translate }}
+                  </span>
 
-                  
-                </span>
+                  <small>
+                    {{ 'HEADER.Explore_our_collection' | translate }}
+                  </small>
+                </div>
 
-                <small>
-                              {{ 'HEADER.Explore_our_collection' | translate }}
-
-                </small>
-
+                <mat-icon>category</mat-icon>
               </div>
 
-              <mat-icon>
-                category
-              </mat-icon>
+              @if (isLoadingCategories()) {
 
-            </div>
+                <div class="menu-loading">
+                  <mat-icon class="loading-icon">
+                    sync
+                  </mat-icon>
 
+                  <span>
+                    {{ 'COMMON.LOADING' | translate }}
+                  </span>
+                </div>
 
-            <!-- LOADING -->
+              }
 
-            @if (isLoadingCategories()) {
+              @if (categoryError()) {
 
-              <div class="menu-loading">
+                <div class="menu-error">
+                  {{ categoryError() }}
+                </div>
 
-                <mat-icon class="loading-icon">
-                  sync
-                </mat-icon>
+              }
 
-                <span>
-                  
-                  {{ 'COMMON.LOADING' | translate }}
-                
-                </span>
+              @if (
+                !isLoadingCategories() &&
+                !categoryError()
+              ) {
 
-              </div>
+                <div class="category-list">
 
-            }
+                  @for (
+                    category of categories();
+                    track category.id
+                  ) {
 
+                    <div class="category-item">
 
-            <!-- ERROR -->
+                      <button
+                        type="button"
+                        class="category-button"
+                        (click)="toggleCategory(category.id)"
+                      >
 
-            @if (categoryError()) {
+                        <span class="category-name">
+                          {{ getCategoryName(category) }}
+                        </span>
 
-              <div class="menu-error">
-                {{ categoryError() }}
-              </div>
-
-            }
-
-
-            <!-- CATEGORIES -->
-
-            @if (
-              !isLoadingCategories() &&
-              !categoryError()
-            ) {
-
-              <div class="category-list">
-
-                @for (
-                  category of categories();
-                  track category.id
-                ) {
-
-                  <div class="category-item">
-
-                    <button
-                      type="button"
-                      class="category-button"
-                      (click)="toggleCategory(category.id)"
-                    >
-
-                      <span class="category-name">
-                        {{ category.name }}
-                      </span>
-
-                      @if (
-                        (category.subCategories?.length ?? 0) > 0
-                      ) {
-
-                        <mat-icon>
-
-                          {{
-                            expandedCategoryId() === category.id
-                              ? 'keyboard_arrow_up'
-                              : 'keyboard_arrow_down'
-                          }}
-
-                        </mat-icon>
-
-                      }
-
-                    </button>
-
-
-                    <!-- SUBCATEGORIES -->
-
-                    @if (
-                      expandedCategoryId() === category.id &&
-                      (category.subCategories?.length ?? 0) > 0
-                    ) {
-
-                      <div class="subcategory-list">
-
-                        @for (
-                          subCategory of category.subCategories;
-                          track subCategory.id
+                        @if (
+                          (category.subCategories?.length ?? 0) > 0
                         ) {
 
-                          <button
-                            type="button"
-                            class="subcategory-button"
-                            (click)="selectSubCategory(subCategory.id)"
-                          >
-
-                            <span class="subcategory-dot">
-                              •
-                            </span>
-
-                            <span>
-                              {{ subCategory.name }}
-                            </span>
-
-                          </button>
+                          <mat-icon>
+                            {{
+                              expandedCategoryId() === category.id
+                                ? 'keyboard_arrow_up'
+                                : 'keyboard_arrow_down'
+                            }}
+                          </mat-icon>
 
                         }
 
-                      </div>
+                      </button>
 
-                    }
+                      @if (
+                        expandedCategoryId() === category.id &&
+                        (category.subCategories?.length ?? 0) > 0
+                      ) {
 
-                  </div>
+                        <div class="subcategory-list">
 
-                }
+                          @for (
+                            subCategory of category.subCategories;
+                            track subCategory.id
+                          ) {
 
+                            <button
+                              type="button"
+                              class="subcategory-button"
+                              (click)="selectSubCategory(subCategory.id)"
+                            >
 
-                @if (categories().length === 0) {
+                              <span class="subcategory-dot">
+                                •
+                              </span>
 
-                  <div class="menu-empty">
-                    {{ 'CATEGORY.No_categories_available' | translate }}
-                    
-                  </div>
+                              <span>
+                                {{ getSubCategoryName(subCategory) }}
+                              </span>
 
-                }
+                            </button>
 
-              </div>
+                          }
 
-            }
+                        </div>
 
-          </div>
+                      }
 
-        }
+                    </div>
 
-      </div>
+                  }
 
+                  @if (categories().length === 0) {
 
-      <!-- =================================================
-           BRANDS
-           ================================================= -->
+                    <div class="menu-empty">
+                      {{ 'CATEGORY.No_categories_available' | translate }}
+                    </div>
 
-      <div
-        class="nav-dropdown"
-        (mouseenter)="openBrandMenu()"
-        (mouseleave)="closeBrandMenu()"
-      >
+                  }
 
-        <button
-          type="button"
-          class="nav-link dropdown-trigger"
-          (click)="toggleBrandMenu()"
-        >
+                </div>
 
-          <span>
-            {{ 'HEADER.BRANDS' | translate }}
-            
-          </span>
-
-          <mat-icon>
-
-            {{
-              brandMenuOpen()
-                ? 'keyboard_arrow_up'
-                : 'keyboard_arrow_down'
-            }}
-
-          </mat-icon>
-
-        </button>
-
-
-        @if (brandMenuOpen()) {
-
-          <div
-            class="dropdown-menu brand-dropdown"
-            (click)="$event.stopPropagation()"
-          >
-
-            <!-- HEADER -->
-
-            <div class="dropdown-header">
-
-              <div>
-
-                <span class="dropdown-title">
-                  
-                  {{ 'HEADER.BRANDS' | translate }}
-                </span>
-
-                <small>
-                  {{ 'HEADER.Shop_your_favorite_brands' | translate }}
-                  
-                </small>
-
-              </div>
-
-              <mat-icon>
-                sell
-              </mat-icon>
+              }
 
             </div>
 
+          }
 
-            <!-- LOADING -->
+        </div>
 
-            @if (isLoadingBrands()) {
+        <!-- BRANDS -->
+        <div
+          class="nav-dropdown"
+          (mouseenter)="openBrandMenu()"
+          (mouseleave)="closeBrandMenu()"
+        >
 
-              <div class="menu-loading">
+          <button
+            type="button"
+            class="nav-link dropdown-trigger"
+            (click)="toggleBrandMenu()"
+          >
 
-                <mat-icon class="loading-icon">
-                  sync
-                </mat-icon>
+            <span>
+              {{ 'HEADER.BRANDS' | translate }}
+            </span>
 
-                <span>
-                  {{ 'COMMON.LOADING' | translate }}
-                </span>
+            <mat-icon>
+              {{
+                brandMenuOpen()
+                  ? 'keyboard_arrow_up'
+                  : 'keyboard_arrow_down'
+              }}
+            </mat-icon>
 
-              </div>
+          </button>
 
-            }
+          @if (brandMenuOpen()) {
 
+            <div
+              class="dropdown-menu brand-dropdown"
+              (click)="$event.stopPropagation()"
+            >
 
-            <!-- ERROR -->
+              <div class="dropdown-header">
 
-            @if (brandError()) {
+                <div>
 
-              <div class="menu-error">
-                {{ brandError() }}
-              </div>
+                  <span class="dropdown-title">
+                    {{ 'HEADER.BRANDS' | translate }}
+                  </span>
 
-            }
+                  <small>
+                    {{ 'HEADER.Shop_your_favorite_brands' | translate }}
+                  </small>
 
+                </div>
 
-            <!-- BRANDS -->
-
-            @if (
-              !isLoadingBrands() &&
-              !brandError()
-            ) {
-
-              <div class="brand-list">
-
-                @for (
-                  brand of brands();
-                  track brand.id
-                ) {
-
-                  <button
-                    type="button"
-                    class="brand-button"
-                    (click)="selectBrand(brand.id)"
-                  >
-
-                    <span>
-                      {{ brand.name }}
-                    </span>
-
-                  </button>
-
-                }
-
-
-                @if (brands().length === 0) {
-
-                  <div class="menu-empty">
-                    {{ 'BRAND.No_brands_available' | translate }}
-                   
-                  </div>
-
-                }
+                <mat-icon>sell</mat-icon>
 
               </div>
 
-            }
+              @if (isLoadingBrands()) {
 
-          </div>
+                <div class="menu-loading">
 
-        }
+                  <mat-icon class="loading-icon">
+                    sync
+                  </mat-icon>
+
+                  <span>
+                    {{ 'COMMON.LOADING' | translate }}
+                  </span>
+
+                </div>
+
+              }
+
+              @if (brandError()) {
+
+                <div class="menu-error">
+                  {{ brandError() }}
+                </div>
+
+              }
+
+              @if (
+                !isLoadingBrands() &&
+                !brandError()
+              ) {
+
+                <div class="brand-list">
+
+                  @for (
+                    brand of brands();
+                    track brand.id
+                  ) {
+
+                    <button
+                      type="button"
+                      class="brand-button"
+                      (click)="selectBrand(brand.id)"
+                    >
+                      <span>
+                        {{ getBrandName(brand) }}
+                      </span>
+                    </button>
+
+                  }
+
+                  @if (brands().length === 0) {
+
+                    <div class="menu-empty">
+                      {{ 'BRAND.No_brands_available' | translate }}
+                    </div>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      </nav>
+
+      <!-- CART -->
+      <div class="header-actions">
+
+        <a
+          routerLink="/cart"
+          class="cart-button"
+        >
+          <mat-icon>
+            shopping_bag
+          </mat-icon>
+
+          <span class="cart-count">
+            {{ cartCount() }}
+          </span>
+        </a>
 
       </div>
 
+      <!-- LANGUAGE -->
+      <div class="header-actions">
 
-     
+        <button
+          type="button"
+          class="language-switcher"
+          (click)="languageService.toggleLanguage()"
+        >
 
+          <mat-icon>
+            language
+          </mat-icon>
 
-    
+          <span>
+            {{
+              languageService.currentLanguage() === 'en'
+                ? ('HEADER.ARABIC' | translate)
+                : ('HEADER.ENGLISH' | translate)
+            }}
+          </span>
 
-    </nav>
+        </button>
 
-
-    <!-- ===================================================
-         CART
-         =================================================== -->
-
-    <div class="header-actions">
-
-      <a
-        routerLink="/cart"
-        class="cart-button"
-      >
-
-        <mat-icon>
-          shopping_bag
-        </mat-icon>
-
-        <span class="cart-count">
-          {{ cartCount() }}
-        </span>
-
-      </a>
+      </div>
 
     </div>
 
-<div class="header-actions">
-<button
-  type="button"
-  class="language-switcher"
-  (click)="languageService.toggleLanguage()">
-
-  <mat-icon>language</mat-icon>
-
-  <span>
-    {{
-      languageService.currentLanguage() === 'en'
-        ? ('HEADER.ARABIC' | translate)
-        : ('HEADER.ENGLISH' | translate)
-    }}
-  </span>
-
-</button>
-</div>
-
-</div>
   </div>
 
 
-  <!-- =====================================================
-       MOBILE / TABLET HEADER
-       ===================================================== -->
+  <!-- ==================== MOBILE HEADER ==================== -->
 
   <div class="mobile-header">
 
-
     <!-- MENU -->
-
     <button
       type="button"
       class="menu-button"
       (click)="openMobileMenu()"
     >
-
       <mat-icon>
         menu
       </mat-icon>
-
     </button>
 
-
     <!-- LOGO -->
-
-    <a
-     
-      class="logo"
-    >
+    <a routerLink="/" class="logo">
 
       <span class="logo-symbol">
         ✦
@@ -530,9 +414,7 @@
 
     </a>
 
-
     <!-- CART -->
-
     <a
       routerLink="/cart"
       class="cart-button"
@@ -547,36 +429,38 @@
       </span>
 
     </a>
-<button
-  type="button"
-  class="language-switcher"
-  (click)="languageService.toggleLanguage()">
 
-  <mat-icon>language</mat-icon>
+    <!-- LANGUAGE -->
+    <button
+      type="button"
+      class="language-switcher"
+      (click)="languageService.toggleLanguage()"
+    >
 
-  <span>
-    {{
-      languageService.currentLanguage() === 'en'
-        ? ('HEADER.ARABIC' | translate)
-        : ('HEADER.ENGLISH' | translate)
-    }}
-  </span>
+      <mat-icon>
+        language
+      </mat-icon>
 
-</button>
+      <span>
+        {{
+          languageService.currentLanguage() === 'en'
+            ? ('HEADER.ARABIC' | translate)
+            : ('HEADER.ENGLISH' | translate)
+        }}
+      </span>
+
+    </button>
+
   </div>
 
 </header>
 
 
-
-<!-- =========================================================
-     MOBILE / TABLET SIDEBAR
-     ========================================================= -->
+<!-- ==================== MOBILE SIDEBAR ==================== -->
 
 @if (mobileMenuOpen()) {
 
   <!-- OVERLAY -->
-
   <div
     class="sidebar-overlay"
     (click)="closeMobileMenu()"
@@ -584,12 +468,9 @@
 
 
   <!-- SIDEBAR -->
-
   <aside class="mobile-sidebar">
 
-
     <!-- SIDEBAR HEADER -->
-
     <div class="sidebar-header">
 
       <div class="sidebar-logo">
@@ -604,52 +485,45 @@
 
       </div>
 
-
       <button
         type="button"
         class="close-button"
         (click)="closeMobileMenu()"
       >
-
         <mat-icon>
           close
         </mat-icon>
-
       </button>
 
     </div>
 
 
-    <!-- ===================================================
-         MOBILE NAVIGATION
-         =================================================== -->
-
+    <!-- MOBILE NAVIGATION -->
     <nav class="mobile-nav">
 
-
       <!-- HOME -->
-
       <a
         routerLink="/"
         class="mobile-nav-link"
         (click)="closeMobileMenu()"
       >
-<div class="mobile-link-content">
-        <mat-icon>
-          home
-        </mat-icon>
 
-        <span>
-          {{ 'HEADER.HOME' | translate }}
-        </span>
+        <div class="mobile-link-content">
+
+          <mat-icon>
+            home
+          </mat-icon>
+
+          <span>
+            {{ 'HEADER.HOME' | translate }}
+          </span>
+
         </div>
+
       </a>
 
 
-      <!-- =================================================
-           OFFERS
-           ================================================= -->
-
+      <!-- OFFERS -->
       <button
         type="button"
         class="mobile-nav-link mobile-offers"
@@ -663,24 +537,19 @@
           </mat-icon>
 
           <span>
-                      {{ 'HEADER.OFFERS' | translate }}
-
+            {{ 'HEADER.OFFERS' | translate }}
           </span>
 
         </div>
 
         <span class="mobile-sale-badge">
-                    {{ 'HEADER.SALE' | translate }}
-
+          {{ 'HEADER.SALE' | translate }}
         </span>
 
       </button>
 
 
-      <!-- =================================================
-           CATEGORIES
-           ================================================= -->
-
+      <!-- CATEGORIES -->
       <button
         type="button"
         class="mobile-nav-link"
@@ -694,33 +563,26 @@
           </mat-icon>
 
           <span>
-                      {{ 'HEADER.CATEGORIES' | translate }}
-
+            {{ 'HEADER.CATEGORIES' | translate }}
           </span>
 
         </div>
 
         <mat-icon>
-
           {{
             categoryMenuOpen()
               ? 'keyboard_arrow_up'
               : 'keyboard_arrow_down'
           }}
-
         </mat-icon>
 
       </button>
 
 
       <!-- MOBILE CATEGORIES -->
-
       @if (categoryMenuOpen()) {
 
         <div class="mobile-dropdown">
-
-
-          <!-- LOADING -->
 
           @if (isLoadingCategories()) {
 
@@ -731,16 +593,12 @@
               </mat-icon>
 
               <span>
-                          {{ 'COMMON.LOADING' | translate }}
-
+                {{ 'COMMON.LOADING' | translate }}
               </span>
 
             </div>
 
           }
-
-
-          <!-- ERROR -->
 
           @if (categoryError()) {
 
@@ -749,9 +607,6 @@
             </div>
 
           }
-
-
-          <!-- CATEGORY LIST -->
 
           @if (
             !isLoadingCategories() &&
@@ -772,22 +627,19 @@
                 >
 
                   <span>
-                    {{ category.name }}
+                    {{ getCategoryName(category) }}
                   </span>
-
 
                   @if (
                     (category.subCategories?.length ?? 0) > 0
                   ) {
 
                     <mat-icon>
-
                       {{
                         expandedCategoryId() === category.id
                           ? 'remove'
                           : 'add'
                       }}
-
                     </mat-icon>
 
                   }
@@ -796,7 +648,6 @@
 
 
                 <!-- SUBCATEGORIES -->
-
                 @if (
                   expandedCategoryId() === category.id &&
                   (category.subCategories?.length ?? 0) > 0
@@ -815,12 +666,10 @@
                         (click)="selectSubCategory(subCategory.id)"
                       >
 
-                        <span>
-                          •
-                        </span>
+                        <span>•</span>
 
                         <span>
-                          {{ subCategory.name }}
+                          {{ getSubCategoryName(subCategory) }}
                         </span>
 
                       </button>
@@ -842,10 +691,7 @@
       }
 
 
-      <!-- =================================================
-           BRANDS
-           ================================================= -->
-
+      <!-- BRANDS -->
       <button
         type="button"
         class="mobile-nav-link"
@@ -859,31 +705,26 @@
           </mat-icon>
 
           <span>
-                      {{ 'HEADER.BRANDS' | translate }}
-
+            {{ 'HEADER.BRANDS' | translate }}
           </span>
 
         </div>
 
         <mat-icon>
-
           {{
             brandMenuOpen()
               ? 'keyboard_arrow_up'
               : 'keyboard_arrow_down'
           }}
-
         </mat-icon>
 
       </button>
 
 
       <!-- MOBILE BRANDS -->
-
       @if (brandMenuOpen()) {
 
         <div class="mobile-dropdown">
-
 
           @if (isLoadingBrands()) {
 
@@ -894,14 +735,12 @@
               </mat-icon>
 
               <span>
-                         {{ 'COMMON.LOADING' | translate }}
-
+                {{ 'COMMON.LOADING' | translate }}
               </span>
 
             </div>
 
           }
-
 
           @if (brandError()) {
 
@@ -910,7 +749,6 @@
             </div>
 
           }
-
 
           @if (
             !isLoadingBrands() &&
@@ -927,21 +765,17 @@
                 class="mobile-brand"
                 (click)="selectBrand(brand.id)"
               >
-
                 <span>
-                  {{ brand.name }}
+                  {{ getBrandName(brand) }}
                 </span>
-
               </button>
 
             }
 
-
             @if (brands().length === 0) {
 
               <div class="menu-empty">
-                          {{ 'BRAND.No_brands_available' | translate }}
-
+                {{ 'BRAND.No_brands_available' | translate }}
               </div>
 
             }
@@ -954,119 +788,32 @@
 
 
       <!-- CART -->
-
       <a
         routerLink="/cart"
         class="mobile-nav-link"
         (click)="closeMobileMenu()"
       >
-<div class="mobile-link-content">
 
-        <mat-icon>
-          shopping_bag
-        </mat-icon>
+        <div class="mobile-link-content">
 
-        <span>
-                    {{ 'HEADER.CART' | translate }}
+          <mat-icon>
+            shopping_bag
+          </mat-icon>
 
+          <span>
+            {{ 'HEADER.CART' | translate }}
+          </span>
+
+        </div>
+
+        <span class="mobile-cart-badge">
+          {{ cartCount() }}
         </span>
 
-       
-</div>
-<div> <span class="mobile-cart-badge">
-          {{ cartCount() }}
-        </span></div>
       </a>
 
     </nav>
 
   </aside>
-
-}
-
-
-
-<!-- =========================================================
-     MOBILE BOTTOM NAVIGATION
-     ========================================================= -->
-
-@if (showBottomNav()) {
-
-  <nav
-    class="mobile-bottom-nav"
-    (click)="$event.stopPropagation()"
-  >
-
-
-    <!-- HOME -->
-
-    <a
-      routerLink="/"
-      class="bottom-nav-item"
-      routerLinkActive="bottom-active"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-
-      <mat-icon>
-        home
-      </mat-icon>
-
-      <span>
-                  {{ 'HEADER.HOME' | translate }}
-
-      </span>
-
-    </a>
-
-
-    <!-- ALL PRODUCTS -->
-
-    <button
-      type="button"
-      class="bottom-nav-item"
-      [class.bottom-active]="isProductsPage()"
-      (click)="selectAllProducts()"
-    >
-
-      <mat-icon>
-        inventory_2
-      </mat-icon>
-
-      <span>
-                  {{ 'HEADER.PRODUCTS' | translate }}
-
-      </span>
-
-    </button>
-
-
-    <!-- OFFERS -->
-
-    <button
-      type="button"
-      class="bottom-nav-item bottom-offers"
-      (click)="selectOffers()"
-    >
-
-      <span class="bottom-offer-icon">
-
-        <mat-icon>
-          local_offer
-        </mat-icon>
-
-        <span class="bottom-sale-dot">
-          !
-        </span>
-
-      </span>
-
-      <span>
-                  {{ 'HEADER.OFFERS' | translate }}
-
-      </span>
-
-    </button>
-
-  </nav>
 
 }

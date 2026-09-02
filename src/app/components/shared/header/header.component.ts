@@ -1,4 +1,3 @@
-
 import {
   Component,
   HostListener,
@@ -16,19 +15,42 @@ import {
   RouterModule
 } from '@angular/router';
 
-
-
 import {
   MatIconModule
 } from '@angular/material/icon';
-import { MaterialModule } from '../../../shared/AngularMaterial';
-import { CategoryService } from '../../../services/category.service';
-import { BrandService } from '../../../services/brand.service';
-import { CartService } from '../../../services/cart.service';
-import { Category } from '../../../models/category.model';
-import { Brand } from '../../../models/brand.model';
-import { LanguageService } from '../../../services/language.service';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  MaterialModule
+} from '../../../shared/AngularMaterial';
+
+import {
+  CategoryService
+} from '../../../services/category.service';
+
+import {
+  BrandService
+} from '../../../services/brand.service';
+
+import {
+  CartService
+} from '../../../services/cart.service';
+
+import {
+  Category
+} from '../../../models/category.model';
+
+import {
+  Brand
+} from '../../../models/brand.model';
+
+import {
+  LanguageService
+} from '../../../services/language.service';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
 
 // ============================================================
 // COMPONENT
@@ -68,7 +90,10 @@ export class HeaderComponent implements OnInit {
 
   private readonly router =
     inject(Router);
-public languageService=inject( LanguageService)
+
+  public readonly languageService =
+    inject(LanguageService);
+
 
   // ==========================================================
   // CART
@@ -78,33 +103,31 @@ public languageService=inject( LanguageService)
 
 
   // ==========================================================
-  // MOBILE BOTTOM NAV
-  // ==========================================================
-
-  showBottomNav = signal(false);
-
-
-  // ==========================================================
   // MENU STATE
   // ==========================================================
 
-  categoryMenuOpen = signal(false);
+  categoryMenuOpen =
+    signal(false);
 
-  brandMenuOpen = signal(false);
+  brandMenuOpen =
+    signal(false);
 
   expandedCategoryId =
     signal<number | null>(null);
 
-  mobileMenuOpen = signal(false);
+  mobileMenuOpen =
+    signal(false);
 
 
   // ==========================================================
   // CATEGORIES
   // ==========================================================
 
-  categories = signal<Category[]>([]);
+  categories =
+    signal<Category[]>([]);
 
-  isLoadingCategories = signal(false);
+  isLoadingCategories =
+    signal(false);
 
   categoryError =
     signal<string | null>(null);
@@ -114,9 +137,11 @@ public languageService=inject( LanguageService)
   // BRANDS
   // ==========================================================
 
-  brands = signal<Brand[]>([]);
+  brands =
+    signal<Brand[]>([]);
 
-  isLoadingBrands = signal(false);
+  isLoadingBrands =
+    signal(false);
 
   brandError =
     signal<string | null>(null);
@@ -138,6 +163,73 @@ public languageService=inject( LanguageService)
 
 
   // ==========================================================
+  // LANGUAGE
+  // ==========================================================
+
+  getCategoryName(
+    category: Category
+  ): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return category.nameAr?.trim()
+        ? category.nameAr
+        : category.nameEn;
+
+    }
+
+    return category.nameEn?.trim()
+      ? category.nameEn
+      : category.nameAr;
+
+  }
+
+
+  getSubCategoryName(
+    subCategory: any
+  ): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return subCategory.nameAr?.trim()
+        ? subCategory.nameAr
+        : subCategory.nameEn;
+
+    }
+
+    return subCategory.nameEn?.trim()
+      ? subCategory.nameEn
+      : subCategory.nameAr;
+
+  }
+
+
+  getBrandName(
+    brand: Brand
+  ): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return brand.nameAr?.trim()
+        ? brand.nameAr
+        : brand.nameEn;
+
+    }
+
+    return brand.nameEn?.trim()
+      ? brand.nameEn
+      : brand.nameAr;
+
+  }
+
+
+  // ==========================================================
   // CART
   // ==========================================================
 
@@ -149,20 +241,6 @@ public languageService=inject( LanguageService)
         this.cartCount.set(count);
 
       });
-
-  }
-
-
-  // ==========================================================
-  // SCROLL
-  // ==========================================================
-
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-
-    this.showBottomNav.set(
-      window.scrollY > 100
-    );
 
   }
 
@@ -258,24 +336,15 @@ public languageService=inject( LanguageService)
         next: (response: any) => {
 
           const data =
-            response?.data ?? response ?? [];
-
-          const mappedCategories: Category[] =
-            data.map((category: any) => ({
-
-              id: category.id,
-
-              name: category.name,
-
-              subCategories:
-                category.subCategories ??
-                category.subcategories ??
-                []
-
-            }));
+            response?.data ??
+            response ??
+            [];
 
           this.categories.set(
-            mappedCategories
+            (data ?? []).filter(
+              (category: Category) =>
+                !!category
+            )
           );
 
           this.isLoadingCategories.set(false);
@@ -319,9 +388,16 @@ public languageService=inject( LanguageService)
         next: (response: any) => {
 
           const data =
-            response?.data ?? response ?? [];
+            response?.data ??
+            response ??
+            [];
 
-          this.brands.set(data);
+          this.brands.set(
+            (data ?? []).filter(
+              (brand: Brand) =>
+                !!brand
+            )
+          );
 
           this.isLoadingBrands.set(false);
 
@@ -360,7 +436,9 @@ public languageService=inject( LanguageService)
       categoryId
     ) {
 
-      this.expandedCategoryId.set(null);
+      this.expandedCategoryId.set(
+        null
+      );
 
       return;
 
@@ -539,4 +617,3 @@ public languageService=inject( LanguageService)
   }
 
 }
-

@@ -16,9 +16,17 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 
 import { CartService } from '../../services/cart.service';
+import { LanguageService } from '../../services/language.service';
+
 import { MaterialModule } from '../../shared/AngularMaterial';
+
 import { environment } from '../../../environments/environment';
+
 import { TranslatePipe } from '@ngx-translate/core';
+
+import { Product } from '../../models/product.model';
+import { SubCategory } from '../../models/subCategory.model';
+
 
 @Component({
   selector: 'app-product-modal',
@@ -35,15 +43,18 @@ import { TranslatePipe } from '@ngx-translate/core';
   ],
 
   templateUrl: './product-modal.component.html',
+
   styleUrl: './product-modal.component.css'
 })
 export class ProductModalComponent {
+
 
   // =====================================================
   // QUANTITY
   // =====================================================
 
   quantity = signal(0);
+
 
   // =====================================================
   // IMAGE API
@@ -52,13 +63,20 @@ export class ProductModalComponent {
   api = environment.imageApiBaseUrl;
 
 
+  // =====================================================
+  // CONSTRUCTOR
+  // =====================================================
+
   constructor(
-    public dialogRef: MatDialogRef<ProductModalComponent>,
+    public dialogRef:
+      MatDialogRef<ProductModalComponent>,
 
     @Inject(MAT_DIALOG_DATA)
-    public product: any,
+    public product: Product,
 
-    private cartService: CartService
+    private cartService: CartService,
+
+    public languageService: LanguageService
   ) {}
 
 
@@ -69,9 +87,7 @@ export class ProductModalComponent {
   get stock(): number {
 
     return Number(
-      this.product?.stock ??
-      this.product?.quantity ??
-      0
+      this.product?.stockQuantity ?? 0
     );
 
   }
@@ -88,7 +104,8 @@ export class ProductModalComponent {
 
     return (
       this.product?.isInStock === true &&
-      this.quantity() > 0
+      this.quantity() > 0 &&
+      (this.stock <= 0 || this.quantity() <= this.stock)
     );
 
   }
@@ -119,7 +136,9 @@ export class ProductModalComponent {
   get newPrice(): number {
 
     if (!this.hasDiscount) {
+
       return this.oldPrice;
+
     }
 
     const discount =
@@ -142,30 +161,41 @@ export class ProductModalComponent {
 
   setQuantity(value: number): void {
 
-    let quantity = Number(value);
+    let newQuantity = Number(value);
 
-    if (!Number.isFinite(quantity)) {
-      quantity = 0;
+    if (!Number.isFinite(newQuantity)) {
+
+      newQuantity = 0;
+
     }
 
-    quantity = Math.floor(quantity);
+    newQuantity = Math.floor(newQuantity);
 
-    if (quantity < 0) {
-      quantity = 0;
+    if (newQuantity < 0) {
+
+      newQuantity = 0;
+
     }
 
-    if (this.stock > 0 && quantity > this.stock) {
-      quantity = this.stock;
+    if (
+      this.stock > 0 &&
+      newQuantity > this.stock
+    ) {
+
+      newQuantity = this.stock;
+
     }
 
-    this.quantity.set(quantity);
+    this.quantity.set(newQuantity);
 
   }
 
 
   validateQuantity(): void {
 
-    this.setQuantity(this.quantity());
+    this.setQuantity(
+      this.quantity()
+    );
 
   }
 
@@ -176,25 +206,37 @@ export class ProductModalComponent {
 
   addToCart(): void {
 
-    if (!this.product?.isInStock) {
+    if (
+      !this.product?.isInStock
+    ) {
+
       return;
+
     }
 
     this.validateQuantity();
 
-    const quantity = this.quantity();
+    const selectedQuantity =
+      this.quantity();
 
-    if (quantity <= 0) {
+    if (selectedQuantity <= 0) {
+
       return;
+
     }
 
-    if (this.stock > 0 && quantity > this.stock) {
+    if (
+      this.stock > 0 &&
+      selectedQuantity > this.stock
+    ) {
+
       return;
+
     }
 
     this.cartService.addToCart(
       this.product,
-      quantity
+      selectedQuantity
     );
 
     this.dialogRef.close();
@@ -242,29 +284,155 @@ export class ProductModalComponent {
 
 
   // =====================================================
-  // CATEGORY
+  // PRODUCT NAME
   // =====================================================
 
-  getCategoryName(): string {
+  getProductName(): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        this.product?.nameAr?.trim() ||
+        this.product?.nameEn?.trim() ||
+        'Product'
+      );
+
+    }
 
     return (
-      this.product?.subCategories?.[0]?.categoryName ||
-      'Category'
+      this.product?.nameEn?.trim() ||
+      this.product?.nameAr?.trim() ||
+      'Product'
     );
 
   }
 
 
   // =====================================================
-  // BRAND
+  // PRODUCT DESCRIPTION
+  // =====================================================
+
+  getProductDescription(): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        this.product?.descriptionAr?.trim() ||
+        this.product?.descriptionEn?.trim() ||
+        ''
+      );
+
+    }
+
+    return (
+      this.product?.descriptionEn?.trim() ||
+      this.product?.descriptionAr?.trim() ||
+      ''
+    );
+
+  }
+
+
+  // =====================================================
+  // CATEGORY NAME
+  // =====================================================
+
+  getCategoryName(): string {
+
+    const subCategory =
+      this.product?.subCategories?.[0];
+
+    if (!subCategory) {
+
+      return '';
+
+    }
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        subCategory.categoryNameAr?.trim() ||
+        subCategory.categoryNameEn?.trim() ||
+        ''
+      );
+
+    }
+
+    return (
+      subCategory.categoryNameEn?.trim() ||
+      subCategory.categoryNameAr?.trim() ||
+      ''
+    );
+
+  }
+
+
+  // =====================================================
+  // SUBCATEGORY NAME
+  // =====================================================
+
+  getSubCategoryName(
+    subCategory: SubCategory
+  ): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        subCategory?.nameAr?.trim() ||
+        subCategory?.nameEn?.trim() ||
+        ''
+      );
+
+    }
+
+    return (
+      subCategory?.nameEn?.trim() ||
+      subCategory?.nameAr?.trim() ||
+      ''
+    );
+
+  }
+
+
+  // =====================================================
+  // BRAND NAME
   // =====================================================
 
   getBrandName(): string {
 
+    const brand =
+      this.product?.brand;
+
+    if (!brand) {
+
+      return '';
+
+    }
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        brand.nameAr?.trim() ||
+        brand.nameEn?.trim() ||
+        ''
+      );
+
+    }
+
     return (
-      this.product?.brand?.name ||
-      this.product?.brandName ||
-      'BEAUTY BRAND'
+      brand.nameEn?.trim() ||
+      brand.nameAr?.trim() ||
+      ''
     );
 
   }

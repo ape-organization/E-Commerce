@@ -5,10 +5,11 @@ import { SubCategory } from "./subCategory.model";
 
 export interface Product {
   id: number;
-  name: string;
+ nameEn: string;
+  nameAr: string;
   isInStock:boolean;
-  description?: string | null;
-
+  descriptionEn?: string | null;
+descriptionAr?: string | null;
   price: number;
 
   discountPercentage: number;
@@ -25,4 +26,11 @@ export interface Product {
   brandName?: string | null;
 
   subCategories: SubCategory[];
+}
+export interface ProductFilterValue {
+  searchName: string;
+  categoryId: number | null;
+  subCategoryId: number | null;
+  brandId: number | null;
+  offers: boolean;
 }

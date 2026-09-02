@@ -1,37 +1,319 @@
 /* =========================================================
-   APP LAYOUT
-   ========================================================= */
+APP LAYOUT
+========================================================= */
+
+:host {
+display: block;
+}
+
+.app-shell {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
 
 .app-content {
-  min-height: calc(100vh - 70px - 250px);
+flex: 1;
 }
+
 /* =========================================================
-   WHATSAPP FLOATING BUTTON
-   ========================================================= */
+WHATSAPP FLOATING BUTTON
+========================================================= */
 
 .whatsapp {
-  width: 60px;
-  height: 60px;
+width: 60px;
+height: 60px;
 
-  position: fixed;
-  bottom: 30px;
-  right: 20px;
+position: fixed;
+bottom: 30px;
+right: 20px;
 
-  z-index: 9999;
+z-index: 9999;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
+.whatsapp img {
+width: 100%;
+height: 100%;
 
-    object-fit: cover;
-    border-radius: 50%;
+object-fit: cover;
+border-radius: 50%;
 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 
-    transition: transform 0.2s ease;
 
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
+transition: transform 0.2s ease;
+}
+
+.whatsapp img:hover {
+transform: scale(1.1);
+}
+
+/* =========================================================
+MOBILE BOTTOM NAVIGATION
+Same style as main header
+========================================================= */
+
+.mobile-bottom-nav {
+display: none;
+}
+
+@media (max-width: 991px) {
+
+.mobile-bottom-nav {
+position: fixed;
+left: 0;
+right: 0;
+bottom: 0;
+
+
+width: 100%;
+height: 60px;
+
+z-index: 10000;
+
+display: flex;
+align-items: stretch;
+
+background: var(--color-surface);
+color: var(--color-text);
+
+border-top: 1px solid var(--color-border);
+
+box-shadow: var(--shadow-sm);
+
+box-sizing: border-box;
+
+transform: translateZ(0);
+-webkit-transform: translateZ(0);
+
+
+}
+
+/* =======================================================
+BOTTOM NAV ITEM
+======================================================= */
+
+.bottom-nav-item {
+position: relative;
+
+
+flex: 1;
+
+min-width: 0;
+height: 60px;
+
+padding: 5px 8px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+gap: 2px;
+
+border: 0;
+outline: 0;
+
+background: transparent;
+color: var(--color-text-secondary);
+
+font-family: inherit;
+font-size: 10px;
+font-weight: 600;
+
+text-decoration: none;
+
+cursor: pointer;
+
+transition:
+  color .2s ease,
+  background .2s ease;
+
+
+}
+
+/* =======================================================
+ICON
+======================================================= */
+
+.bottom-nav-item mat-icon {
+width: 21px;
+height: 21px;
+
+
+font-size: 21px;
+
+color: var(--color-text-secondary);
+
+transition:
+  color .2s ease,
+  transform .2s ease;
+
+
+}
+
+/* =======================================================
+HOVER
+======================================================= */
+
+.bottom-nav-item:hover {
+color: var(--color-primary);
+background: var(--color-surface-soft);
+}
+
+.bottom-nav-item:hover mat-icon {
+color: var(--color-primary);
+}
+
+/* =======================================================
+ACTIVE
+======================================================= */
+
+.bottom-nav-item.bottom-active {
+color: var(--color-primary);
+background: var(--color-surface-soft);
+}
+
+.bottom-nav-item.bottom-active mat-icon {
+color: var(--color-accent);
+}
+
+.bottom-nav-item.bottom-active::after {
+content: '';
+
+
+position: absolute;
+
+left: 25%;
+right: 25%;
+bottom: 0;
+
+height: 2px;
+
+background: var(--color-accent);
+
+border-radius: 4px 4px 0 0;
+
+
+}
+
+/* =======================================================
+OFFERS
+======================================================= */
+
+.bottom-offers {
+color: var(--color-sale);
+}
+
+.bottom-offers mat-icon {
+color: var(--color-sale);
+}
+
+/* =======================================================
+OFFER ICON
+======================================================= */
+
+.bottom-offer-icon {
+position: relative;
+
+
+width: 21px;
+height: 21px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+
+}
+
+.bottom-offer-icon mat-icon {
+width: 21px;
+height: 21px;
+
+
+font-size: 21px;
+
+
+}
+
+/* =======================================================
+SALE DOT
+======================================================= */
+
+.bottom-sale-dot {
+position: absolute;
+
+
+top: -5px;
+right: -7px;
+
+width: 12px;
+height: 12px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: var(--color-sale);
+color: #fff;
+
+font-size: 8px;
+font-weight: 800;
+
+border: 2px solid var(--color-surface);
+
+
+}
+
+/* =======================================================
+CONTENT SPACE
+======================================================= */
+
+.app-content {
+padding-bottom: 60px;
+}
+
+/* =======================================================
+WHATSAPP
+======================================================= */
+
+.whatsapp {
+bottom: 75px;
+}
+}
+
+/* =========================================================
+SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+.mobile-bottom-nav {
+height: 58px;
+}
+
+.bottom-nav-item {
+height: 58px;
+
+
+font-size: 9px;
+
+
+}
+
+.bottom-nav-item mat-icon {
+width: 20px;
+height: 20px;
+
+
+font-size: 20px;
+
+
+}
+
+.app-content {
+padding-bottom: 58px;
+}
 }

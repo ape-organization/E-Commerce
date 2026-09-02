@@ -1,0 +1,212 @@
+<div class="product-filters">
+
+
+  <!-- ====================================================
+       MOBILE HEADER
+       ==================================================== -->
+
+  <div class="mobile-filter-header">
+
+    <div class="mobile-filter-title">
+
+      <mat-icon>
+        filter_alt
+      </mat-icon>
+
+      <h2>
+        {{ 'COMMON.FILTER' | translate }}
+      </h2>
+
+    </div>
+
+  </div>
+
+
+  <!-- ====================================================
+       SEARCH
+       ==================================================== -->
+
+  <div class="filter-section">
+
+    <label>
+      {{ 'FILTER.PRODUCT' | translate }}
+    </label>
+
+    <div class="search-box">
+
+      <mat-icon>
+        search
+      </mat-icon>
+
+      <input
+        type="text"
+        [(ngModel)]="tempSearchName"
+        [placeholder]="
+          'FILTER.SEARCH_PRODUCT' | translate
+        "
+      />
+
+    </div>
+
+  </div>
+
+
+  <!-- ====================================================
+       CATEGORY
+       ==================================================== -->
+
+  <div class="filter-section">
+
+    <label>
+      {{ 'FILTER.CATEGORY' | translate }}
+    </label>
+
+    <select
+      [(ngModel)]="tempCategoryId"
+      (ngModelChange)="onCategoryChange()"
+    >
+
+      <option [ngValue]="null">
+        {{ 'FILTER.ALL_CATEGORIES' | translate }}
+      </option>
+
+      <option
+        *ngFor="let category of categories"
+        [ngValue]="category.id"
+      >
+
+        {{ getCategoryName(category) }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- ====================================================
+       SUBCATEGORY
+       ==================================================== -->
+
+  <div
+    class="filter-section"
+    *ngIf="availableSubCategories.length > 0"
+  >
+
+    <label>
+      {{ 'FILTER.SUBCATEGORY' | translate }}
+    </label>
+
+    <select
+      [(ngModel)]="tempSubCategoryId"
+    >
+
+      <option [ngValue]="null">
+        {{ 'FILTER.ALL_SUBCATEGORIES' | translate }}
+      </option>
+
+      <option
+        *ngFor="
+          let subCategory of
+          availableSubCategories
+        "
+        [ngValue]="subCategory.id"
+      >
+
+        {{ getSubCategoryName(subCategory) }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- ====================================================
+       BRAND
+       ==================================================== -->
+
+  <div class="filter-section">
+
+    <label>
+      {{ 'FILTER.BRAND' | translate }}
+    </label>
+
+    <select
+      [(ngModel)]="tempBrandId"
+    >
+
+      <option [ngValue]="null">
+        {{ 'FILTER.ALL_BRANDS' | translate }}
+      </option>
+
+      <option
+        *ngFor="let brand of brands"
+        [ngValue]="brand.id"
+      >
+
+        {{ getBrandName(brand) }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <!-- ====================================================
+       OFFERS
+       ==================================================== -->
+
+  <label class="offer-filter">
+
+    <input
+      type="checkbox"
+      [(ngModel)]="tempOffers"
+    />
+
+    <span>
+      {{ 'FILTER.OFFERS' | translate }}
+    </span>
+
+  </label>
+
+
+  <!-- ====================================================
+       ACTIONS
+       ==================================================== -->
+
+  <div class="filter-actions">
+
+    <button
+      type="button"
+      class="clear-button"
+      (click)="clearFilters()"
+    >
+
+      <mat-icon>
+        close
+      </mat-icon>
+
+      {{ 'COMMON.CLEAR' | translate }}
+
+    </button>
+
+
+    <button
+      type="button"
+      class="apply-button"
+      (click)="applyFilters()"
+    >
+
+      <mat-icon>
+        filter_alt
+      </mat-icon>
+
+      {{ 'COMMON.APPLY' | translate }}
+
+    </button>
+
+  </div>
+
+</div>

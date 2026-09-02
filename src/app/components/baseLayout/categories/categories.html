@@ -1,84 +1,89 @@
+<div class="section-heading">
 
-    <div class="section-heading">
+  <span class="section-small-title">
+    {{ 'CATEGORY.CATEGORY' | translate }}
+  </span>
 
-      <span class="section-small-title">
-        {{'CATEGORY.CATEGORY' | translate}}
-      </span>
+  <h2>
+    {{ 'CATEGORY.Shop_By_Category' | translate }}
+  </h2>
 
-      <h2>
-                {{'CATEGORY.Shop_By_Category' | translate}}
+  <div class="title-line">
+    <span>✦</span>
+  </div>
 
-        
-      </h2>
-
-      <div class="title-line">
-        <span>✦</span>
-      </div>
-
-     <!--  <p>
-        Explore our beauty collection
-      </p> -->
-
-    </div>
+</div>
 
 
-    <!-- CATEGORY CAROUSEL -->
+<!-- CATEGORY CAROUSEL -->
 
-    <div class="category-carousel">
+<div class="category-carousel">
 
-      <!-- LEFT -->
+  <!-- LEFT -->
 
-    <button
-  type="button"
-  class="carousel-arrow category-arrow category-prev"
-  (click)="scrollCategories('left')"
-  aria-label="Previous categories"
->
-  <mat-icon>chevron_left</mat-icon>
-</button>
+  <button
+    type="button"
+    class="carousel-arrow category-arrow category-prev"
+    (click)="scrollCategories('left')"
+    [attr.aria-label]="
+      languageService.isArabic()
+        ? 'الفئات السابقة'
+        : 'Previous categories'
+    "
+  >
+    <mat-icon>
+      chevron_left
+    </mat-icon>
+  </button>
 
 
-      <!-- CATEGORY LIST -->
+  <!-- CATEGORY LIST -->
+
+  <div
+    class="horizontal-track category-track"
+    #categoryTrack
+  >
 
     <div
-  class="horizontal-track category-track"
-  #categoryTrack
->
+      class="category-card"
+      *ngFor="let category of categories()"
+      (click)="selectCategory(category)"
+    >
 
-        <div
-          class="category-card"
-          *ngFor="let category of categories()"
-          (click)="selectCategory(category)"
-        >
+      <div class="category-image">
 
-          <div class="category-image">
-
-            <img
-              [src]="getCategoryImage(category)"
-              [alt]="category.name"
-              loading="lazy"
-            />
-
-          </div>
-
-          <h3>
-            {{ category.name }}
-          </h3>
-
-        </div>
+        <img
+          [src]="getCategoryImage(category)"
+          [alt]="getCategoryName(category)"
+          loading="lazy"
+        />
 
       </div>
 
-
-      <!-- RIGHT -->
-
-     <button
-  type="button"
-  class="carousel-arrow category-arrow category-next"
-  (click)="scrollCategories('right')"
-  aria-label="Next categories"
->
-  <mat-icon>chevron_right</mat-icon>
-</button>
+      <h3>
+        {{ getCategoryName(category) }}
+      </h3>
 
     </div>
+
+  </div>
+
+
+  <!-- RIGHT -->
+
+  <button
+    type="button"
+    class="carousel-arrow category-arrow category-next"
+    (click)="scrollCategories('right')"
+    [attr.aria-label]="
+      languageService.isArabic()
+        ? 'الفئات التالية'
+        : 'Next categories'
+    "
+  >
+    <mat-icon>
+      chevron_right
+    </mat-icon>
+  </button>
+
+</div>

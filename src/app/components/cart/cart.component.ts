@@ -50,7 +50,14 @@ import {
 import {
   environment
 } from '../../../environments/environment';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
+  LanguageService
+} from '../../services/language.service';
 
 
 @Component({
@@ -62,7 +69,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     CommonModule,
     FormsModule,
     MatButtonModule,
-    MatIconModule,TranslatePipe
+    MatIconModule,
+    TranslatePipe
   ],
 
   templateUrl: './cart.component.html',
@@ -110,7 +118,9 @@ export class CartComponent
 
     private cdr: ChangeDetectorRef,
 
-    private router: Router
+    private router: Router,
+
+    public languageService: LanguageService
 
   ) {}
 
@@ -153,6 +163,35 @@ export class CartComponent
     this.destroy$.next();
 
     this.destroy$.complete();
+
+  }
+
+
+  // ==========================================================
+  // PRODUCT NAME
+  // ==========================================================
+
+  getProductName(
+    product: Product
+  ): string {
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        product?.nameAr?.trim() ||
+        product?.nameEn ||
+        'Product'
+      );
+
+    }
+
+    return (
+      product?.nameEn?.trim() ||
+      product?.nameAr ||
+      'Product'
+    );
 
   }
 
@@ -251,9 +290,47 @@ export class CartComponent
     product: Product
   ): string {
 
+    const brand =
+      product?.brand;
+
+    if (brand) {
+
+      if (
+        this.languageService.isArabic()
+      ) {
+
+        return (
+          brand.nameAr?.trim() ||
+          brand.nameEn ||
+          'BEAUTY'
+        );
+
+      }
+
+      return (
+        brand.nameEn?.trim() ||
+        brand.nameAr ||
+        'BEAUTY'
+      );
+
+    }
+
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        product?.brand?.nameAr?.trim() ||
+        product?.brand?.nameEn ||
+        'BEAUTY'
+      );
+
+    }
+
     return (
-      product.brand?.name ||
-      product.brandName ||
+      product?.brand?.nameAr.trim() ||
+      product?.brand?.nameEn ||
       'BEAUTY'
     );
 
@@ -268,9 +345,31 @@ export class CartComponent
     product: Product
   ): string {
 
+    const subCategory =
+      product?.subCategories?.[0];
+
+    if (!subCategory) {
+
+      return 'BEAUTY';
+
+    }
+
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        subCategory.categoryNameAr?.trim() ||
+        subCategory.categoryNameEn ||
+        'BEAUTY'
+      );
+
+    }
+
     return (
-      product.subCategories?.[0]
-        ?.categoryName ||
+      subCategory.categoryNameEn?.trim() ||
+      subCategory.categoryNameAr ||
       'BEAUTY'
     );
 
@@ -285,9 +384,31 @@ export class CartComponent
     product: Product
   ): string {
 
+    const subCategory =
+      product?.subCategories?.[0];
+
+    if (!subCategory) {
+
+      return 'Collection';
+
+    }
+
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        subCategory.nameAr?.trim() ||
+        subCategory.nameEn ||
+        'Collection'
+      );
+
+    }
+
     return (
-      product.subCategories?.[0]
-        ?.name ||
+      subCategory.nameEn?.trim() ||
+      subCategory.nameAr ||
       'Collection'
     );
 
@@ -375,10 +496,10 @@ export class CartComponent
           data: {
 
             title:
-              'Clear Cart',
+              'CART.CLEAR_CART',
 
             message:
-              'Are you sure you want to clear the cart?'
+              'CART.CLEAR_CART_CONFIRM'
 
           }
 
@@ -392,7 +513,9 @@ export class CartComponent
       .subscribe(result => {
 
         if (!result) {
+
           return;
+
         }
 
 

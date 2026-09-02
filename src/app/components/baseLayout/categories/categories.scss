@@ -59,7 +59,7 @@
    ============================================================ */
 
 .category-card {
-  flex: 0 0 190px;
+  flex: 0 0 140px;
 
   text-align: center;
 
@@ -69,24 +69,25 @@
 }
 
 .category-image {
-  width: 190px;
-  height: 190px;
+  width: 140px;
+  height: 140px;
 
   overflow: hidden;
 
-  border: 2px solid transparent;
+ /*  border: 2px solid transparent; */
   border-radius: 50%;
 
-  background: var(--color-surface-soft);
-
+  /* background: var(--color-surface-soft); */
+/*   box-shadow: var(--shadow-sm); */
+background: transparent;
   transition:
     border-color 0.25s ease,
     transform 0.25s ease;
 }
 
 .category-card:hover .category-image {
-  border-color: var(--color-accent);
-
+/*   border-color: var(--color-accent);
+ */
   transform: translateY(-5px);
 }
 

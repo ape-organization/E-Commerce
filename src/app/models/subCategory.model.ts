@@ -1,6 +1,14 @@
 export interface SubCategory {
   id: number;
-  name: string;
+   nameEn: string;
+  nameAr: string;
   categoryId: number;
-  categoryName: string;
+  categoryNameEn: string;
+  categoryNameAr: string;
+}
+export interface SubCategoryFilter {
+  id: number;
+  nameEn: string;
+  nameAr: string;
+  categoryId?: number;
 }

@@ -44,7 +44,14 @@ import {
 import {
   environment
 } from '../../../environments/environment';
-import { TranslatePipe } from '@ngx-translate/core';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
+  LanguageService
+} from '../../services/language.service';
 
 
 @Component({
@@ -84,6 +91,9 @@ export class Checkout
 
   private readonly cartService =
     inject(CartService);
+
+  public readonly languageService =
+    inject(LanguageService);
 
 
   // ==========================================================
@@ -151,6 +161,7 @@ export class Checkout
           Validators.pattern(
             /^01[0125][0-9]{8}$/
           )
+
         ]
 
       ],
@@ -218,6 +229,46 @@ export class Checkout
           items;
 
       });
+
+  }
+
+
+  // ==========================================================
+  // PRODUCT NAME
+  // ==========================================================
+
+  getProductName(
+    item: CartItem
+  ): string {
+
+    const product =
+      item?.product;
+
+    if (!product) {
+
+      return 'Product';
+
+    }
+
+
+    if (
+      this.languageService.isArabic()
+    ) {
+
+      return (
+        product.nameAr?.trim() ||
+        product.nameEn ||
+        'Product'
+      );
+
+    }
+
+
+    return (
+      product.nameEn?.trim() ||
+      product.nameAr ||
+      'Product'
+    );
 
   }
 
@@ -500,10 +551,6 @@ export class Checkout
 
   placeOrder(): void {
 
-    // --------------------------------------------------------
-    // FORM VALIDATION
-    // --------------------------------------------------------
-
     if (
       this.checkoutForm.invalid
     ) {
@@ -515,10 +562,6 @@ export class Checkout
     }
 
 
-    // --------------------------------------------------------
-    // PREVENT DOUBLE SUBMIT
-    // --------------------------------------------------------
-
     if (
       this.isSubmitting()
     ) {
@@ -527,10 +570,6 @@ export class Checkout
 
     }
 
-
-    // --------------------------------------------------------
-    // CART VALIDATION
-    // --------------------------------------------------------
 
     if (
       this.cartItems.length === 0
@@ -548,18 +587,6 @@ export class Checkout
 
     }
 
-
-    // --------------------------------------------------------
-    // GET ORDER ITEMS
-    // --------------------------------------------------------
-    //
-    // IMPORTANT:
-    //
-    // We get IDs directly from CartService.
-    //
-    // We DO NOT read localStorage here.
-    //
-    // --------------------------------------------------------
 
     const items =
       this.cartService.getOrderItems();
@@ -582,10 +609,6 @@ export class Checkout
     }
 
 
-    // --------------------------------------------------------
-    // START SUBMIT
-    // --------------------------------------------------------
-
     this.isSubmitting.set(
       true
     );
@@ -602,10 +625,6 @@ export class Checkout
         form.apartment
       );
 
-
-    // ========================================================
-    // EXACT CreateOrderDto STRUCTURE
-    // ========================================================
 
     const request = {
 
@@ -626,25 +645,16 @@ export class Checkout
       },
 
       items:
-
         items
 
     };
 
-
-    // --------------------------------------------------------
-    // DEBUG
-    // --------------------------------------------------------
 
     console.log(
       'Create order request:',
       request
     );
 
-
-    // --------------------------------------------------------
-    // SEND TO API
-    // --------------------------------------------------------
 
     this.orderService
       .createOrder(request)
@@ -658,10 +668,6 @@ export class Checkout
             response
           );
 
-
-          // --------------------------------------------------
-          // ORDER SUCCESS
-          // --------------------------------------------------
 
           this.cartService
             .clearCart();

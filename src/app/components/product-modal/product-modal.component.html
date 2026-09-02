@@ -12,8 +12,8 @@
     >
 
       <img
-        [src]="getImageUrl(product?.imageUrl)"
-        [alt]="product?.name || 'Product'"
+        [src]="getImageUrl(product.imageUrl)"
+        [alt]="getProductName()"
       />
 
       <!-- OUT OF STOCK OVERLAY -->
@@ -22,9 +22,11 @@
         class="out-of-stock-overlay"
         *ngIf="isOutOfStock"
       >
+
         <span>
-          {{'PRODUCT.OUT_OF_STOCK'|translate}}
+          {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
         </span>
+
       </div>
 
     </div>
@@ -50,7 +52,7 @@
       *ngIf="hasDiscount && !isOutOfStock"
     >
 
-      -{{ product?.discountPercentage }}%
+      -{{ product.discountPercentage }}%
 
     </div>
 
@@ -62,7 +64,7 @@
       *ngIf="isOutOfStock"
     >
 
-      {{'PRODUCT.OUT_OF_STOCK'|translate}}
+      {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
 
     </div>
 
@@ -95,7 +97,7 @@
 
       <h2 class="product-name">
 
-        {{ product?.name }}
+        {{ getProductName() }}
 
       </h2>
 
@@ -112,9 +114,7 @@
 
 
         <ng-container
-          *ngIf="
-            product?.subCategories?.length
-          "
+          *ngIf="product.subCategories.length"
         >
 
           <span class="separator">
@@ -129,7 +129,7 @@
             "
           >
 
-            {{ sub?.name }}
+            {{ getSubCategoryName(sub) }}
 
             <span *ngIf="!last">
               ,
@@ -154,10 +154,10 @@
 
     <p
       class="product-description"
-      *ngIf="product?.description"
+      *ngIf="getProductDescription()"
     >
 
-      {{ product.description }}
+      {{ getProductDescription() }}
 
     </p>
 
@@ -169,10 +169,7 @@
 
     <div
       class="offer-box"
-      *ngIf="
-        hasDiscount ||
-        product?.offer
-      "
+      *ngIf="hasDiscount"
     >
 
       <div class="offer-icon">
@@ -183,8 +180,7 @@
       <div class="offer-content">
 
         <span class="offer-title">
-          {{'PRODUCT.SPECIAL_OFFER'|translate}}
-          
+          {{ 'PRODUCT.SPECIAL_OFFER' | translate }}
         </span>
 
 
@@ -193,20 +189,7 @@
           *ngIf="hasDiscount"
         >
 
-          {{ product?.discountPercentage }}% OFF
-
-        </span>
-
-
-        <span
-          class="offer-text"
-          *ngIf="
-            !hasDiscount &&
-            product?.offer
-          "
-        >
-
-          {{ product.offer }}
+          {{ product.discountPercentage }}% OFF
 
         </span>
 
@@ -231,7 +214,7 @@
         </span>
 
         <span class="currency">
-          {{'COMMON.EGP' |translate}}
+          {{ 'COMMON.EGP' | translate }}
         </span>
 
       </div>
@@ -249,7 +232,7 @@
         </span>
 
         <span class="old-currency">
-           {{'COMMON.EGP' |translate}}
+          {{ 'COMMON.EGP' | translate }}
         </span>
 
       </div>
@@ -272,8 +255,7 @@
       </mat-icon>
 
       <span>
-         {{'PRODUCT.PRODUCT_OUT' |translate}}
-      
+        {{ 'PRODUCT.PRODUCT_OUT' | translate }}
       </span>
 
     </div>
@@ -290,13 +272,11 @@
     >
 
       <label for="quantity">
-        {{'PRODUCT.QUANTITY' |translate}}
+        {{ 'PRODUCT.QUANTITY' | translate }}
       </label>
 
 
       <div class="quantity-control">
-
-
 
         <input
           id="quantity"
@@ -311,8 +291,6 @@
           aria-label="Quantity"
         />
 
-
-
       </div>
 
 
@@ -321,7 +299,8 @@
         *ngIf="stock > 0"
       >
 
-        {{ stock }} {{'PRODUCT.AVAILABLE' |translate}}
+        {{ stock }}
+        {{ 'PRODUCT.AVAILABLE' | translate }}
 
       </small>
 
@@ -350,7 +329,7 @@
         </mat-icon>
 
         <span>
-         {{'PRODUCT.ADD_TO_CART' |translate}}
+          {{ 'PRODUCT.ADD_TO_CART' | translate }}
         </span>
 
       </button>
@@ -365,7 +344,7 @@
         (click)="closeDialog()"
       >
 
-        {{'COMMON.CLOSE' |translate}}
+        {{ 'COMMON.CLOSE' | translate }}
 
       </button>
 
