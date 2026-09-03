@@ -103,6 +103,15 @@ export class HeaderComponent implements OnInit {
 
 
   // ==========================================================
+  // SEARCH
+  // ==========================================================
+
+  searchTerm = signal('');
+
+  mobileSearchOpen = signal(false);
+
+
+  // ==========================================================
   // MENU STATE
   // ==========================================================
 
@@ -158,6 +167,72 @@ export class HeaderComponent implements OnInit {
     this.loadBrands();
 
     this.loadCartCount();
+
+  }
+
+
+  // ==========================================================
+  // SEARCH
+  // ==========================================================
+
+  searchProducts(): void {
+
+    const search =
+      this.searchTerm().trim();
+
+    this.closeAllMenus();
+
+    if (!search) {
+
+      this.router.navigate(
+        ['/products'],
+        {
+          queryParams: {}
+        }
+      );
+
+      return;
+
+    }
+
+    /*
+     * Only send the search term through
+     * the URL.
+     *
+     * ProductListComponent will call
+     * the API exactly once.
+     */
+
+    this.router.navigate(
+      ['/products'],
+      {
+        queryParams: {
+          search
+        }
+      }
+    );
+
+    this.mobileSearchOpen.set(false);
+
+  }
+
+
+  // ==========================================================
+  // MOBILE SEARCH
+  // ==========================================================
+
+  toggleMobileSearch(): void {
+
+    this.mobileSearchOpen.update(
+      open => !open
+    );
+
+  }
+
+
+  closeMobileSearch(): void {
+
+    this.mobileSearchOpen.set(false);
 
   }
 
@@ -611,6 +686,8 @@ export class HeaderComponent implements OnInit {
     ) {
 
       this.closeAllMenus();
+
+      this.closeMobileSearch();
 
     }
 

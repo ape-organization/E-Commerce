@@ -36,19 +36,33 @@
 
     <!-- ADD TO CART -->
 
-    <button
-      type="button"
-      class="add-cart-button"
-      [disabled]="!product.isInStock"
-      (click)="addToCart($event)"
-      [attr.aria-label]="'PRODUCT.ADD_TO_CART' | translate"
-    >
+<!--     <div class="cart-action">
+ -->
+      <button
+        type="button"
+        class="add-cart-button"
+        [disabled]="!product.isInStock"
+        (click)="addToCart($event)"
+        [attr.aria-label]="'PRODUCT.ADD_TO_CART' | translate"
+      >
 
-      <mat-icon>
-        shopping_cart
-      </mat-icon>
+        <mat-icon>
+          shopping_cart
+        </mat-icon>
 
-    </button>
+      </button>
+
+
+      <!-- ALREADY IN CART MESSAGE -->
+
+      <span
+        class="already-in-cart-message"
+        *ngIf="showAlreadyInCartMessage"
+      >
+        {{ 'PRODUCT.ALREADY_IN_CART' | translate }}
+      </span>
+
+   <!--  </div> -->
 
   </div>
 

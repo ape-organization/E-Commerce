@@ -1,5 +1,6 @@
 {
 "HEADER": {
+
   "TITLE":"Cosmetics",
 "HOME": "Home",
 "PRODUCTS": "products",
@@ -15,7 +16,8 @@
 "BRANDS": "Brands",
 "LANGUAGE": "Language",
 "ENGLISH": "English",
-"ARABIC": "Arabic"
+"ARABIC": "Arabic",
+"SEARCH_PRODUCTS": "Search products..."
 },
 
 "HOME": {
@@ -77,6 +79,7 @@
 "SEARCH_PLACEHOLDER":"Search product...",
 "NO_DESCRIPTION": "No description available",
 " Show_All_Products":" Show All Products",
+"ALREADY_IN_CART": "Product already in cart",
 "PRODUCT_OUT":"This product is currently out of stock"
 },
 
@@ -109,6 +112,8 @@
 "PRODUCT":"Product",
 "CATEGORY": "Category",
 "All_Categories":"All Categories",
+"ALL_SUBCATEGORIES":"All Subcategories",
+"ALL_BRANDS":"All Brands",
 "SUBCATEGORY": "Subcategory",
 "BRAND": "Brand",
 "OFFERS": "Offers",

@@ -28,7 +28,6 @@ descriptionAr?: string | null;
   subCategories: SubCategory[];
 }
 export interface ProductFilterValue {
-  searchName: string;
   categoryId: number | null;
   subCategoryId: number | null;
   brandId: number | null;

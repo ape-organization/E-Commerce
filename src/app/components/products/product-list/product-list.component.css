@@ -184,7 +184,29 @@
 
   font-size: 15px;
 }
+/* ==========================================================
+   SEARCH CHIP
+   ========================================================== */
 
+.search-chip {
+  color: var(--color-accent);
+  border-color: var(--color-accent-light);
+}
+
+.search-chip mat-icon {
+  width: 15px;
+  height: 15px;
+
+  font-size: 15px;
+}
+
+.search-chip strong {
+  max-width: 220px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .remove-filter {
   width: 20px;
   height: 20px;

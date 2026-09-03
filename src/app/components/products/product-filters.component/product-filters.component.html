@@ -22,33 +22,7 @@
   </div>
 
 
-  <!-- ====================================================
-       SEARCH
-       ==================================================== -->
-
-  <div class="filter-section">
-
-    <label>
-      {{ 'FILTER.PRODUCT' | translate }}
-    </label>
-
-    <div class="search-box">
-
-      <mat-icon>
-        search
-      </mat-icon>
-
-      <input
-        type="text"
-        [(ngModel)]="tempSearchName"
-        [placeholder]="
-          'FILTER.SEARCH_PRODUCT' | translate
-        "
-      />
-
-    </div>
-
-  </div>
+ 
 
 
   <!-- ====================================================
@@ -67,7 +41,7 @@
     >
 
       <option [ngValue]="null">
-        {{ 'FILTER.ALL_CATEGORIES' | translate }}
+        {{ 'FILTER.All_Categories' | translate }}
       </option>
 
       <option

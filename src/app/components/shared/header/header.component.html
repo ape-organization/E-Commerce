@@ -8,13 +8,61 @@
     <!-- LOGO -->
     <a routerLink="/" class="logo">
       <span class="logo-symbol">✦</span>
+
       <span class="logo-text">
         {{ 'HEADER.TITLE' | translate }}
       </span>
     </a>
 
+
+    <!-- DESKTOP SEARCH -->
+    <form
+      class="desktop-search"
+      (submit)="$event.preventDefault(); searchProducts()">
+
+      <mat-icon>
+        search
+      </mat-icon>
+
+      <input
+        type="search"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        [placeholder]="'HEADER.SEARCH_PRODUCTS' | translate"
+        autocomplete="off">
+
+      @if (searchTerm()) {
+
+        <button
+          type="button"
+          class="search-clear-button"
+          (click)="searchTerm.set('')">
+
+          <mat-icon>
+            close
+          </mat-icon>
+
+        </button>
+
+      }
+
+      <button
+        type="submit"
+        class="search-submit-button"
+        [attr.aria-label]="'HEADER.SEARCH_PRODUCTS' | translate">
+
+        <mat-icon>
+          search
+        </mat-icon>
+
+      </button>
+
+    </form>
+
+
     <!-- DESKTOP NAVIGATION -->
     <div class="headSection">
+
       <nav class="desktop-nav">
 
         <!-- HOME -->
@@ -22,28 +70,34 @@
           routerLink="/"
           class="nav-link"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
+          [routerLinkActiveOptions]="{ exact: true }">
+
           {{ 'HEADER.HOME' | translate }}
+
         </a>
+
 
         <!-- PRODUCTS -->
         <a
           routerLink="/products"
           class="nav-link"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
+          [routerLinkActiveOptions]="{ exact: true }">
+
           {{ 'HEADER.PRODUCTS' | translate }}
+
         </a>
+
 
         <!-- OFFERS -->
         <button
           type="button"
           class="nav-link offers-link"
-          (click)="selectOffers()"
-        >
-          <mat-icon>local_offer</mat-icon>
+          (click)="selectOffers()">
+
+          <mat-icon>
+            local_offer
+          </mat-icon>
 
           <span>
             {{ 'HEADER.OFFERS' | translate }}
@@ -52,20 +106,21 @@
           <span class="desktop-offer-badge">
             {{ 'HEADER.SALE' | translate }}
           </span>
+
         </button>
+
 
         <!-- CATEGORIES -->
         <div
           class="nav-dropdown"
           (mouseenter)="openCategoryMenu()"
-          (mouseleave)="closeCategoryMenu()"
-        >
+          (mouseleave)="closeCategoryMenu()">
 
           <button
             type="button"
             class="nav-link dropdown-trigger"
-            (click)="toggleCategoryMenu()"
-          >
+            (click)="toggleCategoryMenu()">
+
             <span>
               {{ 'HEADER.CATEGORIES' | translate }}
             </span>
@@ -77,17 +132,20 @@
                   : 'keyboard_arrow_down'
               }}
             </mat-icon>
+
           </button>
+
 
           @if (categoryMenuOpen()) {
 
             <div
               class="dropdown-menu category-dropdown"
-              (click)="$event.stopPropagation()"
-            >
+              (click)="$event.stopPropagation()">
 
               <div class="dropdown-header">
+
                 <div>
+
                   <span class="dropdown-title">
                     {{ 'HEADER.CATEGORIES' | translate }}
                   </span>
@@ -95,14 +153,20 @@
                   <small>
                     {{ 'HEADER.Explore_our_collection' | translate }}
                   </small>
+
                 </div>
 
-                <mat-icon>category</mat-icon>
+                <mat-icon>
+                  category
+                </mat-icon>
+
               </div>
+
 
               @if (isLoadingCategories()) {
 
                 <div class="menu-loading">
+
                   <mat-icon class="loading-icon">
                     sync
                   </mat-icon>
@@ -110,9 +174,11 @@
                   <span>
                     {{ 'COMMON.LOADING' | translate }}
                   </span>
+
                 </div>
 
               }
+
 
               @if (categoryError()) {
 
@@ -121,6 +187,7 @@
                 </div>
 
               }
+
 
               @if (
                 !isLoadingCategories() &&
@@ -139,8 +206,7 @@
                       <button
                         type="button"
                         class="category-button"
-                        (click)="toggleCategory(category.id)"
-                      >
+                        (click)="toggleCategory(category.id)">
 
                         <span class="category-name">
                           {{ getCategoryName(category) }}
@@ -162,6 +228,7 @@
 
                       </button>
 
+
                       @if (
                         expandedCategoryId() === category.id &&
                         (category.subCategories?.length ?? 0) > 0
@@ -177,8 +244,7 @@
                             <button
                               type="button"
                               class="subcategory-button"
-                              (click)="selectSubCategory(subCategory.id)"
-                            >
+                              (click)="selectSubCategory(subCategory.id)">
 
                               <span class="subcategory-dot">
                                 •
@@ -200,6 +266,7 @@
 
                   }
 
+
                   @if (categories().length === 0) {
 
                     <div class="menu-empty">
@@ -218,18 +285,17 @@
 
         </div>
 
+
         <!-- BRANDS -->
         <div
           class="nav-dropdown"
           (mouseenter)="openBrandMenu()"
-          (mouseleave)="closeBrandMenu()"
-        >
+          (mouseleave)="closeBrandMenu()">
 
           <button
             type="button"
             class="nav-link dropdown-trigger"
-            (click)="toggleBrandMenu()"
-          >
+            (click)="toggleBrandMenu()">
 
             <span>
               {{ 'HEADER.BRANDS' | translate }}
@@ -245,12 +311,12 @@
 
           </button>
 
+
           @if (brandMenuOpen()) {
 
             <div
               class="dropdown-menu brand-dropdown"
-              (click)="$event.stopPropagation()"
-            >
+              (click)="$event.stopPropagation()">
 
               <div class="dropdown-header">
 
@@ -266,9 +332,12 @@
 
                 </div>
 
-                <mat-icon>sell</mat-icon>
+                <mat-icon>
+                  sell
+                </mat-icon>
 
               </div>
+
 
               @if (isLoadingBrands()) {
 
@@ -286,6 +355,7 @@
 
               }
 
+
               @if (brandError()) {
 
                 <div class="menu-error">
@@ -293,6 +363,7 @@
                 </div>
 
               }
+
 
               @if (
                 !isLoadingBrands() &&
@@ -309,14 +380,16 @@
                     <button
                       type="button"
                       class="brand-button"
-                      (click)="selectBrand(brand.id)"
-                    >
+                      (click)="selectBrand(brand.id)">
+
                       <span>
                         {{ getBrandName(brand) }}
                       </span>
+
                     </button>
 
                   }
+
 
                   @if (brands().length === 0) {
 
@@ -338,13 +411,14 @@
 
       </nav>
 
+
       <!-- CART -->
       <div class="header-actions">
 
         <a
           routerLink="/cart"
-          class="cart-button"
-        >
+          class="cart-button">
+
           <mat-icon>
             shopping_bag
           </mat-icon>
@@ -352,9 +426,11 @@
           <span class="cart-count">
             {{ cartCount() }}
           </span>
+
         </a>
 
       </div>
+
 
       <!-- LANGUAGE -->
       <div class="header-actions">
@@ -362,8 +438,7 @@
         <button
           type="button"
           class="language-switcher"
-          (click)="languageService.toggleLanguage()"
-        >
+          (click)="languageService.toggleLanguage()">
 
           <mat-icon>
             language
@@ -394,15 +469,19 @@
     <button
       type="button"
       class="menu-button"
-      (click)="openMobileMenu()"
-    >
+      (click)="openMobileMenu()">
+
       <mat-icon>
         menu
       </mat-icon>
+
     </button>
 
+
     <!-- LOGO -->
-    <a routerLink="/" class="logo">
+    <a
+      routerLink="/"
+      class="logo">
 
       <span class="logo-symbol">
         ✦
@@ -414,11 +493,24 @@
 
     </a>
 
+
+    <!-- MOBILE SEARCH -->
+    <button
+      type="button"
+      class="mobile-search-button"
+      (click)="toggleMobileSearch()">
+
+      <mat-icon>
+        {{ mobileSearchOpen() ? 'close' : 'search' }}
+      </mat-icon>
+
+    </button>
+
+
     <!-- CART -->
     <a
       routerLink="/cart"
-      class="cart-button"
-    >
+      class="cart-button">
 
       <mat-icon>
         shopping_bag
@@ -430,12 +522,12 @@
 
     </a>
 
+
     <!-- LANGUAGE -->
     <button
       type="button"
       class="language-switcher"
-      (click)="languageService.toggleLanguage()"
-    >
+      (click)="languageService.toggleLanguage()">
 
       <mat-icon>
         language
@@ -453,6 +545,60 @@
 
   </div>
 
+
+  <!-- ==================== MOBILE SEARCH ==================== -->
+
+  @if (mobileSearchOpen()) {
+
+    <form
+      class="mobile-search"
+      (submit)="$event.preventDefault(); searchProducts()">
+
+      <div class="mobile-search-box">
+
+        <mat-icon>
+          search
+        </mat-icon>
+
+        <input
+          type="search"
+          [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value)"
+          [placeholder]="'HEADER.SEARCH_PRODUCTS' | translate"
+          autocomplete="off">
+
+        @if (searchTerm()) {
+
+          <button
+            type="button"
+            class="search-clear-button"
+            (click)="searchTerm.set('')">
+
+            <mat-icon>
+              close
+            </mat-icon>
+
+          </button>
+
+        }
+
+        <button
+          type="submit"
+          class="search-submit-button"
+          [attr.aria-label]="'HEADER.SEARCH_PRODUCTS' | translate">
+
+          <mat-icon>
+            search
+          </mat-icon>
+
+        </button>
+
+      </div>
+
+    </form>
+
+  }
+
 </header>
 
 
@@ -463,8 +609,8 @@
   <!-- OVERLAY -->
   <div
     class="sidebar-overlay"
-    (click)="closeMobileMenu()"
-  ></div>
+    (click)="closeMobileMenu()">
+  </div>
 
 
   <!-- SIDEBAR -->
@@ -488,11 +634,12 @@
       <button
         type="button"
         class="close-button"
-        (click)="closeMobileMenu()"
-      >
+        (click)="closeMobileMenu()">
+
         <mat-icon>
           close
         </mat-icon>
+
       </button>
 
     </div>
@@ -505,8 +652,7 @@
       <a
         routerLink="/"
         class="mobile-nav-link"
-        (click)="closeMobileMenu()"
-      >
+        (click)="closeMobileMenu()">
 
         <div class="mobile-link-content">
 
@@ -527,8 +673,7 @@
       <button
         type="button"
         class="mobile-nav-link mobile-offers"
-        (click)="selectOffers()"
-      >
+        (click)="selectOffers()">
 
         <div class="mobile-link-content">
 
@@ -553,8 +698,7 @@
       <button
         type="button"
         class="mobile-nav-link"
-        (click)="toggleCategoryMenu()"
-      >
+        (click)="toggleCategoryMenu()">
 
         <div class="mobile-link-content">
 
@@ -600,6 +744,7 @@
 
           }
 
+
           @if (categoryError()) {
 
             <div class="mobile-error">
@@ -607,6 +752,7 @@
             </div>
 
           }
+
 
           @if (
             !isLoadingCategories() &&
@@ -623,8 +769,7 @@
                 <button
                   type="button"
                   class="mobile-category-button"
-                  (click)="toggleCategory(category.id)"
-                >
+                  (click)="toggleCategory(category.id)">
 
                   <span>
                     {{ getCategoryName(category) }}
@@ -663,10 +808,11 @@
                       <button
                         type="button"
                         class="mobile-subcategory"
-                        (click)="selectSubCategory(subCategory.id)"
-                      >
+                        (click)="selectSubCategory(subCategory.id)">
 
-                        <span>•</span>
+                        <span>
+                          •
+                        </span>
 
                         <span>
                           {{ getSubCategoryName(subCategory) }}
@@ -695,8 +841,7 @@
       <button
         type="button"
         class="mobile-nav-link"
-        (click)="toggleBrandMenu()"
-      >
+        (click)="toggleBrandMenu()">
 
         <div class="mobile-link-content">
 
@@ -742,6 +887,7 @@
 
           }
 
+
           @if (brandError()) {
 
             <div class="mobile-error">
@@ -749,6 +895,7 @@
             </div>
 
           }
+
 
           @if (
             !isLoadingBrands() &&
@@ -763,14 +910,16 @@
               <button
                 type="button"
                 class="mobile-brand"
-                (click)="selectBrand(brand.id)"
-              >
+                (click)="selectBrand(brand.id)">
+
                 <span>
                   {{ getBrandName(brand) }}
                 </span>
+
               </button>
 
             }
+
 
             @if (brands().length === 0) {
 
@@ -791,8 +940,7 @@
       <a
         routerLink="/cart"
         class="mobile-nav-link"
-        (click)="closeMobileMenu()"
-      >
+        (click)="closeMobileMenu()">
 
         <div class="mobile-link-content">
 

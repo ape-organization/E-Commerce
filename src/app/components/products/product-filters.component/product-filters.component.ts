@@ -59,9 +59,6 @@ export class ProductFiltersComponent
   brands: BrandFilter[] = [];
 
   @Input()
-  searchName = '';
-
-  @Input()
   selectedCategoryId: number | null = null;
 
   @Input()
@@ -90,8 +87,6 @@ export class ProductFiltersComponent
   // ========================================================
   // TEMPORARY VALUES
   // ========================================================
-
-  tempSearchName = '';
 
   tempCategoryId: number | null = null;
 
@@ -131,7 +126,6 @@ export class ProductFiltersComponent
   ): void {
 
     if (
-      changes['searchName'] ||
       changes['selectedCategoryId'] ||
       changes['selectedSubCategoryId'] ||
       changes['selectedBrandId'] ||
@@ -150,9 +144,6 @@ export class ProductFiltersComponent
   // ========================================================
 
   syncInputs(): void {
-
-    this.tempSearchName =
-      this.searchName ?? '';
 
     this.tempCategoryId =
       this.selectedCategoryId;
@@ -188,9 +179,6 @@ export class ProductFiltersComponent
 
     this.filterApplied.emit({
 
-      searchName:
-        this.tempSearchName.trim(),
-
       categoryId:
         this.tempCategoryId,
 
@@ -214,8 +202,6 @@ export class ProductFiltersComponent
 
   clearFilters(): void {
 
-    this.tempSearchName = '';
-
     this.tempCategoryId = null;
 
     this.tempSubCategoryId = null;
@@ -236,7 +222,6 @@ export class ProductFiltersComponent
   get availableSubCategories():
     SubCategoryFilter[] {
 
-    // No category selected
     if (
       this.tempCategoryId === null
     ) {

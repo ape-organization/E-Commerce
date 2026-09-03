@@ -1,3 +1,4 @@
+
 <main class="container">
 
   <div class="product-layout">
@@ -13,8 +14,6 @@
         [subCategories]="subCategories()"
         [brands]="brands()"
 
-        [searchName]="searchName()"
-
         [selectedCategoryId]="selectedCategoryId()"
         [selectedSubCategoryId]="selectedSubCategoryId()"
         [selectedBrandId]="selectedBrandId()"
@@ -22,7 +21,6 @@
         [showOffers]="showOffers()"
 
         (filterApplied)="onFilterApplied($event)"
-
         (clearFiltersEvent)="clearFilters()">
       </app-product-filters>
 
@@ -72,13 +70,12 @@
         class="active-filters"
 
         *ngIf="
-          searchName() ||
+          hasSearch() ||
           selectedCategoryId() !== null ||
           selectedSubCategoryId() !== null ||
           selectedBrandId() !== null ||
           showOffers()
         ">
-
 
         <div class="active-filter-title">
 
@@ -96,15 +93,17 @@
         <div class="active-filter-list">
 
 
-          <!-- SEARCH -->
+          <!-- ==================================================
+               SEARCH
+               ================================================== -->
 
           <div
-            class="filter-chip"
-            *ngIf="searchName()">
+            class="filter-chip search-chip"
+            *ngIf="hasSearch()">
 
-            <span>
-              {{ 'FILTER.PRODUCT' | translate }}
-            </span>
+            <mat-icon>
+              search
+            </mat-icon>
 
             <strong>
               {{ searchName() }}
@@ -113,13 +112,8 @@
             <button
               type="button"
               class="remove-filter"
-              (click)="searchName.set(''); onFilterApplied({
-                searchName: '',
-                categoryId: selectedCategoryId(),
-                subCategoryId: selectedSubCategoryId(),
-                brandId: selectedBrandId(),
-                offers: showOffers()
-              })">
+              (click)="clearSearch()"
+              [attr.aria-label]="'COMMON.CLEAR' | translate">
 
               <mat-icon>
                 close
@@ -130,7 +124,9 @@
           </div>
 
 
-          <!-- CATEGORY -->
+          <!-- ==================================================
+               CATEGORY
+               ================================================== -->
 
           <div
             class="filter-chip"
@@ -158,7 +154,9 @@
           </div>
 
 
-          <!-- SUBCATEGORY -->
+          <!-- ==================================================
+               SUBCATEGORY
+               ================================================== -->
 
           <div
             class="filter-chip"
@@ -186,7 +184,9 @@
           </div>
 
 
-          <!-- BRAND -->
+          <!-- ==================================================
+               BRAND
+               ================================================== -->
 
           <div
             class="filter-chip"
@@ -214,7 +214,9 @@
           </div>
 
 
-          <!-- OFFERS -->
+          <!-- ==================================================
+               OFFERS
+               ================================================== -->
 
           <div
             class="filter-chip offer-chip"
@@ -242,7 +244,9 @@
           </div>
 
 
-          <!-- CLEAR -->
+          <!-- ==================================================
+               CLEAR ALL
+               ================================================== -->
 
           <button
             type="button"
@@ -278,6 +282,10 @@
           [product]="product"
 
           [imageApi]="api"
+
+          [showAlreadyInCartMessage]="
+            alreadyInCartProductId() === product.id
+          "
 
           (productClicked)="
             openProductDetails($event)
@@ -374,4 +382,3 @@
   </div>
 
 </main>
-

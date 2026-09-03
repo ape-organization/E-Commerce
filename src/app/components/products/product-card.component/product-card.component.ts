@@ -49,7 +49,8 @@ export class ProductCardComponent {
   addToCartClicked =
     new EventEmitter<Product>();
 
-
+@Input()
+showAlreadyInCartMessage = false;
   constructor(
     public languageService: LanguageService
   ) {}

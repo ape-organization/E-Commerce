@@ -7,6 +7,7 @@
 "OFFERS":"العروض",
 "SALE":"خصم",
 "LOGIN": "تسجيل الدخول",
+  "SEARCH_PRODUCTS": "ابحث عن منتج...",
 "LOGOUT": "تسجيل الخروج",
 "MENU": "القائمة",
 "CATEGORIES": "الأقسام",
@@ -48,6 +49,7 @@
 },
 
 "PRODUCT": {
+
 "TITLE": "المنتجات",
 "PRODUCT": "المنتج",
 "PRODUCTS": "المنتجات",
@@ -72,6 +74,7 @@
 "SELECT_OPTIONS": "اختر الخيارات",
 "SPECIAL_OFFER": "عرض خاص",
 "OFFER": "عرض",
+ "ALREADY_IN_CART": "المنتج موجود بالفعل في السلة",
 "NO_DESCRIPTION": "لا يوجد وصف متاح",
 "No_Products_Found":"لا يوجد منتجات",
 "FILTER_DISMATCH":"لا يوجد منتجات تتوافق مع الفلتر المختار",
@@ -108,6 +111,8 @@
 "PRODUCT":"المنتج",
 "CATEGORY": "القسم",
 "All_Categories":"كل الاقسام",
+"ALL_SUBCATEGORIES":"جميع الأقسام الفرعية",
+"ALL_BRANDS":"جميع العلامات التجارية",
 "SUBCATEGORY": "القسم الفرعي",
 "BRAND": "العلامة التجارية",
 "OFFERS": "العروض",

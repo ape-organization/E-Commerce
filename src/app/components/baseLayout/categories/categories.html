@@ -15,29 +15,47 @@
 </div>
 
 
-<!-- CATEGORY CAROUSEL -->
+<!-- =====================================================
+     CATEGORY CAROUSEL
+     ===================================================== -->
 
-<div class="category-carousel">
+<div
+  class="category-carousel"
+  *ngIf="categories().length > 0"
+>
 
-  <!-- LEFT -->
+  <!-- ===================================================
+       LEFT ARROW
+       =================================================== -->
 
   <button
     type="button"
     class="carousel-arrow category-arrow category-prev"
+
+    [disabled]="
+      !hasCategoryOverflow() ||
+      isAtStart()
+    "
+
     (click)="scrollCategories('left')"
+
     [attr.aria-label]="
       languageService.isArabic()
         ? 'الفئات السابقة'
         : 'Previous categories'
     "
   >
+
     <mat-icon>
       chevron_left
     </mat-icon>
+
   </button>
 
 
-  <!-- CATEGORY LIST -->
+  <!-- ===================================================
+       CATEGORY TRACK
+       =================================================== -->
 
   <div
     class="horizontal-track category-track"
@@ -60,6 +78,7 @@
 
       </div>
 
+
       <h3>
         {{ getCategoryName(category) }}
       </h3>
@@ -69,21 +88,32 @@
   </div>
 
 
-  <!-- RIGHT -->
+  <!-- ===================================================
+       RIGHT ARROW
+       =================================================== -->
 
   <button
     type="button"
     class="carousel-arrow category-arrow category-next"
+
+    [disabled]="
+      !hasCategoryOverflow() ||
+      isAtEnd()
+    "
+
     (click)="scrollCategories('right')"
+
     [attr.aria-label]="
       languageService.isArabic()
         ? 'الفئات التالية'
         : 'Next categories'
     "
   >
+
     <mat-icon>
       chevron_right
     </mat-icon>
+
   </button>
 
 </div>

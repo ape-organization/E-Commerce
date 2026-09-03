@@ -716,84 +716,158 @@
    left  = image
    right = all information stacked vertically
    ========================================================= */
+/* =========================================================
+   MOBILE CART
+   Professional card-based layout
+   ========================================================= */
 
 @media (max-width: 768px) {
 
   .cart-container {
-    margin: 20px auto;
-
+    margin: 18px auto 30px;
     padding: 0 12px;
   }
 
+
+  /* =======================================================
+     HEADER
+     ======================================================= */
+
   .cart-header {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
   }
 
   .cart-title {
     font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .cart-label {
+    margin-bottom: 4px;
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+
+  .cart-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    padding: 6px 9px;
+
+    border: 1px solid var(--border-color, #e5e8ed);
+    border-radius: 20px;
+
+    background: #fff;
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .cart-count span {
+    margin: 0;
+
+    color: var(--text-secondary, #70798a);
+
+    font-size: 9px;
+    font-weight: 500;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
+     CART CONTENT
+     ======================================================= */
+
+  .cart-content {
+    overflow: visible;
+
+    box-shadow: none;
+  }
+
+  .cart-items {
+    gap: 10px;
+
+    background: transparent;
+  }
+
+
+  /* =======================================================
      CART ITEM
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .cart-item {
 
     /*
-     * Column 1:
-     * image
-     *
-     * Column 2:
-     * all product information
+     * 1 = image
+     * 2 = product information
+     * 3 = price
+     * 4 = quantity
+     * 5 = subtotal
+     * 6 = remove
      */
 
-    grid-template-columns: 68px minmax(0, 1fr);
+    grid-template-columns: 76px minmax(0, 1fr);
 
-    gap: 10px;
+    gap: 0 12px;
 
-    padding: 12px;
+    position: relative;
 
-    /*
-     * Important:
-     * allows the left image column to stretch
-     * with the height of the right content.
-     */
-    align-items: stretch;
+    padding: 13px;
+
+    border: 1px solid var(--border-color, #e5e8ed);
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow:
+      0 3px 12px rgba(58, 39, 33, .045);
+
+    transition:
+      transform .18s ease,
+      box-shadow .18s ease;
+  }
+
+  .cart-item:hover {
+    background: #fff;
+
+    transform: none;
+
+    box-shadow:
+      0 4px 16px rgba(58, 39, 33, .07);
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      IMAGE
-     * Center horizontally + vertically
-     * inside the complete left column.
-     * --------------------------------------------------------- */
+     ======================================================= */
 
   .product-image {
 
-    width: 66px;
-    height: 66px;
+    width: 76px;
+    height: 76px;
 
     grid-column: 1;
-
-    /*
-     * Stretch the image cell across
-     * the complete content area.
-     */
     grid-row: 1 / span 4;
 
-    /*
-     * Center the actual image box
-     * inside the left grid column.
-     */
-    justify-self: center;
-    align-self: center;
+    align-self: start;
+    justify-self: start;
+
+    padding: 5px;
+
+    border-radius: 10px;
+
+    background: #faf8f6;
+  }
+
+  .product-image img {
+    object-fit: contain;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      PRODUCT INFORMATION
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .product-info {
 
@@ -801,83 +875,379 @@
     grid-row: 1;
 
     min-width: 0;
+
+    padding-right: 28px;
+  }
+
+  .product-brand {
+
+    margin-bottom: 3px;
+
+    color: var(--color-primary-light, #5a4036);
+
+    font-size: 8px;
+    letter-spacing: .8px;
+  }
+
+  .product-name {
+
+    margin: 0;
+
+    color: var(--color-primary, #3a2721);
+
+    font-size: 13px;
+    font-weight: 650;
+
+    line-height: 1.35;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+  }
+
+  .product-category {
+
+    gap: 4px;
+
+    margin-top: 4px;
+
+    color: var(--text-secondary, #70798a);
+
+    font-size: 8px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
+     REMOVE BUTTON
+     ======================================================= */
+
+  .remove-btn {
+
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 28px;
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #a8a0a0;
+  }
+
+  .remove-btn mat-icon {
+
+    width: 17px;
+    height: 17px;
+
+    font-size: 17px;
+  }
+
+  .remove-btn:hover {
+
+    background: rgba(179, 58, 58, .08);
+
+    color: #b33a3a;
+  }
+
+
+  /* =======================================================
      PRICE
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .price-section {
 
     grid-column: 2;
     grid-row: 2;
 
-    align-items: flex-start;
+    display: flex;
+
+    flex-direction: row;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-top: 8px;
+  }
+
+  .new-price {
+
+    color: var(--color-primary, #3a2721);
+
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .new-price span {
+
+    color: var(--color-primary-light, #5a4036);
+
+    font-size: 8px;
+  }
+
+  .old-price {
+
+    font-size: 9px;
+  }
+
+  .old-price span {
+    font-size: 7px;
+  }
+
+  .discount {
+
+    margin-top: 0;
+
+    padding: 2px 5px;
+
+    border-radius: 4px;
+
+    background: rgba(201, 164, 92, .13);
+
+    color: var(--color-primary-light, #5a4036);
+
+    font-size: 7px;
   }
 
 
-  /* ---------------------------------------------------------
-     QUANTITY
-     --------------------------------------------------------- */
+  /* =======================================================
+     BOTTOM PRODUCT CONTROLS
+     ======================================================= */
 
   .quantity-section {
 
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 3;
 
-    align-items: flex-start;
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 13px;
+    padding-top: 11px;
+
+    border-top: 1px solid #f0ece8;
+  }
+
+  .quantity-label {
+
+    color: var(--text-secondary, #70798a);
+
+    font-size: 9px;
+    font-weight: 600;
+  }
+
+  .quantity-control {
+
+    height: 32px;
+
+    border-radius: 7px;
+  }
+
+  .quantity-btn {
+
+    width: 30px;
+    height: 32px;
+
+    font-size: 15px;
+  }
+
+  .quantity-input {
+
+    width: 38px;
+    height: 32px;
+
+    font-size: 11px;
+    font-weight: 700;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      SUBTOTAL
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .subtotal-section {
 
-    grid-column: 2;
+    grid-column: 1 / -1;
     grid-row: 4;
 
-    align-items: flex-start;
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-top: 8px;
+  }
+
+  .subtotal-label {
+
+    color: var(--text-secondary, #70798a);
+
+    font-size: 9px;
+  }
+
+  .subtotal {
+
+    color: var(--color-primary, #3a2721);
+
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .subtotal span {
+
+    color: var(--color-primary-light, #5a4036);
+
+    font-size: 8px;
   }
 
 
-  /* ---------------------------------------------------------
-     REMOVE
-     --------------------------------------------------------- */
+  /* =======================================================
+     SUMMARY
+     ======================================================= */
 
-  .remove-btn {
+  .cart-summary {
 
-    grid-column: 2;
-    grid-row: 5;
+    margin-top: 14px;
 
-    justify-self: start;
+    overflow: hidden;
+
+    border: 1px solid var(--border-color, #e5e8ed);
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow:
+      0 4px 16px rgba(58, 39, 33, .05);
+  }
+
+  .summary-total {
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 15px;
+  }
+
+  .summary-total > span {
+
+    color: var(--color-primary, #3a2721);
+
+    font-size: 12px;
+  }
+
+  .summary-total strong {
+
+    color: var(--color-primary, #3a2721);
+
+    font-size: 20px;
+  }
+
+  .summary-total small {
+
+    font-size: 8px;
   }
 
 
-  /* ---------------------------------------------------------
-     CART ACTIONS
-     --------------------------------------------------------- */
+  /* =======================================================
+     ACTIONS
+     ======================================================= */
 
   .cart-actions {
 
     flex-direction: column;
 
     align-items: stretch;
+
+    gap: 8px;
+
+    padding: 12px;
+
+    border-top: 1px solid var(--border-color, #e5e8ed);
   }
 
   .continue-shopping {
+
     width: 100%;
+
+    min-height: 38px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
   }
 
   .purchase-actions {
+
     width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
   }
 
-  .checkout-btn,
+
+  /* =======================================================
+     CHECKOUT
+     ======================================================= */
+
+  .checkout-btn {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .checkout-btn mat-icon {
+
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+  }
+
+
+  /* =======================================================
+     CLEAR CART
+     ======================================================= */
+
   .clear-btn {
-    flex: 1;
+
+    width: 100%;
+
+    min-height: 34px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
   }
 }
 
@@ -889,180 +1259,306 @@
 @media (max-width: 480px) {
 
   .cart-container {
-    margin: 16px auto;
+
+    margin: 14px auto 24px;
 
     padding: 0 9px;
   }
+
+
+  /* =======================================================
+     HEADER
+     ======================================================= */
 
   .cart-title {
     font-size: 19px;
   }
 
   .cart-label {
-    font-size: 8px;
+    font-size: 7px;
   }
 
   .cart-count {
-    font-size: 13px;
+
+    padding: 5px 8px;
+
+    font-size: 11px;
   }
 
   .cart-count span {
-    display: none;
+    font-size: 8px;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      CART ITEM
-     --------------------------------------------------------- */
+     ======================================================= */
+
+  .cart-items {
+    gap: 8px;
+  }
 
   .cart-item {
 
-    /*
-     * Smaller image column,
-     * remaining width for information.
-     */
+    grid-template-columns: 62px minmax(0, 1fr);
 
-    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 0 10px;
 
-    gap: 8px;
+    padding: 11px;
 
-    padding: 10px;
-
-    align-items: stretch;
+    border-radius: 11px;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      IMAGE
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .product-image {
 
-    width: 56px;
-    height: 56px;
+    width: 62px;
+    height: 62px;
 
-    grid-column: 1;
+    border-radius: 9px;
 
-    grid-row: 1 / span 4;
-
-    justify-self: center;
-    align-self: center;
-
-    border-radius: 8px;
+    padding: 4px;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      PRODUCT
-     --------------------------------------------------------- */
+     ======================================================= */
+
+  .product-info {
+
+    padding-right: 26px;
+  }
 
   .product-brand {
+
     font-size: 7px;
+
+    letter-spacing: .7px;
   }
 
   .product-name {
+
     font-size: 12px;
+
+    line-height: 1.3;
   }
 
   .product-category {
-    font-size: 8px;
-  }
 
+    margin-top: 3px;
 
-  /* ---------------------------------------------------------
-     PRICE
-     --------------------------------------------------------- */
-
-  .new-price {
-    font-size: 12px;
-  }
-
-  .old-price {
-    font-size: 9px;
-  }
-
-  .discount {
     font-size: 7px;
   }
 
 
-  /* ---------------------------------------------------------
-     QUANTITY / SUBTOTAL
-     --------------------------------------------------------- */
+  /* =======================================================
+     REMOVE
+     ======================================================= */
 
-  .quantity-label,
-  .subtotal-label {
+  .remove-btn {
+
+    top: 8px;
+    right: 8px;
+
+    width: 26px;
+    height: 26px;
+  }
+
+  .remove-btn mat-icon {
+
+    width: 16px;
+    height: 16px;
+
+    font-size: 16px;
+  }
+
+
+  /* =======================================================
+     PRICE
+     ======================================================= */
+
+  .price-section {
+
+    margin-top: 7px;
+
+    gap: 4px;
+  }
+
+  .new-price {
+    font-size: 13px;
+  }
+
+  .new-price span {
+    font-size: 7px;
+  }
+
+  .old-price {
     font-size: 8px;
   }
 
+  .discount {
+    font-size: 6px;
+  }
+
+
+  /* =======================================================
+     QUANTITY
+     ======================================================= */
+
+  .quantity-section {
+
+    margin-top: 11px;
+
+    padding-top: 9px;
+  }
+
+  .quantity-label {
+
+    font-size: 8px;
+  }
+
+  .quantity-control {
+
+    height: 30px;
+  }
+
   .quantity-btn {
-    width: 24px;
-    height: 27px;
+
+    width: 28px;
+    height: 30px;
   }
 
   .quantity-input {
-    width: 32px;
-    height: 27px;
+
+    width: 34px;
+    height: 30px;
 
     font-size: 10px;
   }
 
+
+  /* =======================================================
+     SUBTOTAL
+     ======================================================= */
+
+  .subtotal-section {
+
+    margin-top: 7px;
+  }
+
+  .subtotal-label {
+
+    font-size: 8px;
+  }
+
   .subtotal {
-    font-size: 12px;
+
+    font-size: 13px;
+  }
+
+  .subtotal span {
+    font-size: 7px;
   }
 
 
-  /* ---------------------------------------------------------
-     REMOVE
-     --------------------------------------------------------- */
-
-  .remove-btn {
-    width: 28px;
-    height: 28px;
-  }
-
-
-  /* ---------------------------------------------------------
+  /* =======================================================
      SUMMARY
-     --------------------------------------------------------- */
+     ======================================================= */
+
+  .cart-summary {
+
+    margin-top: 12px;
+
+    border-radius: 11px;
+  }
 
   .summary-total {
 
-    justify-content: space-between;
+    padding: 13px;
+  }
 
-    padding: 13px 12px;
+  .summary-total > span {
+    font-size: 11px;
   }
 
   .summary-total strong {
-    font-size: 17px;
+    font-size: 18px;
+  }
+
+  .summary-total small {
+    font-size: 7px;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      ACTIONS
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .cart-actions {
     padding: 10px;
   }
 
-  .purchase-actions {
-    flex-direction: column;
+  .checkout-btn {
+
+    min-height: 42px;
+
+    font-size: 11px;
   }
 
-  .checkout-btn,
+  .continue-shopping {
+
+    min-height: 36px;
+
+    font-size: 9px;
+  }
+
   .clear-btn {
-    width: 100%;
+
+    min-height: 32px;
+
+    font-size: 8px;
   }
 
 
-  /* ---------------------------------------------------------
+  /* =======================================================
      EMPTY CART
-     --------------------------------------------------------- */
+     ======================================================= */
 
   .empty-cart {
-    min-height: 300px;
+
+    min-height: 280px;
 
     padding: 25px 15px;
+
+    border-radius: 11px;
+  }
+
+  .empty-icon {
+
+    width: 56px;
+    height: 56px;
+  }
+
+  .empty-icon mat-icon {
+
+    width: 25px;
+    height: 25px;
+
+    font-size: 25px;
+  }
+
+  .empty-cart h2 {
+    font-size: 17px;
+  }
+
+  .empty-message {
+    max-width: 300px;
+
+    font-size: 11px;
   }
 }

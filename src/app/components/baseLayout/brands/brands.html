@@ -20,25 +20,38 @@
   *ngIf="brands().length > 0"
 >
 
-  <!-- LEFT -->
+  <!-- =====================================================
+       LEFT ARROW
+       ===================================================== -->
 
   <button
     type="button"
     class="carousel-arrow brand-arrow brand-prev"
+
+    [disabled]="
+      !hasBrandOverflow() ||
+      isAtStart()
+    "
+
     (click)="scrollBrands('left')"
+
     [attr.aria-label]="
       languageService.isArabic()
         ? 'العلامات التجارية السابقة'
         : 'Previous brands'
     "
   >
+
     <mat-icon>
       chevron_left
     </mat-icon>
+
   </button>
 
 
-  <!-- BRAND TRACK -->
+  <!-- =====================================================
+       BRAND TRACK
+       ===================================================== -->
 
   <div
     class="horizontal-track brand-track"
@@ -61,7 +74,6 @@
 
       </div>
 
-
       <h3>
         {{ getBrandName(brand) }}
       </h3>
@@ -71,21 +83,32 @@
   </div>
 
 
-  <!-- RIGHT -->
+  <!-- =====================================================
+       RIGHT ARROW
+       ===================================================== -->
 
   <button
     type="button"
     class="carousel-arrow brand-arrow brand-next"
+
+    [disabled]="
+      !hasBrandOverflow() ||
+      isAtEnd()
+    "
+
     (click)="scrollBrands('right')"
+
     [attr.aria-label]="
       languageService.isArabic()
         ? 'العلامات التجارية التالية'
         : 'Next brands'
     "
   >
+
     <mat-icon>
       chevron_right
     </mat-icon>
+
   </button>
 
 </div>

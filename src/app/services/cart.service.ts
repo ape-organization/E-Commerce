@@ -164,116 +164,76 @@ export class CartService {
   // ADD TO CART
   // ==========================================================
 
-  addToCart(
-    product: Product,
-    quantity: number = 1
-  ): void {
+addToCart(
+  product: Product,
+  quantity: number = 1
+): boolean {
 
-    if (!product) {
-      return;
-    }
+  if (!product?.id) {
+    return false;
+  }
 
+  if (!product.isInStock) {
+    return false;
+  }
 
-    if (!product.id) {
-      return;
-    }
+  const currentCart = [
+    ...this.cartItems.value
+  ];
 
+  // ========================================================
+  // CHECK IF PRODUCT ALREADY EXISTS
+  // ========================================================
 
-    if (!product.isInStock) {
-      return;
-    }
+  const existingItem = currentCart.find(
+    item =>
+      item.product.id === product.id
+  );
 
+  if (existingItem) {
 
-    quantity =
-      this.normalizeQuantity(quantity);
+    // Product already exists.
+    // Do NOT increase quantity.
 
+    return true;
+  }
 
-    if (quantity <= 0) {
-      return;
-    }
+  // ========================================================
+  // NEW PRODUCT
+  // ========================================================
 
+  quantity =
+    this.normalizeQuantity(quantity);
 
-    const stock =
-      Number(
-        product.stockQuantity ?? 0
-      );
+  if (quantity <= 0) {
+    quantity = 1;
+  }
 
-
-    if (
-      stock > 0 &&
-      quantity > stock
-    ) {
-
-      quantity = stock;
-
-    }
-
-
-    if (quantity <= 0) {
-      return;
-    }
-
-
-    const currentCart =
-      [...this.cartItems.value];
-
-
-    const existingItem =
-      currentCart.find(
-        item =>
-          item.product.id === product.id
-      );
-
-
-    // ========================================================
-    // EXISTING PRODUCT
-    // ========================================================
-
-    if (existingItem) {
-
-      let newQuantity =
-        existingItem.quantity +
-        quantity;
-
-
-      if (
-        stock > 0 &&
-        newQuantity > stock
-      ) {
-
-        newQuantity = stock;
-
-      }
-
-
-      existingItem.quantity =
-        newQuantity;
-
-    }
-
-
-    // ========================================================
-    // NEW PRODUCT
-    // ========================================================
-
-    else {
-
-      currentCart.push({
-
-        product,
-
-        quantity
-
-      });
-
-    }
-
-
-    this.setCart(
-      currentCart
+  const stock =
+    Number(
+      product.stockQuantity ?? 0
     );
 
+  if (
+    stock > 0 &&
+    quantity > stock
+  ) {
+    quantity = stock;
   }
+
+  if (quantity <= 0) {
+    return false;
+  }
+
+  currentCart.push({
+    product,
+    quantity
+  });
+
+  this.setCart(currentCart);
+
+  return false;
+}
 
 
   // ==========================================================
