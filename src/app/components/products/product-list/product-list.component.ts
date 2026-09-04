@@ -225,7 +225,14 @@ private readonly destroyRef = inject(DestroyRef);
 
   readonly showOffers =
     signal<boolean>(false);
+// ========================================================
+// CART SUCCESS
+// ========================================================
+readonly addedToCartProductId =
+  signal<number | null>(null);
 
+private addedToCartTimer?:
+  ReturnType<typeof setTimeout>;
   // ========================================================
   // NORMAL API FILTERS ACTIVE
   // ========================================================
@@ -2187,38 +2194,83 @@ private readonly destroyRef = inject(DestroyRef);
   // CART
   // ========================================================
 
-  addToCart(
-    product: Product
-  ): void {
+// ========================================================
+// CART
+// ========================================================
 
-    const alreadyExists =
-      this.cartService.addToCart(
-        product
-      );
+addToCart(
+  product: Product
+): void {
 
-    // ------------------------------------------------------
-    // PRODUCT ALREADY EXISTS
-    // ------------------------------------------------------
+  const alreadyExists =
+    this.cartService.addToCart(
+      product
+    );
 
-    if (
-      alreadyExists
-    ) {
+  // ------------------------------------------------------
+  // PRODUCT ALREADY EXISTS
+  // ------------------------------------------------------
 
-      this.showAlreadyInCartMessage(
-        product.id
-      );
+  if (alreadyExists) {
 
-      return;
-    }
+    this.addedToCartProductId.set(null);
 
-    // ------------------------------------------------------
-    // PRODUCT ADDED
-    // ------------------------------------------------------
+    this.showAlreadyInCartMessage(
+      product.id
+    );
 
-    this.alreadyInCartProductId.set(
-      null
+    return;
+  }
+
+  // ------------------------------------------------------
+  // PRODUCT SUCCESSFULLY ADDED
+  // ------------------------------------------------------
+
+  this.alreadyInCartProductId.set(null);
+
+  this.showAddedToCartSuccess(
+    product.id
+  );
+}
+
+
+// ========================================================
+// ADDED TO CART SUCCESS
+// ========================================================
+
+private showAddedToCartSuccess(
+  productId: number
+): void {
+
+  // Clear previous timer
+  if (this.addedToCartTimer) {
+
+    clearTimeout(
+      this.addedToCartTimer
     );
   }
+
+  // Only THIS product shows the check
+  this.addedToCartProductId.set(
+    productId
+  );
+
+  // Return to shopping-cart icon
+  this.addedToCartTimer =
+    setTimeout(() => {
+
+      if (
+        this.addedToCartProductId() ===
+        productId
+      ) {
+
+        this.addedToCartProductId.set(
+          null
+        );
+      }
+
+    }, 1500);
+}
 
   // ========================================================
   // ALREADY IN CART MESSAGE

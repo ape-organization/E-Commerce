@@ -16,7 +16,7 @@
   position: relative;
 
   width: 100%;
-  height: 400px;
+  height: 300px;
 
   overflow: hidden;
 
@@ -59,7 +59,7 @@
 
   display: block;
 
-  object-fit: cover;
+  object-fit: fill;
 }
 
 
@@ -89,16 +89,38 @@
 .hero-content {
   position: absolute;
 
-  left: 50%;
+  left: 25px;
+  right: auto;
+
   top: 80%;
 
   transform: translateY(-50%);
 
   z-index: 2;
+
   width: min(560px, 80%);
 
   color: var(--color-surface);
+
+  text-align: left;
 }
+
+
+/* ============================================================
+   RTL HERO CONTENT
+   ============================================================ */
+
+html[dir="rtl"] .hero-content {
+  left: auto;
+  right: 25px;
+
+  text-align: right;
+}
+
+
+/* ============================================================
+   HERO SMALL TITLE
+   ============================================================ */
 
 .hero-small-title {
   display: block;
@@ -113,29 +135,6 @@
   letter-spacing: 3px;
 }
 
-.hero-content h1 {
-  margin: 0 0 18px;
-
-  color: var(--color-surface);
-
-  font-size: clamp(38px, 5vw, 68px);
-
-  font-weight: 600;
-
-  line-height: 1.08;
-}
-
-.hero-content p {
-  max-width: 500px;
-
-  margin: 0 0 28px;
-
-  color: rgba(255, 255, 255, 0.88);
-
-  font-size: 16px;
-
-  line-height: 1.7;
-}
 
 
 /* ============================================================
@@ -143,7 +142,7 @@
    ============================================================ */
 
 .hero-button {
-  height: 48px;
+  height: 41px;
 
   display: inline-flex;
 
@@ -165,25 +164,55 @@
   font-weight: 700;
 
   cursor: pointer;
-
+box-shadow: 1px 1px 1px var(--color-accent);
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease;
 }
 
+
+/* ============================================================
+   HERO BUTTON HOVER
+   ============================================================ */
+
 .hero-button:hover {
   background: var(--color-accent);
+
   border-color: var(--color-accent-light);
 
   color: var(--color-primary-dark);
 }
+
+
+/* ============================================================
+   HERO BUTTON ICON
+   ============================================================ */
 
 .hero-button mat-icon {
   width: 18px;
   height: 18px;
 
   font-size: 18px;
+
+  transition: transform 0.2s ease;
+}
+
+
+/* ============================================================
+   RTL BUTTON
+   ============================================================ */
+
+/*
+   In Arabic:
+   Button stays on the right because hero-content
+   is positioned on the right.
+
+   The arrow is reversed so it points toward the left.
+*/
+
+html[dir="rtl"] .hero-button mat-icon {
+  transform: rotate(180deg);
 }
 
 
@@ -201,15 +230,22 @@
   z-index: 5;
 
   background: transparent;
-border: none;
-/*   border-color: rgba(255, 255, 255, 0.45);
- */
+
+  border: none;
+
   color: var(--color-surface);
+
+  cursor: pointer;
 }
 
 .slider-arrow:hover {
   transform: translateY(-50%) scale(1.05);
 }
+
+
+/* ============================================================
+   SLIDER PREVIOUS / NEXT
+   ============================================================ */
 
 .slider-prev {
   left: 30px;
@@ -217,6 +253,25 @@ border: none;
 
 .slider-next {
   right: 30px;
+}
+
+
+/* ============================================================
+   RTL SLIDER ARROWS
+   ============================================================ */
+
+/*
+   In RTL the visual meaning of previous/next is reversed.
+*/
+
+html[dir="rtl"] .slider-prev {
+  left: auto;
+  right: 30px;
+}
+
+html[dir="rtl"] .slider-next {
+  right: auto;
+  left: 30px;
 }
 
 
@@ -248,6 +303,7 @@ border: none;
   padding: 0;
 
   border: none;
+
   border-radius: 50%;
 
   background: rgba(255, 255, 255, 0.55);
@@ -268,11 +324,26 @@ border: none;
 }
 
 
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
 
+.categories-section {
+  width: 100%;
+}
 
 
 /* ============================================================
-   MOBILE
+   BRANDS
+   ============================================================ */
+
+.brands-section {
+  width: 100%;
+}
+
+
+/* ============================================================
+   MOBILE - TABLET
    ============================================================ */
 
 @media (max-width: 900px) {
@@ -282,7 +353,14 @@ border: none;
   }
 
   .hero-content {
-    left: 7%;
+    left: 25px;
+    right: auto;
+  }
+
+  /* RTL */
+  html[dir="rtl"] .hero-content {
+    left: auto;
+    right: 25px;
   }
 
   .category-card {
@@ -296,14 +374,20 @@ border: none;
 }
 
 
-
-
+/* ============================================================
+   MOBILE
+   ============================================================ */
 
 @media (max-width: 600px) {
 
   .hero {
     height: 500px;
   }
+
+
+  /* ----------------------------------------------------------
+     MOBILE OVERLAY
+     ---------------------------------------------------------- */
 
   .hero-overlay {
     background:
@@ -314,37 +398,94 @@ border: none;
       );
   }
 
+
+  /* ----------------------------------------------------------
+     MOBILE HERO CONTENT
+     ---------------------------------------------------------- */
+
   .hero-content {
     left: 25px;
-    right: 25px;
+    right: auto;
 
     width: auto;
+
+    text-align: left;
   }
+
+
+  /* RTL mobile */
+  html[dir="rtl"] .hero-content {
+    left: auto;
+    right: 25px;
+
+    text-align: right;
+  }
+
+
+  /* ----------------------------------------------------------
+     MOBILE TITLE
+     ---------------------------------------------------------- */
 
   .hero-content h1 {
     font-size: 40px;
   }
 
+
+  /* ----------------------------------------------------------
+     MOBILE DESCRIPTION
+     ---------------------------------------------------------- */
+
   .hero-content p {
     font-size: 14px;
   }
+
+
+  /* ----------------------------------------------------------
+     MOBILE SLIDER ARROWS
+     ---------------------------------------------------------- */
 
   .slider-arrow {
     width: 38px;
     height: 38px;
   }
 
+
   .slider-prev {
     left: 12px;
+    right: auto;
   }
 
   .slider-next {
     right: 12px;
+    left: auto;
   }
+
+
+  /* RTL mobile arrows */
+
+  html[dir="rtl"] .slider-prev {
+    left: auto;
+    right: 12px;
+  }
+
+  html[dir="rtl"] .slider-next {
+    right: auto;
+    left: 12px;
+  }
+
+
+  /* ----------------------------------------------------------
+     MOBILE CATEGORIES
+     ---------------------------------------------------------- */
 
   .categories-section {
     padding: 55px 15px 60px;
   }
+
+
+  /* ----------------------------------------------------------
+     MOBILE SECTION HEADING
+     ---------------------------------------------------------- */
 
   .section-heading {
     margin-bottom: 30px;
@@ -353,13 +494,12 @@ border: none;
   .section-heading h2 {
     font-size: 28px;
   }
-
-  
 }
 
 
-
-
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
 
 @media (max-width: 400px) {
 
@@ -371,5 +511,15 @@ border: none;
     font-size: 34px;
   }
 
-  
+  .hero-content {
+    left: 20px;
+    right: auto;
+  }
+
+  /* RTL small mobile */
+
+  html[dir="rtl"] .hero-content {
+    left: auto;
+    right: 20px;
+  }
 }

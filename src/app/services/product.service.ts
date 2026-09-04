@@ -175,4 +175,17 @@ export class ProductService {
       }
     );
   }
+  getBestSellerProducts(
+  count: number = 10
+): Observable<Product[]> {
+
+  return this.http.get<Product[]>(
+    `${environment.apiBaseUrl}/products/best-sellers`,
+    {
+      params: {
+        count: count.toString()
+      }
+    }
+  );
+}
 }

@@ -31,19 +31,9 @@ export class App {
   // MOBILE BOTTOM NAV
   // ==========================================================
 
-  showBottomNav = signal(false);
+  showBottomNav = signal(true);
     // ==========================================================
-  // SCROLL
-  // ==========================================================
 
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-
-    this.showBottomNav.set(
-      window.scrollY > 100
-    );
-
-  }
 
   // ==========================================================
   // PRODUCTS

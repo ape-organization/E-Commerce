@@ -21,6 +21,8 @@
 },
 
 "HOME": {
+   "BEST_SELLERS": "Top Picks",
+  "BEST_SELLERS_SUBTITLE": "Our most loved products",
 "TITLE": "Welcome to our store",
 "SHOP_NOW": "Shop Now",
 "VIEW_PRODUCTS": "View Products",
@@ -50,6 +52,7 @@
 },
 
 "PRODUCT": {
+"Show_All_Products":"Show_All_Products",
 "TITLE": "Products",
 "PRODUCT": "Product",
 "PRODUCTS": "Products",
@@ -128,6 +131,7 @@
 "CART": {
 "TITLE": "Shopping Cart",
 "YOUR_CART": "Your Cart",
+"CLEAR_CART_CONFIRM":"Confirm clearing cart",
 "EMPTY": "Your cart is empty",
 "EMPTY_MESSAGE": "There are no products in your cart.",
 "CONTINUE_SHOPPING": "Continue Shopping",

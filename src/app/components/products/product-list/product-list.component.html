@@ -286,7 +286,9 @@
           [showAlreadyInCartMessage]="
             alreadyInCartProductId() === product.id
           "
-
+[showAddedCheck]="
+  addedToCartProductId() === product.id
+"
           (productClicked)="
             openProductDetails($event)
           "

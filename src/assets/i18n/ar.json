@@ -20,6 +20,8 @@
 },
 
 "HOME": {
+   "BEST_SELLERS": "الأكثر طلبا",
+  "BEST_SELLERS_SUBTITLE": "منتجاتنا الأكثر طلبًا",
 "TITLE": "مرحباً بكم في متجرنا",
 "SHOP_NOW": "تسوق الآن",
 "VIEW_PRODUCTS": "عرض المنتجات",
@@ -49,7 +51,7 @@
 },
 
 "PRODUCT": {
-
+"Show_All_Products":"كل المنتجات",
 "TITLE": "المنتجات",
 "PRODUCT": "المنتج",
 "PRODUCTS": "المنتجات",
@@ -125,6 +127,8 @@
 },
 
 "CART": {
+  "CLEAR_CART_CONFIRM":"تاكيد افراغ السله",
+
 "TITLE": "سلة التسوق",
 "YOUR_CART": "سلة التسوق الخاصة بك",
 "EMPTY": "السلة فارغة",

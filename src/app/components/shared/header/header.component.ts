@@ -341,7 +341,6 @@ export class HeaderComponent implements OnInit {
 
 
   toggleCategoryMenu(): void {
-
     const open =
       !this.categoryMenuOpen();
 
@@ -505,7 +504,6 @@ export class HeaderComponent implements OnInit {
   toggleCategory(
     categoryId: number
   ): void {
-
     if (
       this.expandedCategoryId() ===
       categoryId

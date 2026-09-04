@@ -21,28 +21,18 @@
 
       <div class="hero-content">
 
-        <span class="hero-small-title">
-          ✦ {{'HEADER.TITLE'|translate}} ✦
-        </span>
+       <button
+  type="button"
+  class="hero-button"
+  (click)="shopNow()"
+>
+  <span>{{ 'HOME.SHOP_NOW' | translate }}</span>
 
-       <!--  <h1>
-          {{ slide.title }}
-        </h1>
-
-        <p>
-          {{ slide.description }}
-        </p> -->
-
-        <button
-          type="button"
-          class="hero-button"
-          (click)="shopNow()"
-        >
-          Shop Now
-          <mat-icon>
-            arrow_forward
-          </mat-icon>
-        </button>
+<mat-icon
+>
+  arrow_forward
+</mat-icon>
+</button>
 
       </div>
 
@@ -98,7 +88,21 @@
 
   </section>
 
+ <!-- =====================================================
+       BEST SELLERS
+       ===================================================== -->
 
+  <section class="best-sellers-section">
+
+    <app-best-sellers
+    [addedToCartProductId]="addedToCartProductId()"
+    [alreadyInCartProductId]="alreadyInCartProductId()"
+
+    (productClicked)="openProductDetails($event)"
+    (addToCartClicked)="addToCart($event)">
+  </app-best-sellers>
+
+  </section>
 
   <!-- =====================================================
        CATEGORIES

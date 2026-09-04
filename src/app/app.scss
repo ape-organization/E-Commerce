@@ -72,13 +72,12 @@ z-index: 10000;
 
 display: flex;
 align-items: stretch;
-
 background: var(--color-surface);
 color: var(--color-text);
 
 border-top: 1px solid var(--color-border);
-
-box-shadow: var(--shadow-sm);
+border-radius: 10px 10px 0 0;
+box-shadow:0px 0px 0px 5px rgb(142, 103, 2);
 
 box-sizing: border-box;
 

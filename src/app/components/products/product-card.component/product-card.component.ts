@@ -2,7 +2,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  signal
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -54,7 +55,10 @@ showAlreadyInCartMessage = false;
   constructor(
     public languageService: LanguageService
   ) {}
-
+  @Input()
+cartAddedSuccessfully = false;
+@Input()
+showAddedCheck = false;
 
   // ========================================================
   // PRODUCT NAME

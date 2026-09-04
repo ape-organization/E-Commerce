@@ -311,57 +311,69 @@ flex: .5;
 
 .nav-link {
   position: relative;
-
   min-height: 38px;
   padding: 0 11px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-
   border: 0;
   outline: 0;
   border-radius: var(--radius-sm);
-
   background: transparent;
   color: var(--color-text);
-
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-
   text-decoration: none;
   cursor: pointer;
 
   transition:
-    color .2s ease,
-    background .2s ease;
+    color 0.25s ease,
+    background 0.25s ease;
 }
 
-.nav-link:hover,
-.nav-link.active {
+/* Hover */
+.nav-link:hover {
   color: var(--color-primary);
   background: var(--color-surface-soft);
 }
 
+/* Selected */
 .nav-link.active {
+  color: var(--color-primary);
+  background: transparent;
   font-weight: 600;
 }
 
-.nav-link.active::after {
+/* Underline */
+.nav-link::after {
   content: '';
 
   position: absolute;
-  left: 11px;
-  right: 11px;
+  left: 50%;
   bottom: 2px;
 
+  width: 0;
   height: 2px;
 
   background: var(--color-accent);
   border-radius: 4px;
+
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
 }
+
+/* Hover underline */
+.nav-link:hover::after {
+  width: calc(100% - 22px);
+}
+
+/* Selected underline */
+.nav-link.active::after {
+  width: calc(100% - 22px);
+}
+
 
 .nav-link mat-icon {
   width: 17px;
@@ -405,13 +417,17 @@ flex: .5;
 
 .nav-dropdown {
   position: relative;
-
   height: 68px;
-
   display: flex;
   align-items: center;
 }
-
+.navbarnd-dropdown {
+  position: relative;
+min-width: 130px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+}
 .dropdown-trigger {
   height: 38px;
 }
@@ -1167,6 +1183,9 @@ flex: .5;
 /* =========================================================
    SMALL MOBILE
    ========================================================= */
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 400px) {
 
@@ -1185,4 +1204,50 @@ flex: .5;
   .mobile-sidebar {
     width: 275px;
   }
+}
+
+/* =========================================================
+   RTL MOBILE SIDEBAR
+   ========================================================= */
+
+:host-context([dir="rtl"]) .mobile-sidebar {
+  left: auto;
+  right: 0;
+
+  box-shadow: -8px 0 30px rgba(46, 37, 33, .18);
+
+  animation: sidebarOpenRtl .22s ease-out;
+}
+
+@keyframes sidebarOpenRtl {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================================
+   RTL MOBILE SIDEBAR CONTENT
+   ========================================================= */
+
+:host-context([dir="rtl"]) .mobile-nav-link {
+  text-align: right;
+}
+
+:host-context([dir="rtl"]) .mobile-subcategories {
+  padding: 3px 13px 6px 0;
+  border-left: 0;
+  border-right: 2px solid var(--color-accent);
+}
+
+:host-context([dir="rtl"]) .mobile-subcategory {
+  text-align: right;
+}
+
+:host-context([dir="rtl"]) .mobile-brand {
+  text-align: right;
 }
