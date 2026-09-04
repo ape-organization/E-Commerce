@@ -51,268 +51,333 @@ transform: scale(1.1);
 MOBILE BOTTOM NAVIGATION
 Same style as main header
 ========================================================= */
+/* =======================================================
+   BOTTOM NAV CONTAINER
+   ======================================================= */
 
 .mobile-bottom-nav {
-display: none;
+  display: none;
 }
 
 @media (max-width: 991px) {
 
-.mobile-bottom-nav {
-position: fixed;
-left: 0;
-right: 0;
-bottom: 0;
+  .mobile-bottom-nav {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 60px;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: stretch;
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    border-top: 1px solid var(--color-border);
+    border-radius: 10px 10px 0 0;
+
+    /* KEEP YOUR GOLD OUTER BORDER */
+    box-shadow:
+      0 0 0 5px rgb(142, 103, 2);
+
+    box-sizing: border-box;
+
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
 
 
-width: 100%;
-height: 60px;
+  /* =======================================================
+     BOTTOM NAV ITEM
+     ======================================================= */
 
-z-index: 10000;
+  .bottom-nav-item {
+    position: relative;
 
-display: flex;
-align-items: stretch;
-background: var(--color-surface);
-color: var(--color-text);
+    flex: 1;
+    min-width: 0;
+    height: 60px;
 
-border-top: 1px solid var(--color-border);
-border-radius: 10px 10px 0 0;
-box-shadow:0px 0px 0px 5px rgb(142, 103, 2);
+    padding: 5px 8px;
 
-box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-transform: translateZ(0);
--webkit-transform: translateZ(0);
+    gap: 2px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: var(--color-text-secondary);
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    /* rounded floating button */
+    border-radius: 10px;
+
+    transform: translateY(0);
+
+    transition:
+      color 0.25s ease,
+      background 0.25s ease,
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
 
 
+  /* =======================================================
+     ICON
+     ======================================================= */
+
+  .bottom-nav-item mat-icon {
+    width: 21px;
+    height: 21px;
+
+    font-size: 21px;
+
+    color: var(--color-text-secondary);
+
+    transform: scale(1);
+
+    transition:
+      color 0.25s ease,
+      transform 0.25s ease;
+  }
+
+
+  /* =======================================================
+     HOVER
+     ======================================================= */
+
+  .bottom-nav-item:hover {
+    color: var(--color-primary);
+
+    background: var(--color-surface-soft);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+      0 4px 10px rgba(58, 39, 33, 0.12);
+  }
+
+  .bottom-nav-item:hover mat-icon {
+    color: var(--color-accent);
+
+    transform: scale(1.08);
+  }
+
+
+  /* =======================================================
+     ACTIVE BUTTON
+     ======================================================= */
+
+  .bottom-nav-item.bottom-active {
+    color: var(--color-primary);
+
+    background: var(--color-surface-soft);
+
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 5px 12px rgba(58, 39, 33, 0.15);
+  }
+
+  .bottom-nav-item.bottom-active mat-icon {
+    color: var(--color-accent);
+
+    transform: scale(1.12);
+  }
+
+
+  /* =======================================================
+     ACTIVE BUTTON TOP ACCENT
+     ======================================================= */
+
+/*   .bottom-nav-item.bottom-active::before {
+    content: '';
+
+    position: absolute;
+
+    top: 0;
+    left: 20%;
+    right: 20%;
+
+    height: 3px;
+
+    background: var(--color-accent);
+
+    border-radius: 0 0 5px 5px;
+
+    box-shadow:
+      0 2px 6px rgba(184, 138, 90, 0.35);
+  }
+ */
+
+  /* =======================================================
+     ACTIVE BUTTON BOTTOM LINE
+     ======================================================= */
+
+  .bottom-nav-item.bottom-active::after {
+    content: '';
+
+    position: absolute;
+
+    left: 30%;
+    right: 30%;
+
+    bottom: 2px;
+
+    height: 2px;
+
+    background: var(--color-accent);
+
+    border-radius: 4px;
+  }
+
+
+  /* =======================================================
+     OFFERS
+     ======================================================= */
+
+  .bottom-offers {
+    color: var(--color-sale);
+  }
+
+  .bottom-offers mat-icon {
+    color: var(--color-sale);
+  }
+
+
+  /* =======================================================
+     OFFER ICON
+     ======================================================= */
+
+  .bottom-offer-icon {
+    position: relative;
+
+    width: 21px;
+    height: 21px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bottom-offer-icon mat-icon {
+    width: 21px;
+    height: 21px;
+
+    font-size: 21px;
+  }
+
+
+  /* =======================================================
+     SALE DOT
+     ======================================================= */
+
+  .bottom-sale-dot {
+    position: absolute;
+
+    top: -5px;
+    right: -7px;
+
+    width: 12px;
+    height: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--color-sale);
+    color: #fff;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    border: 2px solid var(--color-surface);
+
+    transition: transform 0.2s ease;
+  }
+
+  .bottom-nav-item:hover .bottom-sale-dot,
+  .bottom-nav-item.bottom-active .bottom-sale-dot {
+    transform: scale(1.1);
+  }
+
+
+  /* =======================================================
+     PRESS EFFECT
+     ======================================================= */
+
+  .bottom-nav-item:active {
+    transform: translateY(-1px) scale(0.96);
+
+    box-shadow:
+      0 2px 6px rgba(58, 39, 33, 0.10);
+  }
+
+
+  /* =======================================================
+     CONTENT SPACE
+     ======================================================= */
+
+  .app-content {
+    padding-bottom: 60px;
+  }
+
+
+  /* =======================================================
+     WHATSAPP
+     ======================================================= */
+
+  .whatsapp {
+    bottom: 75px;
+  }
 }
 
-/* =======================================================
-BOTTOM NAV ITEM
-======================================================= */
-
-.bottom-nav-item {
-position: relative;
-
-
-flex: 1;
-
-min-width: 0;
-height: 60px;
-
-padding: 5px 8px;
-
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-
-gap: 2px;
-
-border: 0;
-outline: 0;
-
-background: transparent;
-color: var(--color-text-secondary);
-
-font-family: inherit;
-font-size: 10px;
-font-weight: 600;
-
-text-decoration: none;
-
-cursor: pointer;
-
-transition:
-  color .2s ease,
-  background .2s ease;
-
-
-}
-
-/* =======================================================
-ICON
-======================================================= */
-
-.bottom-nav-item mat-icon {
-width: 21px;
-height: 21px;
-
-
-font-size: 21px;
-
-color: var(--color-text-secondary);
-
-transition:
-  color .2s ease,
-  transform .2s ease;
-
-
-}
-
-/* =======================================================
-HOVER
-======================================================= */
-
-.bottom-nav-item:hover {
-color: var(--color-primary);
-background: var(--color-surface-soft);
-}
-
-.bottom-nav-item:hover mat-icon {
-color: var(--color-primary);
-}
-
-/* =======================================================
-ACTIVE
-======================================================= */
-
-.bottom-nav-item.bottom-active {
-color: var(--color-primary);
-background: var(--color-surface-soft);
-}
-
-.bottom-nav-item.bottom-active mat-icon {
-color: var(--color-accent);
-}
-
-.bottom-nav-item.bottom-active::after {
-content: '';
-
-
-position: absolute;
-
-left: 25%;
-right: 25%;
-bottom: 0;
-
-height: 2px;
-
-background: var(--color-accent);
-
-border-radius: 4px 4px 0 0;
-
-
-}
-
-/* =======================================================
-OFFERS
-======================================================= */
-
-.bottom-offers {
-color: var(--color-sale);
-}
-
-.bottom-offers mat-icon {
-color: var(--color-sale);
-}
-
-/* =======================================================
-OFFER ICON
-======================================================= */
-
-.bottom-offer-icon {
-position: relative;
-
-
-width: 21px;
-height: 21px;
-
-display: flex;
-align-items: center;
-justify-content: center;
-
-
-}
-
-.bottom-offer-icon mat-icon {
-width: 21px;
-height: 21px;
-
-
-font-size: 21px;
-
-
-}
-
-/* =======================================================
-SALE DOT
-======================================================= */
-
-.bottom-sale-dot {
-position: absolute;
-
-
-top: -5px;
-right: -7px;
-
-width: 12px;
-height: 12px;
-
-display: flex;
-align-items: center;
-justify-content: center;
-
-border-radius: 50%;
-
-background: var(--color-sale);
-color: #fff;
-
-font-size: 8px;
-font-weight: 800;
-
-border: 2px solid var(--color-surface);
-
-
-}
-
-/* =======================================================
-CONTENT SPACE
-======================================================= */
-
-.app-content {
-padding-bottom: 60px;
-}
-
-/* =======================================================
-WHATSAPP
-======================================================= */
-
-.whatsapp {
-bottom: 75px;
-}
-}
 
 /* =========================================================
-SMALL MOBILE
-========================================================= */
+   SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 400px) {
 
-.mobile-bottom-nav {
-height: 58px;
-}
+  .mobile-bottom-nav {
+    height: 58px;
+  }
 
-.bottom-nav-item {
-height: 58px;
+  .bottom-nav-item {
+    height: 58px;
 
+    font-size: 9px;
+  }
 
-font-size: 9px;
+  .bottom-nav-item mat-icon {
+    width: 20px;
+    height: 20px;
 
+    font-size: 20px;
+  }
 
-}
-
-.bottom-nav-item mat-icon {
-width: 20px;
-height: 20px;
-
-
-font-size: 20px;
-
-
-}
-
-.app-content {
-padding-bottom: 58px;
-}
+  .app-content {
+    padding-bottom: 58px;
+  }
 }

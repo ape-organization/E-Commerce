@@ -6,7 +6,7 @@
   width: 100%;
   max-width: 1380px;
   margin: auto;
-  padding: 35px 28px 65px;
+  padding: 45px 38px 75px;
   box-sizing: border-box;
 }
 
@@ -464,7 +464,7 @@
 @media (max-width: 600px) {
 
   .container {
-    padding: 20px 14px 40px;
+    padding: 30px 24px 50px;
   }
 
   .active-filters {
@@ -491,7 +491,7 @@
 @media (max-width: 400px) {
 
   .product-grid {
-    gap: 3px;
+    gap: 13px;
   }
 
 }

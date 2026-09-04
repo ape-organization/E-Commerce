@@ -88,21 +88,7 @@
 
   </section>
 
- <!-- =====================================================
-       BEST SELLERS
-       ===================================================== -->
 
-  <section class="best-sellers-section">
-
-    <app-best-sellers
-    [addedToCartProductId]="addedToCartProductId()"
-    [alreadyInCartProductId]="alreadyInCartProductId()"
-
-    (productClicked)="openProductDetails($event)"
-    (addToCartClicked)="addToCart($event)">
-  </app-best-sellers>
-
-  </section>
 
   <!-- =====================================================
        CATEGORIES
@@ -131,5 +117,19 @@
  
 
 </section>
+ <!-- =====================================================
+       BEST SELLERS
+       ===================================================== -->
 
+  <section class="best-sellers-section">
+
+    <app-best-sellers
+    [addedToCartProductId]="addedToCartProductId()"
+    [alreadyInCartProductId]="alreadyInCartProductId()"
+
+    (productClicked)="openProductDetails($event)"
+    (addToCartClicked)="addToCart($event)">
+  </app-best-sellers>
+
+  </section>
 </section>

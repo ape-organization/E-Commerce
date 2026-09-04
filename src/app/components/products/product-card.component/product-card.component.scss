@@ -1,62 +1,101 @@
+/* ============================================================
+   PRODUCT CARD HOST
+   ============================================================ */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   PRODUCT CARD
+   ============================================================ */
+
 .product-card {
-  width: 180px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+border-radius: 10px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
+
   background: var(--color-background);
-  /* border-radius: 12px; */
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .product-card:hover {
-  background-color: var( --color-surface);
+  background-color: var(--color-surface);
+
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(58, 39, 33, 0.12);
+
+  box-shadow:
+    0 8px 24px rgba(58, 39, 33, 0.12);
 }
 
-/* ==============================
+
+/* ============================================================
    IMAGE
-   ============================== */
+   ============================================================ */
 
 .product-image {
   position: relative;
+
   width: 100%;
   aspect-ratio: 1 / 1;
+
   overflow: hidden;
-  /* border-radius: 12px; */
+
   background: #f3eee8;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
+
   display: block;
+
   object-fit: cover;
-  transition: transform 0.35s ease;
+
+  transition:
+    transform 0.35s ease;
 }
 
 .product-card:hover .product-image img {
   transform: scale(1.04);
 }
 
-/* ==============================
-   DISCOUNT
-   ============================== */
+
+/* ============================================================
+   DISCOUNT / STOCK
+   ============================================================ */
 
 .discount-badge,
 .stock-badge {
   position: absolute;
+
   top: 10px;
+
   z-index: 2;
+
   padding: 5px 9px;
+
   border-radius: 6px;
+
   font-size: 12px;
   font-weight: 600;
 }
 
 .discount-badge {
   left: 10px;
-  background: var(  --color-sale);
+
+  background: var(--color-sale);
   color: #fff;
 }
 
@@ -69,14 +108,17 @@
   color: #fff;
 }
 
-/* ==============================
-   ADD TO CART
-   ============================== */
+
+/* ============================================================
+   ADD TO CART BUTTON
+   ============================================================ */
 
 .add-cart-button {
   position: absolute;
+
   top: 70%;
   left: 50%;
+
   z-index: 3;
 
   width: 80px;
@@ -87,13 +129,17 @@
   justify-content: center;
 
   padding: 0;
+
   border: none;
   border-radius: 5%;
 
-  background:  var( --color-surface);
+  background: var(--color-surface);
   color: var(--color-primary-light);
 
-  transform: translate(-50%, -50%) scale(0.8);
+  transform:
+    translate(-50%, -50%)
+    scale(0.8);
+
   opacity: 0;
   visibility: hidden;
 
@@ -108,69 +154,39 @@
 
 .add-cart-button mat-icon {
   margin: 0;
-  font-size: 22px;
+
   width: 22px;
   height: 22px;
+
+  font-size: 22px;
 }
 
-/* Desktop hover */
+
+/* ============================================================
+   DESKTOP HOVER
+   ============================================================ */
 
 .product-card:hover .add-cart-button:not(:disabled) {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, -50%) scale(1);
+
+  transform:
+    translate(-50%, -50%)
+    scale(1);
 }
 
 .add-cart-button:hover:not(:disabled) {
   background: var(--color-accent);
-  transform: translate(-50%, -50%) scale(1.08);
+
+  transform:
+    translate(-50%, -50%)
+    scale(1.08);
 }
 
 .add-cart-button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
-/* ============================================================
-   CART ACTION
-   ============================================================ */
-
-/* .cart-action {
-  position: absolute;
-
-  left: 50%;
-  bottom: 15px;
-
-  transform: translateX(-50%);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: 6px;
-
-  z-index: 5;
-} */
-
-
-/* ============================================================
-   ADD TO CART BUTTON
-   ============================================================ */
-
-/* .add-cart-button {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 42px;
-  height: 42px;
-
-  border: none;
-  border-radius: 50%;
-
-  cursor: pointer;
-} */
 
 
 /* ============================================================
@@ -202,74 +218,78 @@
   line-height: 1.3;
 
   text-align: center;
+
   white-space: nowrap;
 
   pointer-events: none;
 }
+
+
 /* ============================================================
-   MESSAGE ANIMATION
-   ============================================================ */
-
-/* @keyframes alreadyInCartFadeIn {
-
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-} */
-/* ==============================
    CONTENT
-   ============================== */
+   ============================================================ */
 
 .product-content {
   padding: 12px 4px 14px;
+
+  box-sizing: border-box;
 }
 
 .product-name {
   margin: 0 0 8px;
+
   color: var(--color-primary);
 
   font-size: 15px;
   font-weight: 600;
 
   display: -webkit-box;
+
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+
   overflow: hidden;
 }
 
 .product-price {
   display: flex;
   align-items: center;
+
   gap: 8px;
+
+  min-width: 0;
 }
 
 .old-price {
   color: #999;
+
   font-size: 13px;
+
   text-decoration: line-through;
 }
 
 .current-price {
   color: var(--color-accent);
+
   font-size: 17px;
   font-weight: 700;
 }
 
-/* ==============================
+
+/* ============================================================
    MOBILE / TABLET
-   ============================== */
+   ============================================================ */
 
 @media (max-width: 768px) {
 
+  .product-card
+  {
+      background-color: var(--color-surface);
+
+  }
   .product-card:hover {
     transform: none;
+
     box-shadow: none;
   }
 
@@ -280,22 +300,32 @@
   .add-cart-button {
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, -50%) scale(1);
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
   }
 
   .add-cart-button:hover:not(:disabled) {
-    transform: translate(-50%, -50%) scale(1);
+    transform:
+      translate(-50%, -50%)
+      scale(1);
   }
 }
+
+
 /* ============================================================
    ADDED TO CART SUCCESS
    ============================================================ */
 
 .add-cart-button.added {
-  background:  var( --color-surface);;
-  color: var(-color-text-secondar);
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
   opacity: 1;
   visibility: visible;
+
   cursor: default;
 
   transform:
@@ -307,14 +337,19 @@
 }
 
 .add-cart-button.added:hover {
-  background:  var( --color-surface);;
-    color: var(-color-text-secondar);
+  background: var(--color-surface);
 
+  color: var(--color-text-secondary);
 
   transform:
     translate(-50%, -50%)
     scale(1);
 }
+
+
+/* ============================================================
+   ADDED CHECK ICON
+   ============================================================ */
 
 .added-check-icon {
   width: 23px !important;
@@ -325,23 +360,26 @@
   animation:
     addedCheckAnimation
     0.3s
-    cubic-bezier(.2,.8,.3,1);
+    cubic-bezier(.2, .8, .3, 1);
 }
 
 @keyframes addedCheckAnimation {
 
   0% {
     opacity: 0;
-    transform: scale(.4);
+
+    transform: scale(0.4);
   }
 
   60% {
     opacity: 1;
+
     transform: scale(1.15);
   }
 
   100% {
     opacity: 1;
+
     transform: scale(1);
   }
 }
