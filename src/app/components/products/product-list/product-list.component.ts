@@ -37,7 +37,7 @@ import {
   ProductFilterValue
 } from '../../../models/product.model';
 
-import { ProductModalComponent } from '../../shared/product-modal/product-modal.component';
+import { ProductModalComponent } from '../product-modal/product-modal.component';
 
 import { environment } from '../../../../environments/environment';
 
@@ -2210,8 +2210,7 @@ addToCart(
   // ------------------------------------------------------
   // PRODUCT ALREADY EXISTS
   // ------------------------------------------------------
-
-  if (alreadyExists) {
+  if (!alreadyExists) {
 
     this.addedToCartProductId.set(null);
 

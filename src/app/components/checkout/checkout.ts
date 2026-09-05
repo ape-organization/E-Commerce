@@ -4,8 +4,8 @@ import {
 
 import {
   Component,
-  inject,
   OnInit,
+  inject,
   signal
 } from '@angular/core';
 
@@ -16,42 +16,50 @@ import {
 } from '@angular/forms';
 
 import {
-  Router
+  MatButtonModule
+} from '@angular/material/button';
+
+import {
+  MatDialog,
+  MatDialogModule
+} from '@angular/material/dialog';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import {
+  MatProgressSpinnerModule
+} from '@angular/material/progress-spinner';
+
+import {
+  Router,
+  RouterModule
 } from '@angular/router';
 
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  switchMap,
-  catchError,
-  of
-} from 'rxjs';
 
 import {
-  ClientService
-} from '../../services/client.service';
+  CartItem,
+  CartService
+} from '../../services/cart.service';
+
+import {
+  Product
+} from '../../models/product.model';
+
+import {
+  ProductService
+} from '../../services/product.service';
 
 import {
   OrderService
 } from '../../services/order.service';
 
-import {
-  CartService,
-  CartItem
-} from '../../services/cart.service';
 
-import {
-  environment
-} from '../../../environments/environment';
-
-import {
-  TranslatePipe
-} from '@ngx-translate/core';
-
-import {
-  LanguageService
-} from '../../services/language.service';
+import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ClientService } from '../../services/client.service';
+import { NotifyMessage } from '../shared/notify-message/notify-message';
 
 
 @Component({
@@ -62,26 +70,29 @@ import {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
     TranslatePipe
   ],
 
   templateUrl: './checkout.html',
 
-  styleUrl: './checkout.scss',
+  styleUrls: ['./checkout.scss']
 })
-export class Checkout
-  implements OnInit {
+export class CheckoutComponent implements OnInit {
 
-
-  // ==========================================================
+  // =========================================================
   // SERVICES
-  // ==========================================================
+  // =========================================================
 
   private readonly fb =
     inject(FormBuilder);
 
-  private readonly router =
-    inject(Router);
+  private readonly cartService =
+    inject(CartService);
 
   private readonly clientService =
     inject(ClientService);
@@ -89,16 +100,16 @@ export class Checkout
   private readonly orderService =
     inject(OrderService);
 
-  private readonly cartService =
-    inject(CartService);
+  private readonly dialog =
+    inject(MatDialog);
 
-  public readonly languageService =
-    inject(LanguageService);
+  private readonly router =
+    inject(Router);
 
 
-  // ==========================================================
-  // STATE
-  // ==========================================================
+  // =========================================================
+  // SIGNALS
+  // =========================================================
 
   readonly isSubmitting =
     signal(false);
@@ -110,418 +121,574 @@ export class Checkout
     signal(false);
 
 
-  // ==========================================================
+  // =========================================================
   // CART
-  // ==========================================================
+  // =========================================================
 
   cartItems: CartItem[] = [];
 
 
-  // ==========================================================
-  // DELIVERY
-  // ==========================================================
-
-  readonly deliveryFee =
-    signal(50);
-
-
-  // ==========================================================
-  // IMAGE API
-  // ==========================================================
-
-  api =
-    environment.imageApiBaseUrl;
-
-
-  // ==========================================================
+  // =========================================================
   // FORM
-  // ==========================================================
+  // =========================================================
 
-  readonly checkoutForm =
+  checkoutForm =
     this.fb.nonNullable.group({
 
       fullName: [
-
         '',
-
         [
           Validators.required,
-          Validators.minLength(3)
+          Validators.minLength(2)
         ]
-
       ],
 
       phone: [
-
         '',
-
         [
           Validators.required,
-
-          Validators.pattern(
-            /^01[0125][0-9]{8}$/
-          )
-
+          Validators.pattern(/^[0-9+\-\s()]{7,20}$/)
         ]
-
       ],
 
       email: [
-
         '',
-
         [
           Validators.email
         ]
-
-      ],
-
-      city: [
-        ''
       ],
 
       address: [
-
         '',
-
         [
           Validators.required,
           Validators.minLength(5)
         ]
-
-      ],
-
-      apartment: [
-        ''
-      ],
-
-      notes: [
-        ''
       ]
 
     });
 
 
-  // ==========================================================
-  // INITIALIZE
-  // ==========================================================
+  // =========================================================
+  // INIT
+  // =========================================================
 
   ngOnInit(): void {
 
-    this.loadCart();
-
-    this.watchPhoneNumber();
-
-  }
-
-
-  // ==========================================================
-  // LOAD CART
-  // ==========================================================
-
-  private loadCart(): void {
-
-    this.cartService
-      .cartItems$
+    this.cartService.cartItems$
       .subscribe(items => {
 
-        this.cartItems =
-          items;
+        this.cartItems = items;
 
       });
 
+    this.setupPhoneLookup();
   }
 
 
-  // ==========================================================
+  // =========================================================
+  // TOTAL ITEMS
+  // =========================================================
+
+  get totalItems(): number {
+
+    return this.cartItems.reduce(
+      (total, item) =>
+        total + item.quantity,
+      0
+    );
+  }
+
+
+  // =========================================================
+  // SUBTOTAL
+  // =========================================================
+
+  get subtotal(): number {
+
+    const total =
+      this.cartItems.reduce(
+        (sum, item) =>
+          sum + this.getItemSubtotal(item),
+        0
+      );
+
+    return this.roundPrice(total);
+  }
+
+
+  // =========================================================
+  // TOTAL
+  // =========================================================
+
+  get total(): number {
+
+    return this.roundPrice(this.subtotal);
+  }
+
+
+  // =========================================================
+  // PHONE LOOKUP
+  // =========================================================
+
+  private setupPhoneLookup(): void {
+
+    const phoneControl =
+      this.checkoutForm.controls.phone;
+
+    phoneControl.valueChanges
+      .subscribe(phone => {
+
+        const normalizedPhone =
+          phone.trim();
+
+        if (normalizedPhone.length < 7) {
+
+          this.clientFound.set(false);
+
+          return;
+        }
+
+        this.searchClient(normalizedPhone);
+
+      });
+  }
+
+
+  // =========================================================
+  // SEARCH CLIENT
+  // =========================================================
+
+  private searchClient(
+    phone: string
+  ): void {
+
+    this.isSearchingClient.set(true);
+
+    this.clientService
+      .getByPhone(phone)
+      .subscribe({
+
+        next: client => {
+
+          this.isSearchingClient.set(false);
+
+          if (!client) {
+
+            this.clientFound.set(false);
+
+            /**
+             * Clear previous customer's
+             * information when this is
+             * a new phone number.
+             */
+            this.checkoutForm.patchValue(
+              {
+                fullName: '',
+                email: '',
+                address: ''
+              },
+              {
+                emitEvent: false
+              }
+            );
+
+            return;
+          }
+
+          this.clientFound.set(true);
+
+          this.checkoutForm.patchValue(
+            {
+              fullName: client.name ?? '',
+              email: client.email ?? '',
+              address: client.address ?? ''
+            },
+            {
+              emitEvent: false
+            }
+          );
+
+        },
+
+        error: error => {
+
+          console.error(
+            'Client lookup error:',
+            error
+          );
+
+          this.isSearchingClient.set(false);
+
+          this.clientFound.set(false);
+
+        }
+
+      });
+  }
+
+
+  // =========================================================
+  // BACK TO CART
+  // =========================================================
+
+  goBackToCart(): void {
+
+    this.router.navigate([
+      '/cart'
+    ]);
+  }
+
+
+  // =========================================================
   // PRODUCT NAME
-  // ==========================================================
+  // =========================================================
 
   getProductName(
     item: CartItem
   ): string {
 
-    const product =
-      item?.product;
+    const product = item.product;
 
-    if (!product) {
-
-      return 'Product';
-
-    }
-
-
-    if (
-      this.languageService.isArabic()
-    ) {
-
-      return (
-        product.nameAr?.trim() ||
-        product.nameEn ||
-        'Product'
-      );
-
-    }
-
-
-    return (
-      product.nameEn?.trim() ||
-      product.nameAr ||
-      'Product'
-    );
-
+    /**
+     * If your Product model has both
+     * nameEn and nameAr, this keeps the
+     * existing English behavior.
+     *
+     * If you already have a language service
+     * controlling the name, you can replace
+     * this later.
+     */
+    return product.nameEn ?? '';
   }
 
 
-  // ==========================================================
+  // =========================================================
   // DISCOUNTED PRICE
-  // ==========================================================
+  // =========================================================
 
   getDiscountedPrice(
     item: CartItem
   ): number {
 
-    return this.cartService
-      .getFinalPrice(
-        item.product
-      );
-
+    return this.getFinalPrice(
+      item.product
+    );
   }
 
 
-  // ==========================================================
-  // ORIGINAL PRICE
-  // ==========================================================
+  // =========================================================
+  // FINAL PRODUCT PRICE
+  // =========================================================
 
-  getOriginalPrice(
-    item: CartItem
+  getFinalPrice(
+    product: Product
   ): number {
 
-    return Number(
-      item.product.price ?? 0
-    );
+    const price =
+      Number(product.price ?? 0);
 
+    const discount =
+      Number(product.discountPercentage ?? 0);
+
+    if (discount <= 0) {
+
+      return this.roundPrice(price);
+    }
+
+    const finalPrice =
+      price *
+      (1 - discount / 100);
+
+    return this.roundPrice(
+      finalPrice
+    );
   }
 
 
-  // ==========================================================
-  // ITEM DISCOUNT
-  // ==========================================================
-
-  getItemDiscount(
-    item: CartItem
-  ): number {
-
-    return Number(
-      item.product.discountPercentage ?? 0
-    );
-
-  }
-
-
-  // ==========================================================
+  // =========================================================
   // ITEM SUBTOTAL
-  // ==========================================================
+  // =========================================================
 
   getItemSubtotal(
     item: CartItem
   ): number {
 
-    return this.getDiscountedPrice(item) *
-      item.quantity;
+    const price =
+      this.getFinalPrice(
+        item.product
+      );
 
+    return this.roundPrice(
+      price * item.quantity
+    );
   }
 
 
-  // ==========================================================
-  // SEARCH CLIENT BY PHONE
-  // ==========================================================
+  // =========================================================
+  // ITEM TOTAL
+  // =========================================================
 
-  private watchPhoneNumber(): void {
+  getItemTotal(
+    item: CartItem
+  ): number {
 
-    this.checkoutForm
-      .controls
-      .phone
-      .valueChanges
+    return this.getItemSubtotal(item);
+  }
 
-      .pipe(
 
-        debounceTime(400),
+  // =========================================================
+  // IMAGE URL
+  // =========================================================
 
-        distinctUntilChanged(),
+  getImageUrl(
+    imageUrl: string | null | undefined
+  ): string {
 
-        filter(phone =>
-          phone.length === 11
-        ),
+    if (!imageUrl) {
 
-        switchMap(phone => {
+      return 'assets/images/product-placeholder.png';
+    }
 
-          this.isSearchingClient.set(
-            true
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
+    ) {
+
+      return imageUrl;
+    }
+
+    return `${environment.imageApiBaseUrl}${imageUrl}`;
+  }
+
+
+  // =========================================================
+  // INCREASE
+  // =========================================================
+
+  increaseQuantity(
+    productId: number
+  ): void {
+
+    this.cartService
+      .increaseQuantity(productId);
+  }
+
+
+  // =========================================================
+  // DECREASE
+  // =========================================================
+
+  decreaseQuantity(
+    productId: number
+  ): void {
+
+    this.cartService
+      .decreaseQuantity(productId);
+  }
+
+
+  // =========================================================
+  // REMOVE
+  // =========================================================
+
+  removeItem(
+    productId: number
+  ): void {
+
+    this.cartService
+      .removeFromCart(productId);
+  }
+
+
+  // =========================================================
+  // PLACE ORDER
+  // =========================================================
+
+  placeOrder(): void {
+
+    if (this.isSubmitting()) {
+      return;
+    }
+
+    if (this.cartItems.length === 0) {
+
+      this.showError(
+        'CHECKOUT.EMPTY_CART'
+      );
+
+      return;
+    }
+
+    if (this.checkoutForm.invalid) {
+
+      this.checkoutForm.markAllAsTouched();
+
+      return;
+    }
+
+    const form =
+      this.checkoutForm.getRawValue();
+
+
+    /**
+     * IMPORTANT:
+     *
+     * We intentionally DO NOT send
+     * price or discount from Angular.
+     *
+     * Backend calculates the real
+     * price from the database.
+     */
+    const items =
+      this.cartService.getOrderItems();
+
+
+    if (items.length === 0) {
+
+      this.showError(
+        'CHECKOUT.EMPTY_CART'
+      );
+
+      return;
+    }
+
+
+    const request = {
+
+      client: {
+
+        name:
+          form.fullName.trim(),
+
+        phoneNumber:
+          form.phone.trim(),
+
+        address:
+          form.address.trim(),
+
+        email:
+          form.email.trim()
+            ? form.email.trim()
+            : null
+
+      },
+
+      items
+
+    };
+
+
+    this.isSubmitting.set(true);
+
+
+    this.orderService
+      .createOrder(request)
+      .subscribe({
+
+        next: () => {
+
+          this.isSubmitting.set(false);
+
+          this.handleSuccessfulOrder();
+
+        },
+
+        error: error => {
+
+          console.error(
+            'Create order error:',
+            error
           );
 
-          return this.clientService
-            .getByPhone(phone)
+          this.isSubmitting.set(false);
 
-            .pipe(
+          const message =
+            error?.error?.message ??
+            'CHECKOUT.ORDER_FAILED';
 
-              catchError(() => {
-
-                this.clientFound.set(
-                  false
-                );
-
-                return of(null);
-
-              })
-
-            );
-
-        })
-
-      )
-
-      .subscribe(client => {
-
-        this.isSearchingClient.set(
-          false
-        );
-
-
-        if (!client) {
-
-          this.clientFound.set(
-            false
-          );
-
-          return;
+          this.showError(message);
 
         }
 
-
-        this.clientFound.set(
-          true
-        );
+      });
+  }
 
 
-        this.checkoutForm.patchValue({
+  // =========================================================
+  // SUCCESS
+  // =========================================================
 
-          fullName:
-            client.name,
+  private handleSuccessfulOrder(): void {
 
-          email:
-            client.email ?? '',
+    /**
+     * Clear the cart exactly once.
+     */
+    this.cartService.clearCart();
 
-          address:
-            client.address ?? ''
 
-        });
+    const dialogRef =
+      this.dialog.open(
+        NotifyMessage,
+        {
+          width: '400px',
+
+          disableClose: true,
+
+          data: {
+
+            title:
+              'ORDER.SUCCESS',
+
+            message:
+              'ORDER.SUCCESSORDER'
+
+          }
+        }
+      );
+
+
+    dialogRef
+      .afterClosed()
+      .subscribe(() => {
+
+        this.router.navigate([
+          '/products'
+        ]);
 
       });
-
   }
 
 
-  // ==========================================================
-  // SUBTOTAL
-  // ==========================================================
+  // =========================================================
+  // ERROR
+  // =========================================================
 
-  get subtotal(): number {
+  private showError(
+    message: string
+  ): void {
 
-    return this.cartItems.reduce(
-      (
-        total,
-        item
-      ) => {
+    this.dialog.open(
+      NotifyMessage,
+      {
+        width: '400px',
 
-        return total +
-          this.getItemSubtotal(
-            item
-          );
+        data: {
 
-      },
-      0
+          title:
+            'COMMON.ERROR',
+
+          message
+
+        }
+      }
     );
-
   }
 
 
-  // ==========================================================
-  // TOTAL
-  // ==========================================================
-
-  get total(): number {
-
-    return this.subtotal +
-      this.deliveryFee();
-
-  }
-
-
-  // ==========================================================
-  // TOTAL ITEMS
-  // ==========================================================
-
-  get totalItems(): number {
-
-    return this.cartItems.reduce(
-      (
-        total,
-        item
-      ) => {
-
-        return total +
-          item.quantity;
-
-      },
-      0
-    );
-
-  }
-
-
-  // ==========================================================
-  // TOTAL SAVINGS
-  // ==========================================================
-
-  get totalSavings(): number {
-
-    return this.cartItems.reduce(
-      (
-        total,
-        item
-      ) => {
-
-        const original =
-          this.getOriginalPrice(
-            item
-          );
-
-        const discounted =
-          this.getDiscountedPrice(
-            item
-          );
-
-
-        return total +
-          (
-            (
-              original -
-              discounted
-            ) *
-            item.quantity
-          );
-
-      },
-      0
-    );
-
-  }
-
-
-  // ==========================================================
+  // =========================================================
   // VALIDATION
-  // ==========================================================
+  // =========================================================
 
   isInvalid(
     controlName: string
@@ -532,7 +699,6 @@ export class Checkout
         controlName
       );
 
-
     return !!(
       control &&
       control.invalid &&
@@ -541,254 +707,19 @@ export class Checkout
         control.touched
       )
     );
-
   }
 
 
-  // ==========================================================
-  // PLACE ORDER
-  // ==========================================================
-
-  placeOrder(): void {
-
-    if (
-      this.checkoutForm.invalid
-    ) {
-
-      this.checkoutForm.markAllAsTouched();
-
-      return;
-
-    }
-
-
-    if (
-      this.isSubmitting()
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      this.cartItems.length === 0
-    ) {
-
-      alert(
-        'Your cart is empty.'
-      );
-
-      this.router.navigate([
-        '/cart'
-      ]);
-
-      return;
-
-    }
-
-
-    const items =
-      this.cartService.getOrderItems();
-
-
-    if (
-      items.length === 0
-    ) {
-
-      alert(
-        'Your cart contains no valid products.'
-      );
-
-      this.router.navigate([
-        '/cart'
-      ]);
-
-      return;
-
-    }
-
-
-    this.isSubmitting.set(
-      true
-    );
-
-
-    const form =
-      this.checkoutForm.getRawValue();
-
-
-    const fullAddress =
-      this.buildFullAddress(
-        form.city,
-        form.address,
-        form.apartment
-      );
-
-
-    const request = {
-
-      client: {
-
-        name:
-          form.fullName,
-
-        phoneNumber:
-          form.phone,
-
-        address:
-          fullAddress,
-
-        email:
-          form.email || null
-
-      },
-
-      items:
-        items
-
-    };
-
-
-    console.log(
-      'Create order request:',
-      request
-    );
-
-
-    this.orderService
-      .createOrder(request)
-
-      .subscribe({
-
-        next: response => {
-
-          console.log(
-            'Order created:',
-            response
-          );
-
-
-          this.cartService
-            .clearCart();
-
-
-          this.isSubmitting.set(
-            false
-          );
-
-
-          this.router.navigate([
-            '/order-success'
-          ]);
-
-        },
-
-
-        error: error => {
-
-          console.error(
-            'Failed to create order:',
-            error
-          );
-
-
-          this.isSubmitting.set(
-            false
-          );
-
-
-          alert(
-
-            error?.error?.message ??
-
-            'Failed to place order. Please try again.'
-
-          );
-
-        }
-
-      });
-
+  // =========================================================
+  // ROUND PRICE
+  // =========================================================
+
+  private roundPrice(
+    value: number
+  ): number {
+
+    return Math.round(
+      (value + Number.EPSILON) * 100
+    ) / 100;
   }
-
-
-  // ==========================================================
-  // BUILD ADDRESS
-  // ==========================================================
-
-  private buildFullAddress(
-    city: string,
-    address: string,
-    apartment: string
-  ): string {
-
-    let result =
-      `${city}, ${address}`;
-
-
-    if (
-      apartment.trim()
-    ) {
-
-      result +=
-        `, ${apartment}`;
-
-    }
-
-
-    return result;
-
-  }
-
-
-  // ==========================================================
-  // BACK TO CART
-  // ==========================================================
-
-  goBackToCart(): void {
-
-    this.router.navigate([
-      '/cart'
-    ]);
-
-  }
-
-
-  // ==========================================================
-  // IMAGE URL
-  // ==========================================================
-
-  getImageUrl(
-    imageUrl?: string | null
-  ): string {
-
-    if (!imageUrl) {
-
-      return 'assets/images/product-placeholder.png';
-
-    }
-
-
-    if (
-
-      imageUrl.startsWith(
-        'http://'
-      ) ||
-
-      imageUrl.startsWith(
-        'https://'
-      )
-
-    ) {
-
-      return imageUrl;
-
-    }
-
-
-    return `${this.api}${imageUrl}`;
-
-  }
-
 }

@@ -24,7 +24,7 @@ import { environment } from '../../../../environments/environment';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ProductModalComponent } from '../../shared/product-modal/product-modal.component';
+import { ProductModalComponent } from '../../products/product-modal/product-modal.component';
 
 interface HomeSlide {
   id: number;
@@ -107,7 +107,7 @@ export class Home implements OnInit, OnDestroy {
     // PRODUCT ALREADY EXISTS
     // ---------------------------------------------------
 
-    if (alreadyExists) {
+    if (!alreadyExists) {
 
       // Remove check mark
       this.addedToCartProductId.set(null);

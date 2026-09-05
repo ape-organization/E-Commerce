@@ -53,7 +53,7 @@ export class ProductModalComponent {
   // QUANTITY
   // =====================================================
 
-  quantity = signal(0);
+  quantity = signal(1);
 
 
   // =====================================================
@@ -204,44 +204,30 @@ export class ProductModalComponent {
   // ADD TO CART
   // =====================================================
 
-  addToCart(): void {
-
-    if (
-      !this.product?.isInStock
-    ) {
-
-      return;
-
-    }
-
-    this.validateQuantity();
-
-    const selectedQuantity =
-      this.quantity();
-
-    if (selectedQuantity <= 0) {
-
-      return;
-
-    }
-
-    if (
-      this.stock > 0 &&
-      selectedQuantity > this.stock
-    ) {
-
-      return;
-
-    }
-
-    this.cartService.addToCart(
-      this.product,
-      selectedQuantity
-    );
-
-    this.dialogRef.close();
-
+ addToCart(): void {
+  if (!this.product?.isInStock) {
+    return;
   }
+
+  this.validateQuantity();
+
+  const selectedQuantity = this.quantity();
+
+  if (selectedQuantity <= 0) {
+    return;
+  }
+
+  const added = this.cartService.replaceCartItem(
+    this.product,
+    selectedQuantity
+  );
+
+  if (!added) {
+    return;
+  }
+
+  this.dialogRef.close();
+}
 
 
   // =====================================================

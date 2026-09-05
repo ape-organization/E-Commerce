@@ -191,6 +191,8 @@
 },
 
 "ORDER": {
+  "SUCCESS":"Success",
+  "SUCCESSORDER":"Your order has been placed successfully. We’ll contact you shortly for further details.",
 "ORDER": "Order",
 "ORDERS": "Orders",
 "ORDER_NUMBER": "Order Number",
@@ -217,6 +219,8 @@
 },
 
 "COMMON": {
+      "client-found":"Client found",
+
 "SAVE": "Save",
 "CANCEL": "Cancel",
 "DELETE": "Delete",
