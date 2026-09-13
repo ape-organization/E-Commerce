@@ -1,7 +1,8 @@
 import {
   Component,
-  inject,
+  OnDestroy,
   OnInit,
+  inject,
   signal
 } from '@angular/core';
 
@@ -29,6 +30,11 @@ import {
 
 import { ProductService } from '../../../services/product.service';
 
+import {
+  Subject,
+  takeUntil
+} from 'rxjs';
+import { RelativeProducts } from '../relative-products/relative-products';
 
 @Component({
   selector: 'app-product-modal',
@@ -40,46 +46,66 @@ import { ProductService } from '../../../services/product.service';
     CommonModule,
     FormsModule,
     MatButtonModule,
-    MaterialModule
+    MaterialModule,
+    RelativeProducts
   ],
 
   templateUrl: './product-modal.component.html',
 
   styleUrl: './product-modal.component.css'
 })
-export class ProductModalComponent implements OnInit {
+export class ProductModalComponent
+  implements OnInit, OnDestroy {
+
 
   // =====================================================
   // SERVICES
   // =====================================================
 
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private productService = inject(ProductService);
-  private cartService = inject(CartService);
+  private readonly router = inject(Router);
 
-  public languageService = inject(LanguageService);
+  private readonly route = inject(ActivatedRoute);
+
+  private readonly productService =
+    inject(ProductService);
+
+  private readonly cartService =
+    inject(CartService);
+
+  readonly languageService =
+    inject(LanguageService);
+
+
+  // =====================================================
+  // DESTROY
+  // =====================================================
+
+  private readonly destroy$ =
+    new Subject<void>();
 
 
   // =====================================================
   // PRODUCT
   // =====================================================
 
-  product = signal<Product | null>(null);
+  readonly product =
+    signal<Product | null>(null);
 
 
   // =====================================================
   // QUANTITY
   // =====================================================
 
-  quantity = signal(1);
+  readonly quantity =
+    signal(1);
 
 
   // =====================================================
   // IMAGE API
   // =====================================================
 
-  api = environment.imageApiBaseUrl;
+  readonly api =
+    environment.imageApiBaseUrl;
 
 
   // =====================================================
@@ -87,18 +113,41 @@ export class ProductModalComponent implements OnInit {
   // =====================================================
 
   ngOnInit(): void {
-    const productId = Number(
-      this.route.snapshot.paramMap.get('id')
-    );
 
-    if (!productId) {
+    /**
+     * IMPORTANT:
+     *
+     * Do NOT use:
+     *
+     * route.snapshot.paramMap.get('id')
+     *
+     * because the same component can remain alive while
+     * only the route ID changes.
+     *
+     * paramMap subscription detects:
+     *
+     * /products/10
+     *        ↓
+     * /products/20
+     */
+    this.route.paramMap
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe(params => {
 
-      this.goBack();
+        const productId =
+          Number(params.get('id'));
 
-      return;
-    }
+        if (!productId) {
 
-    this.loadProduct(productId);
+          this.goBack();
+
+          return;
+        }
+
+        this.loadProduct(productId);
+      });
   }
 
 
@@ -108,22 +157,36 @@ export class ProductModalComponent implements OnInit {
 
   private loadProduct(id: number): void {
 
-    this.productService.getProduct(id).subscribe({
+    /**
+     * Reset UI state immediately when changing products.
+     */
+    this.product.set(null);
 
-      next: (product) => {
+    this.quantity.set(1);
 
-        this.product.set(product);
+    this.productService
+      .getProduct(id)
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
 
-      },
+        next: (product) => {
 
-      error: () => {
+          this.product.set(product);
 
-        this.goBack();
+        },
 
-      }
+        error: (error) => {
 
-    });
+          console.error(
+            'Failed to load product:',
+            error
+          );
 
+          this.goBack();
+        }
+      });
   }
 
 
@@ -136,23 +199,21 @@ export class ProductModalComponent implements OnInit {
     return Number(
       this.product()?.stockQuantity ?? 0
     );
-
   }
 
 
   get isOutOfStock(): boolean {
 
     return this.product()?.isInStock !== true;
-
   }
 
 
   get canAddToCart(): boolean {
+
     return (
       this.product()?.isInStock === true &&
       this.quantity() > 0
     );
-
   }
 
 
@@ -165,7 +226,6 @@ export class ProductModalComponent implements OnInit {
     return Number(
       this.product()?.discountPercentage ?? 0
     ) > 0;
-
   }
 
 
@@ -174,7 +234,6 @@ export class ProductModalComponent implements OnInit {
     return Number(
       this.product()?.price ?? 0
     );
-
   }
 
 
@@ -183,19 +242,18 @@ export class ProductModalComponent implements OnInit {
     if (!this.hasDiscount) {
 
       return this.oldPrice;
-
     }
 
-    const discount = Number(
-      this.product()?.discountPercentage ?? 0
-    );
+    const discount =
+      Number(
+        this.product()?.discountPercentage ?? 0
+      );
 
     return Math.max(
       0,
       this.oldPrice -
       (this.oldPrice * discount / 100)
     );
-
   }
 
 
@@ -203,31 +261,33 @@ export class ProductModalComponent implements OnInit {
   // QUANTITY
   // =====================================================
 
-setQuantity(value: number): void {
+  setQuantity(value: number): void {
 
-  let newQuantity = Number(value);
+    let newQuantity =
+      Number(value);
 
-  if (!Number.isFinite(newQuantity)) {
-    newQuantity = 1;
+    if (!Number.isFinite(newQuantity)) {
+
+      newQuantity = 1;
+    }
+
+    newQuantity =
+      Math.floor(newQuantity);
+
+    if (newQuantity < 1) {
+
+      newQuantity = 1;
+    }
+
+    this.quantity.set(newQuantity);
   }
 
-  newQuantity = Math.floor(newQuantity);
-
-  if (newQuantity < 1) {
-    newQuantity = 1;
-  }
-
-
-
-  this.quantity.set(newQuantity);
-}
 
   validateQuantity(): void {
 
     this.setQuantity(
       this.quantity()
     );
-
   }
 
 
@@ -237,35 +297,92 @@ setQuantity(value: number): void {
 
   addToCart(): void {
 
-    const product = this.product();
+    const product =
+      this.product();
 
     if (!product?.isInStock) {
 
       return;
-
     }
 
     this.validateQuantity();
 
-    const selectedQuantity = this.quantity();
+    const selectedQuantity =
+      this.quantity();
 
     if (selectedQuantity <= 0) {
 
       return;
-
     }
 
-    const added = this.cartService.replaceCartItem(
-      product,
-      selectedQuantity
-    );
+    const added =
+      this.cartService.replaceCartItem(
+        product,
+        selectedQuantity
+      );
 
     if (!added) {
 
       return;
-
     }
-this.goBack()
+
+    this.goBack();
+  }
+  // ============================================================
+  // OPEN PRODUCT DETAILS
+  // ============================================================
+
+  openProductDetails(
+    product: Product
+  ): void {
+    this.router.navigate([
+      '/product',
+      product.id
+    ]);
+  }
+
+  // =====================================================
+  // RELATIVE PRODUCT CLICK
+  // =====================================================
+
+  onRelativeProductClicked(
+    product: Product
+  ): void {
+
+    /**
+     * Navigate to the new product ID.
+     *
+     * Because this component listens to paramMap,
+     * the same ProductModalComponent instance will
+     * automatically reload with the new product.
+     */
+    console.log("__________")
+    console.log(product.id)
+    console.log(product)
+    this.router.navigate([
+      '/product',
+      product.id
+    ]);
+  }
+
+
+  // =====================================================
+  // RELATIVE PRODUCT ADD TO CART
+  // =====================================================
+
+  onRelativeAddToCartClicked(
+    product: Product
+  ): void {
+
+    if (!product.isInStock) {
+
+      return;
+    }
+
+    this.cartService.replaceCartItem(
+      product,
+      1
+    );
   }
 
 
@@ -275,8 +392,9 @@ this.goBack()
 
   goBack(): void {
 
-    this.router.navigate(['/products']);
-
+    this.router.navigate([
+      '/products'
+    ]);
   }
 
 
@@ -291,7 +409,6 @@ this.goBack()
     if (!imageUrl) {
 
       return 'assets/images/product-placeholder.png';
-
     }
 
     if (
@@ -300,11 +417,9 @@ this.goBack()
     ) {
 
       return imageUrl;
-
     }
 
     return `${this.api}${imageUrl}`;
-
   }
 
 
@@ -314,22 +429,23 @@ this.goBack()
 
   getProductName(): string {
 
-    const product = this.product();
+    const product =
+      this.product();
 
     if (!product) {
 
       return '';
-
     }
 
-    if (this.languageService.isArabic()) {
+    if (
+      this.languageService.isArabic()
+    ) {
 
       return (
         product.nameAr?.trim() ||
         product.nameEn?.trim() ||
         'Product'
       );
-
     }
 
     return (
@@ -337,7 +453,6 @@ this.goBack()
       product.nameAr?.trim() ||
       'Product'
     );
-
   }
 
 
@@ -347,22 +462,23 @@ this.goBack()
 
   getProductDescription(): string {
 
-    const product = this.product();
+    const product =
+      this.product();
 
     if (!product) {
 
       return '';
-
     }
 
-    if (this.languageService.isArabic()) {
+    if (
+      this.languageService.isArabic()
+    ) {
 
       return (
         product.descriptionAr?.trim() ||
         product.descriptionEn?.trim() ||
         ''
       );
-
     }
 
     return (
@@ -370,7 +486,6 @@ this.goBack()
       product.descriptionAr?.trim() ||
       ''
     );
-
   }
 
 
@@ -380,25 +495,26 @@ this.goBack()
 
   getCategoryName(): string {
 
-    const product = this.product();
-
+    const product =
+      this.product();
+console.log(product)
     const subCategory =
       product?.subCategories?.[0];
 
     if (!subCategory) {
 
       return '';
-
     }
 
-    if (this.languageService.isArabic()) {
+    if (
+      this.languageService.isArabic()
+    ) {
 
       return (
         subCategory.categoryNameAr?.trim() ||
         subCategory.categoryNameEn?.trim() ||
         ''
       );
-
     }
 
     return (
@@ -406,7 +522,6 @@ this.goBack()
       subCategory.categoryNameAr?.trim() ||
       ''
     );
-
   }
 
 
@@ -418,14 +533,15 @@ this.goBack()
     subCategory: SubCategory
   ): string {
 
-    if (this.languageService.isArabic()) {
+    if (
+      this.languageService.isArabic()
+    ) {
 
       return (
         subCategory?.nameAr?.trim() ||
         subCategory?.nameEn?.trim() ||
         ''
       );
-
     }
 
     return (
@@ -433,7 +549,6 @@ this.goBack()
       subCategory?.nameAr?.trim() ||
       ''
     );
-
   }
 
 
@@ -449,17 +564,17 @@ this.goBack()
     if (!brand) {
 
       return '';
-
     }
 
-    if (this.languageService.isArabic()) {
+    if (
+      this.languageService.isArabic()
+    ) {
 
       return (
         brand.nameAr?.trim() ||
         brand.nameEn?.trim() ||
         ''
       );
-
     }
 
     return (
@@ -467,7 +582,17 @@ this.goBack()
       brand.nameAr?.trim() ||
       ''
     );
-
   }
 
+
+  // =====================================================
+  // DESTROY
+  // =====================================================
+
+  ngOnDestroy(): void {
+
+    this.destroy$.next();
+
+    this.destroy$.complete();
+  }
 }

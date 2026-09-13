@@ -13,7 +13,6 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Categories } from '../categories/categories';
 import { Brands } from '../brands/brands';
-import { BestSellers } from '../best-sellers.component/best-sellers.component';
 
 import { SliderService } from '../../../services/slider.service';
 import { CartService } from '../../../services/cart.service';
@@ -25,6 +24,8 @@ import { environment } from '../../../../environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { ProductModalComponent } from '../../products/product-modal/product-modal.component';
+import { BestSellers } from '../../products/best-sellers.component/best-sellers.component';
+import { NewArrivalProducts } from '../../products/new-arrival-products/new-arrival-products';
 
 interface HomeSlide {
   id: number;
@@ -41,7 +42,8 @@ interface HomeSlide {
     Categories,
     Brands,
     TranslatePipe,
-    BestSellers
+    BestSellers,
+    NewArrivalProducts
   ],
 
   templateUrl: './home.html',

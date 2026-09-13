@@ -23,6 +23,10 @@
 "HOME": {
    "BEST_SELLERS": "Top Picks",
   "BEST_SELLERS_SUBTITLE": "Our most loved products",
+   "NEWARRIVAL": "New Arrival",
+  "NEWARRIVALSUBTITLE": "Our newest loved products",
+   "relative": "May like ",
+  "relativeSUBTITLE": "Relative loved products",
 "TITLE": "Welcome to our store",
 "SHOP_NOW": "Shop Now",
 "VIEW_PRODUCTS": "View Products",
@@ -158,6 +162,8 @@
 "CUSTOMER_INFORMATION": "Customer Information",
 "ORDER_INFORMATION": "Order Information",
 "DELIVERY_INFORMATION": "Delivery Information",
+"DELIVERY": "Please note that delivery fees are excluded from this calculation.",
+
 "FULL_NAME": "Full Name",
 "PHONE": "Phone Number",
 "EMAIL": "Email",

@@ -541,6 +541,8 @@ min-width: 130px;
 
 .category-list,
 .brand-list {
+  max-height: 150px;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
 }
@@ -608,7 +610,8 @@ min-width: 130px;
 
 .subcategory-list {
   padding: 3px 7px 6px 22px;
-
+  max-height: 150px;
+  overflow-y: scroll;
   background: #fcfaf8;
   border-left: 2px solid var(--color-accent);
 }
@@ -1028,6 +1031,8 @@ min-width: 130px;
 
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+     max-height: 150px;
+  overflow-y: scroll;
 }
 
 
@@ -1036,6 +1041,8 @@ min-width: 130px;
    ========================================================= */
 
 .mobile-category {
+    max-height: 150px;
+  overflow-y: scroll;
   border-bottom: 1px solid var(--color-border-light);
 }
 
@@ -1065,6 +1072,8 @@ min-width: 130px;
 .mobile-subcategory {
   width: 100%;
   min-height: 34px;
+    max-height: 150px;
+  overflow-y: scroll;
   padding: 0 8px;
 
   display: flex;
@@ -1098,6 +1107,8 @@ min-width: 130px;
 .mobile-brand {
   width: 100%;
   min-height: 40px;
+ /*    max-height: 50px;
+  overflow-y: scroll; */
   padding: 0 9px;
 
   display: flex;

@@ -1,71 +1,388 @@
 <div class="container">
-<div class="dialog-content" *ngIf="product() as product">
 
-  <!-- =====================================================
-       PRODUCT IMAGE
-       ===================================================== -->
+  <div
+    class="dialog-content"
+    *ngIf="product() as product"
+  >
 
-  <div class="product-image">
+    <!-- =====================================================
+         PRODUCT IMAGE
+         ===================================================== -->
 
-    <div
-      class="image-frame"
-      [class.out-of-stock-image]="isOutOfStock"
-    >
-
-      <img
-        [src]="getImageUrl(product.imageUrl)"
-        [alt]="getProductName()"
-      />
-
-      <!-- OUT OF STOCK OVERLAY -->
+    <div class="product-image">
 
       <div
-        class="out-of-stock-overlay"
+        class="image-frame"
+        [class.out-of-stock-image]="isOutOfStock"
+      >
+
+        <img
+          [src]="getImageUrl(product.imageUrl)"
+          [alt]="getProductName()"
+        />
+
+        <!-- OUT OF STOCK OVERLAY -->
+
+        <div
+          class="out-of-stock-overlay"
+          *ngIf="isOutOfStock"
+        >
+
+          <span>
+            {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- CATEGORY -->
+
+      <div class="image-label">
+
+        <span>
+          ✦
+        </span>
+
+        {{ getCategoryName() }}
+
+      </div>
+
+
+      <!-- DISCOUNT -->
+
+      <div
+        class="discount-badge"
+        *ngIf="hasDiscount && !isOutOfStock"
+      >
+
+        -{{ product.discountPercentage }}%
+
+      </div>
+
+
+      <!-- STOCK -->
+
+      <div
+        class="stock-badge"
         *ngIf="isOutOfStock"
       >
 
-        <span>
-          {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
-        </span>
+        {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
 
       </div>
 
     </div>
 
 
-    <!-- CATEGORY -->
 
-    <div class="image-label">
+    <!-- =====================================================
+         PRODUCT DETAILS
+         ===================================================== -->
 
-      <span>
-        ✦
-      </span>
+    <div class="product-details">
 
-      {{ getCategoryName() }}
+      <!-- ===================================================
+           HEADER
+           =================================================== -->
 
-    </div>
+      <div class="details-header">
 
+        <!-- BRAND -->
 
-    <!-- DISCOUNT -->
+        <span class="product-brand">
 
-    <div
-      class="discount-badge"
-      *ngIf="hasDiscount && !isOutOfStock"
-    >
+          {{ getBrandName() }}
 
-      -{{ product.discountPercentage }}%
-
-    </div>
+        </span>
 
 
-    <!-- STOCK -->
+        <!-- NAME -->
 
-    <div
-      class="stock-badge"
-      *ngIf="isOutOfStock"
-    >
+        <h2 class="product-name">
 
-      {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
+          {{ getProductName() }}
+
+        </h2>
+
+
+        <!-- CATEGORY / SUBCATEGORIES -->
+
+        <div class="product-location">
+
+          <span class="category-name">
+
+            {{ getCategoryName() }}
+
+          </span>
+
+
+          <ng-container
+            *ngIf="product.subCategories.length"
+          >
+
+            <span class="separator">
+              /
+            </span>
+
+            <span
+              class="subcategory-name"
+              *ngFor="
+                let sub of product.subCategories;
+                let last = last
+              "
+            >
+
+              {{ getSubCategoryName(sub) }}
+
+              <span *ngIf="!last">
+                ,
+              </span>
+
+            </span>
+
+          </ng-container>
+
+        </div>
+
+
+        <div class="title-line"></div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           DESCRIPTION
+           =================================================== -->
+
+      <p
+        class="product-description"
+        *ngIf="getProductDescription()"
+      >
+
+        {{ getProductDescription() }}
+
+      </p>
+
+
+
+      <!-- ===================================================
+           OFFER
+           =================================================== -->
+
+      <div
+        class="offer-box"
+        *ngIf="hasDiscount"
+      >
+
+        <div class="offer-icon">
+          %
+        </div>
+
+
+        <div class="offer-content">
+
+          <span class="offer-title">
+
+            {{ 'PRODUCT.SPECIAL_OFFER' | translate }}
+
+          </span>
+
+
+          <span class="offer-text">
+
+            {{ product.discountPercentage }}% OFF
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           PRICE
+           =================================================== -->
+
+      <div class="price-section">
+
+        <div class="current-price-wrapper">
+
+          <span class="price">
+
+            {{ newPrice | number:'1.0-2' }}
+
+          </span>
+
+          <span class="currency">
+
+            {{ 'COMMON.EGP' | translate }}
+
+          </span>
+
+        </div>
+
+
+        <div
+          class="old-price-wrapper"
+          *ngIf="hasDiscount"
+        >
+
+          <span class="old-price">
+
+            {{ oldPrice | number:'1.0-2' }}
+
+          </span>
+
+          <span class="old-currency">
+
+            {{ 'COMMON.EGP' | translate }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           OUT OF STOCK
+           =================================================== -->
+
+      <div
+        class="out-of-stock-message"
+        *ngIf="isOutOfStock"
+      >
+
+        <mat-icon>
+          inventory_2
+        </mat-icon>
+
+        <span>
+
+          {{ 'PRODUCT.PRODUCT_OUT' | translate }}
+
+        </span>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           QUANTITY
+           =================================================== -->
+
+      <div
+        class="quantity-section"
+        *ngIf="!isOutOfStock"
+      >
+
+        <label for="quantity">
+
+          {{ 'PRODUCT.QUANTITY' | translate }}
+
+        </label>
+
+
+        <div class="quantity-control">
+
+          <button
+            type="button"
+            class="quantity-btn"
+            (click)="setQuantity(quantity() - 1)"
+            [disabled]="quantity() <= 1"
+          >
+
+            −
+
+          </button>
+
+
+          <input
+            id="quantity"
+            type="number"
+            [ngModel]="quantity()"
+            (ngModelChange)="setQuantity($event)"
+            [ngModelOptions]="{ standalone: true }"
+            min="1"
+            [max]="stock || null"
+            step="1"
+            class="quantity-input"
+            aria-label="Quantity"
+          />
+
+
+          <button
+            type="button"
+            class="quantity-btn"
+            (click)="setQuantity(quantity() + 1)"
+          >
+
+            +
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ===================================================
+           ACTIONS
+           =================================================== -->
+
+      <div class="dialog-actions">
+
+        <!-- ADD TO CART -->
+
+        <button
+          mat-raised-button
+          type="button"
+          class="add-btn"
+          [disabled]="!canAddToCart"
+          (click)="addToCart()"
+        >
+
+          <mat-icon>
+            add_shopping_cart
+          </mat-icon>
+
+          <span>
+
+            {{ 'PRODUCT.ADD_TO_CART' | translate }}
+
+          </span>
+
+        </button>
+
+
+        <!-- BACK -->
+
+        <button
+          mat-raised-button
+          type="button"
+          class="back-btn"
+          (click)="goBack()"
+        >
+
+          <mat-icon>
+            arrow_back
+          </mat-icon>
+
+          <span>
+
+            {{ 'COMMON.BACK' | translate }}
+
+          </span>
+
+        </button>
+
+      </div>
 
     </div>
 
@@ -74,294 +391,28 @@
 
 
   <!-- =====================================================
-       PRODUCT DETAILS
+       RELATIVE PRODUCTS
        ===================================================== -->
 
-  <div class="product-details">
+  <app-relative-products
 
-    <!-- ===================================================
-         HEADER
-         =================================================== -->
+    *ngIf="product() as currentProduct"
 
-    <div class="details-header">
+    [currentProductId]="currentProduct.id"
 
-      <!-- BRAND -->
+    [subCategoryId]="
+      currentProduct.subCategories[0]?.id ?? null
+    "
+ 
+    (productClicked)="
+      onRelativeProductClicked($event)
+    "
 
-      <span class="product-brand">
+    (addToCartClicked)="
+      onRelativeAddToCartClicked($event)
+    "
 
-        {{ getBrandName() }}
+  >
+  </app-relative-products>
 
-      </span>
-
-
-      <!-- NAME -->
-
-      <h2 class="product-name">
-
-        {{ getProductName() }}
-
-      </h2>
-
-
-      <!-- CATEGORY / SUBCATEGORIES -->
-
-      <div class="product-location">
-
-        <span class="category-name">
-
-          {{ getCategoryName() }}
-
-        </span>
-
-
-        <ng-container
-          *ngIf="product.subCategories.length"
-        >
-
-          <span class="separator">
-            /
-          </span>
-
-          <span
-            class="subcategory-name"
-            *ngFor="
-              let sub of product.subCategories;
-              let last = last
-            "
-          >
-
-            {{ getSubCategoryName(sub) }}
-
-            <span *ngIf="!last">
-              ,
-            </span>
-
-          </span>
-
-        </ng-container>
-
-      </div>
-
-
-      <div class="title-line"></div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         DESCRIPTION
-         =================================================== -->
-
-    <p
-      class="product-description"
-      *ngIf="getProductDescription()"
-    >
-
-      {{ getProductDescription() }}
-
-    </p>
-
-
-
-    <!-- ===================================================
-         OFFER
-         =================================================== -->
-
-    <div
-      class="offer-box"
-      *ngIf="hasDiscount"
-    >
-
-      <div class="offer-icon">
-        %
-      </div>
-
-
-      <div class="offer-content">
-
-        <span class="offer-title">
-          {{ 'PRODUCT.SPECIAL_OFFER' | translate }}
-        </span>
-
-
-        <span class="offer-text">
-
-          {{ product.discountPercentage }}% OFF
-
-        </span>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         PRICE
-         =================================================== -->
-
-    <div class="price-section">
-
-      <div class="current-price-wrapper">
-
-        <span class="price">
-
-          {{ newPrice | number:'1.0-2' }}
-
-        </span>
-
-        <span class="currency">
-          {{ 'COMMON.EGP' | translate }}
-        </span>
-
-      </div>
-
-
-      <div
-        class="old-price-wrapper"
-        *ngIf="hasDiscount"
-      >
-
-        <span class="old-price">
-
-          {{ oldPrice | number:'1.0-2' }}
-
-        </span>
-
-        <span class="old-currency">
-          {{ 'COMMON.EGP' | translate }}
-        </span>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         OUT OF STOCK
-         =================================================== -->
-
-    <div
-      class="out-of-stock-message"
-      *ngIf="isOutOfStock"
-    >
-
-      <mat-icon>
-        inventory_2
-      </mat-icon>
-
-      <span>
-        {{ 'PRODUCT.PRODUCT_OUT' | translate }}
-      </span>
-
-    </div>
-
-
-
-    <!-- ===================================================
-         QUANTITY
-         =================================================== -->
-
-<div
-  class="quantity-section"
-  *ngIf="!isOutOfStock"
->
-
-  <label for="quantity">
-    {{ 'PRODUCT.QUANTITY' | translate }}
-  </label>
-
-  <div class="quantity-control">
-
-    <button
-      type="button"
-      class="quantity-btn"
-      (click)="setQuantity(quantity() - 1)"
-      [disabled]="quantity() <= 1"
-    >
-      −
-    </button>
-
-    <input
-      id="quantity"
-      type="number"
-      [ngModel]="quantity()"
-      (ngModelChange)="setQuantity($event)"
-      [ngModelOptions]="{ standalone: true }"
-      min="1"
-      [max]="stock || null"
-      step="1"
-      class="quantity-input"
-      aria-label="Quantity"
-    />
-
-    <button
-      type="button"
-      class="quantity-btn"
-      (click)="setQuantity(quantity() + 1)"
-     
-    >
-      +
-    </button>
-
-  </div>
-
-</div>
-    
-
-
-
-    <!-- ===================================================
-         ACTIONS
-         =================================================== -->
-
-    <div class="dialog-actions">
-
-      <!-- ADD TO CART -->
-
-      <button
-        mat-raised-button
-        type="button"
-        class="add-btn"
-        [disabled]="!canAddToCart"
-        (click)="addToCart()"
-      >
-
-        <mat-icon>
-          add_shopping_cart
-        </mat-icon>
-
-        <span>
-          {{ 'PRODUCT.ADD_TO_CART' | translate }}
-        </span>
-
-      </button>
-
-
-      <!-- BACK -->
-
-      <button
-         mat-raised-button
-        type="button"
-        class="back-btn"
-        (click)="goBack()"
-      >
-
-        <mat-icon>
-          arrow_back
-        </mat-icon>
-
-        <span>
-          {{ 'COMMON.BACK' | translate }}
-        </span>
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
 </div>

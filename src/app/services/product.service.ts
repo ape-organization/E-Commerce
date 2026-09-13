@@ -175,6 +175,12 @@ export class ProductService {
       }
     );
   }
+   newArrivalProducts(): Observable<Product[]> {
+
+  return this.http.get<Product[]>(
+    `${environment.apiBaseUrl}/products/new`
+  );
+}
   getBestSellerProducts(
   count: number = 10
 ): Observable<Product[]> {
@@ -186,6 +192,12 @@ export class ProductService {
         count: count.toString()
       }
     }
+  );
+}
+    getProductsbySubID(id:any,productId:any): Observable<Product[]> {
+
+  return this.http.get<Product[]>(
+    `${environment.apiBaseUrl}/products/bySubID/${id}/${productId}`
   );
 }
 }

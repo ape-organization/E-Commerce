@@ -1,3 +1,4 @@
+
 import {
   CommonModule
 } from '@angular/common';
@@ -37,7 +38,6 @@ import {
   RouterModule
 } from '@angular/router';
 
-
 import {
   CartItem,
   CartService
@@ -55,11 +55,30 @@ import {
   OrderService
 } from '../../services/order.service';
 
+import {
+  environment
+} from '../../../environments/environment';
 
-import { environment } from '../../../environments/environment';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ClientService } from '../../services/client.service';
-import { NotifyMessage } from '../shared/notify-message/notify-message';
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
+  ClientService
+} from '../../services/client.service';
+
+import {
+  NotifyMessage
+} from '../shared/notify-message/notify-message';
+
+import {
+  EGYPT_GOVERNORATES,
+  Governorate
+} from '../../models/egypt-governorates';
+
+import {
+  LanguageService
+} from '../../services/language.service';
 
 
 @Component({
@@ -83,6 +102,54 @@ import { NotifyMessage } from '../shared/notify-message/notify-message';
   styleUrls: ['./checkout.scss']
 })
 export class CheckoutComponent implements OnInit {
+
+  // =========================================================
+  // GOVERNORATES
+  // =========================================================
+
+  readonly governorates =
+    EGYPT_GOVERNORATES;
+
+  private readonly languageService =
+    inject(LanguageService);
+
+  get isArabic(): boolean {
+    return this.languageService.currentLanguage() === 'ar';
+  }
+
+  /**
+   * Display name according to the current language.
+   *
+   * IMPORTANT:
+   * This is ONLY for displaying the governorate.
+   *
+   * The value stored in the form is ALWAYS nameAr.
+   */
+  getGovernorateName(
+    governorate: Governorate
+  ): string {
+
+    return this.isArabic
+      ? governorate.nameAr
+      : governorate.nameEn;
+  }
+
+  /**
+   * Select governorate.
+   *
+   * IMPORTANT:
+   * We save the Arabic name in the form,
+   * regardless of the current UI language.
+   */
+  selectGovernorate(
+    governorate: Governorate
+  ): void {
+
+    this.checkoutForm.patchValue({
+      governorate: governorate.nameAr
+    });
+  }
+
 
   // =========================================================
   // SERVICES
@@ -147,7 +214,9 @@ export class CheckoutComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern(/^[0-9+\-\s()]{7,20}$/)
+          Validators.pattern(
+            /^[0-9+\-\s()]{7,20}$/
+          )
         ]
       ],
 
@@ -155,6 +224,13 @@ export class CheckoutComponent implements OnInit {
         '',
         [
           Validators.email
+        ]
+      ],
+
+      governorate: [
+        '',
+        [
+          Validators.required
         ]
       ],
 
@@ -223,7 +299,9 @@ export class CheckoutComponent implements OnInit {
 
   get total(): number {
 
-    return this.roundPrice(this.subtotal);
+    return this.roundPrice(
+      this.subtotal
+    );
   }
 
 
@@ -249,9 +327,44 @@ export class CheckoutComponent implements OnInit {
           return;
         }
 
-        this.searchClient(normalizedPhone);
+        this.searchClient(
+          normalizedPhone
+        );
 
       });
+  }
+
+
+  // =========================================================
+  // NORMALIZE GOVERNORATE
+  //
+  // The form must ALWAYS contain the Arabic
+  // governorate name.
+  //
+  // This also handles old client records that
+  // may contain the English governorate name.
+  // =========================================================
+
+  private getArabicGovernorateName(
+    value: string | null | undefined
+  ): string {
+
+    if (!value?.trim()) {
+      return '';
+    }
+
+    const normalized =
+      value.trim();
+
+    const governorate =
+      this.governorates.find(
+        item =>
+          item.nameAr.trim() === normalized ||
+          item.nameEn.trim().toLowerCase() ===
+            normalized.toLowerCase()
+      );
+
+    return governorate?.nameAr ?? '';
   }
 
 
@@ -273,20 +386,20 @@ export class CheckoutComponent implements OnInit {
 
           this.isSearchingClient.set(false);
 
+          // ===============================================
+          // CLIENT NOT FOUND
+          // ===============================================
+
           if (!client) {
 
             this.clientFound.set(false);
 
-            /**
-             * Clear previous customer's
-             * information when this is
-             * a new phone number.
-             */
             this.checkoutForm.patchValue(
               {
                 fullName: '',
                 email: '',
-                address: ''
+                address: '',
+                governorate: ''
               },
               {
                 emitEvent: false
@@ -296,13 +409,36 @@ export class CheckoutComponent implements OnInit {
             return;
           }
 
+
+          // ===============================================
+          // CLIENT FOUND
+          // ===============================================
+
           this.clientFound.set(true);
 
           this.checkoutForm.patchValue(
             {
-              fullName: client.name ?? '',
-              email: client.email ?? '',
-              address: client.address ?? ''
+              fullName:
+                client.name ?? '',
+
+              email:
+                client.email ?? '',
+
+              address:
+                client.address ?? '',
+
+              /**
+               * IMPORTANT:
+               *
+               * Regardless of whether the existing
+               * client record contains Arabic or
+               * English, convert it to Arabic before
+               * putting it into the form.
+               */
+              governorate:
+                this.getArabicGovernorateName(
+                  client.governorate
+                )
             },
             {
               emitEvent: false
@@ -348,17 +484,9 @@ export class CheckoutComponent implements OnInit {
     item: CartItem
   ): string {
 
-    const product = item.product;
+    const product =
+      item.product;
 
-    /**
-     * If your Product model has both
-     * nameEn and nameAr, this keeps the
-     * existing English behavior.
-     *
-     * If you already have a language service
-     * controlling the name, you can replace
-     * this later.
-     */
     return product.nameEn ?? '';
   }
 
@@ -389,11 +517,15 @@ export class CheckoutComponent implements OnInit {
       Number(product.price ?? 0);
 
     const discount =
-      Number(product.discountPercentage ?? 0);
+      Number(
+        product.discountPercentage ?? 0
+      );
 
     if (discount <= 0) {
 
-      return this.roundPrice(price);
+      return this.roundPrice(
+        price
+      );
     }
 
     const finalPrice =
@@ -433,7 +565,9 @@ export class CheckoutComponent implements OnInit {
     item: CartItem
   ): number {
 
-    return this.getItemSubtotal(item);
+    return this.getItemSubtotal(
+      item
+    );
   }
 
 
@@ -511,6 +645,11 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+
+    // ===============================================
+    // EMPTY CART
+    // ===============================================
+
     if (this.cartItems.length === 0) {
 
       this.showError(
@@ -520,6 +659,11 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+
+    // ===============================================
+    // FORM VALIDATION
+    // ===============================================
+
     if (this.checkoutForm.invalid) {
 
       this.checkoutForm.markAllAsTouched();
@@ -527,19 +671,15 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+
     const form =
       this.checkoutForm.getRawValue();
 
 
-    /**
-     * IMPORTANT:
-     *
-     * We intentionally DO NOT send
-     * price or discount from Angular.
-     *
-     * Backend calculates the real
-     * price from the database.
-     */
+    // ===============================================
+    // ORDER ITEMS
+    // ===============================================
+
     const items =
       this.cartService.getOrderItems();
 
@@ -554,6 +694,10 @@ export class CheckoutComponent implements OnInit {
     }
 
 
+    // ===============================================
+    // REQUEST
+    // ===============================================
+
     const request = {
 
       client: {
@@ -567,6 +711,18 @@ export class CheckoutComponent implements OnInit {
         address:
           form.address.trim(),
 
+        /**
+         * IMPORTANT:
+         *
+         * form.governorate is ALWAYS the
+         * Arabic governorate name.
+         *
+         * Example:
+         * "السويس"
+         */
+        governorate:
+          form.governorate.trim(),
+
         email:
           form.email.trim()
             ? form.email.trim()
@@ -579,8 +735,17 @@ export class CheckoutComponent implements OnInit {
     };
 
 
-    this.isSubmitting.set(true);
+    console.log(
+      'Order request:',
+      request
+    );
 
+
+    // ===============================================
+    // SUBMIT
+    // ===============================================
+
+    this.isSubmitting.set(true);
 
     this.orderService
       .createOrder(request)
@@ -607,7 +772,9 @@ export class CheckoutComponent implements OnInit {
             error?.error?.message ??
             'CHECKOUT.ORDER_FAILED';
 
-          this.showError(message);
+          this.showError(
+            message
+          );
 
         }
 
@@ -621,9 +788,6 @@ export class CheckoutComponent implements OnInit {
 
   private handleSuccessfulOrder(): void {
 
-    /**
-     * Clear the cart exactly once.
-     */
     this.cartService.clearCart();
 
 
@@ -722,4 +886,5 @@ export class CheckoutComponent implements OnInit {
       (value + Number.EPSILON) * 100
     ) / 100;
   }
+
 }

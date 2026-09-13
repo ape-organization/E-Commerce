@@ -300,7 +300,9 @@
    ============================================================ */
 
 .form-field input,
-.form-field textarea {
+.form-field textarea 
+.form-field select
+{
   width: 100%;
   box-sizing: border-box;
 
@@ -335,13 +337,39 @@
   resize: vertical;
 }
 
+.form-field select {
+  height: 37px;
+  padding: 8px 10px;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Custom arrow */
+  background-image:
+    linear-gradient(45deg, transparent 50%, #8b817c 50%),
+    linear-gradient(135deg, #8b817c 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-size:
+    4px 4px,
+    4px 4px;
+  background-repeat: no-repeat;
+
+  padding-right: 30px;
+}
+
 .form-field input::placeholder,
 .form-field textarea::placeholder {
   color: #aaa19c;
 }
 
 .form-field input:hover,
-.form-field textarea:hover {
+.form-field textarea:hover
+.form-field select:hover {
   border-color: #d4c8c1;
 }
 

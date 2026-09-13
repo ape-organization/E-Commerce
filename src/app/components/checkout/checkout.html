@@ -15,7 +15,7 @@
       >
         <span class="back-icon">←</span>
 
-        {{'CHECKOUT.Back_to_Cart' | translate}}
+        {{ 'CHECKOUT.Back_to_Cart' | translate }}
       </button>
 
 
@@ -28,11 +28,11 @@
         <div>
 
           <h1>
-            {{'CHECKOUT.TITLE' | translate}}
+            {{ 'CHECKOUT.TITLE' | translate }}
           </h1>
 
           <p>
-            {{'CHECKOUT.Complete_your_order' | translate }}
+            {{ 'CHECKOUT.Complete_your_order' | translate }}
           </p>
 
         </div>
@@ -42,7 +42,6 @@
     </div>
 
   </div>
-
 
 
   <!-- ========================================= -->
@@ -70,7 +69,6 @@
 
       <section class="checkout-card">
 
-
         <div class="section-header">
 
           <div class="section-icon">
@@ -80,15 +78,12 @@
           <div>
 
             <h2>
-              {{'CHECKOUT.CUSTOMER_INFORMATION' | translate }}
+              {{ 'CHECKOUT.CUSTOMER_INFORMATION' | translate }}
             </h2>
-
-            
 
           </div>
 
         </div>
-
 
 
         <div class="form-grid">
@@ -102,7 +97,7 @@
 
             <label for="phone">
 
-               {{'CHECKOUT.PHONE' | translate }}
+              {{ 'CHECKOUT.PHONE' | translate }}
 
               <span>
                 *
@@ -124,26 +119,23 @@
               />
 
 
-              <!-- Searching -->
-
               @if (isSearchingClient()) {
 
                 <span class="searching">
 
-                   {{'COMMON.Searching' | translate }}
+                  {{ 'COMMON.Searching' | translate }}
 
                 </span>
 
               }
 
 
-              <!-- Client Found -->
-
               @if (clientFound()) {
 
                 <span class="client-found">
 
-                  ✓  {{'COMMON.client-found' | translate }}
+                  ✓
+                  {{ 'COMMON.client-found' | translate }}
 
                 </span>
 
@@ -156,17 +148,13 @@
 
               <small>
 
-                 {{'CHECKOUT.INVALID_PHONE' | translate }}
+                {{ 'CHECKOUT.INVALID_PHONE' | translate }}
 
               </small>
 
             }
 
-
-            
-
           </div>
-
 
 
           <!-- ================================= -->
@@ -177,7 +165,7 @@
 
             <label for="fullName">
 
-              {{'CHECKOUT.FULL_NAME' | translate }}
+              {{ 'CHECKOUT.FULL_NAME' | translate }}
 
               <span>
                 *
@@ -200,14 +188,13 @@
 
               <small>
 
-                {{'CHECKOUT.INVALID_NAME' | translate }}
+                {{ 'CHECKOUT.INVALID_NAME' | translate }}
 
               </small>
 
             }
 
           </div>
-
 
 
           <!-- ================================= -->
@@ -218,10 +205,10 @@
 
             <label for="email">
 
-              {{'CHECKOUT.EMAIL' | translate }}
+              {{ 'CHECKOUT.EMAIL' | translate }}
 
               <em>
-                {{'CHECKOUT.OPTIONAL' | translate }}
+                {{ 'CHECKOUT.OPTIONAL' | translate }}
               </em>
 
             </label>
@@ -241,7 +228,7 @@
 
               <small>
 
-                {{'CHECKOUT.INVALID_EMAIL' | translate }}
+                {{ 'CHECKOUT.INVALID_EMAIL' | translate }}
 
               </small>
 
@@ -254,38 +241,99 @@
       </section>
 
 
-
       <!-- ===================================== -->
       <!-- DELIVERY INFORMATION -->
       <!-- ===================================== -->
 
       <section class="checkout-card">
 
-
         <div class="section-header">
-
-          <div class="section-icon">
-            02
-          </div>
 
           <div>
 
             <h2>
-              {{'CHECKOUT.DELIVERY_INFORMATION' | translate }}
+              {{ 'CHECKOUT.DELIVERY_INFORMATION' | translate }}
             </h2>
-
 
           </div>
 
         </div>
 
 
-
         <div class="form-grid">
 
 
+          <!-- ================================= -->
+          <!-- GOVERNORATE -->
+          <!-- ================================= -->
+
+          <div  class="form-field full-width">
+
+            <label for="governorate">
+
+              {{ isArabic ? 'المحافظة' : 'Governorate' }}
+
+              <span>
+                *
+              </span>
+
+            </label>
 
 
+            <select
+            
+              id="governorate"
+              formControlName="governorate"
+              [class.invalid]="isInvalid('governorate')"
+            >
+
+              <!-- Placeholder -->
+
+              <option
+                value=""
+                disabled
+              >
+                {{
+                  isArabic
+                    ? 'اختر المحافظة'
+                    : 'Select governorate'
+                }}
+              </option>
+
+
+              <!-- Governorates -->
+
+              @for (
+                governorate of governorates;
+                track $index
+              ) {
+
+                <option
+                  [value]="governorate.nameAr"
+                >
+                  {{ getGovernorateName(governorate) }}
+                </option>
+
+              }
+
+            </select>
+
+
+            @if (isInvalid('governorate')) {
+
+              <small>
+
+                {{
+                  isArabic
+                    ? 'برجاء اختيار المحافظة'
+                    : 'Please select a governorate'
+                }}
+
+              </small>
+
+            }
+
+          </div>
 
 
           <!-- ================================= -->
@@ -296,7 +344,7 @@
 
             <label for="address">
 
-               {{'CHECKOUT.ADDRESS' | translate }}
+              {{ 'CHECKOUT.ADDRESS' | translate }}
 
               <span>
                 *
@@ -319,7 +367,7 @@
 
               <small>
 
-                {{'CHECKOUT.INVALID_ADDRESS' | translate }}
+                {{ 'CHECKOUT.INVALID_ADDRESS' | translate }}
 
               </small>
 
@@ -327,38 +375,9 @@
 
           </div>
 
-
-
-          <!-- ================================= -->
-          <!-- NOTES -->
-          <!-- ================================= -->
-
-        <!--   <div class="form-field full-width">
-
-            <label for="notes">
-
-              Delivery Notes
-
-              <em>
-                Optional
-              </em>
-
-            </label>
-
-
-            <textarea
-              id="notes"
-              formControlName="notes"
-              rows="3"
-              placeholder="Any special instructions for delivery?"
-            ></textarea>
-
-          </div> -->
-
         </div>
 
       </section>
-
 
 
       <!-- ===================================== -->
@@ -366,7 +385,6 @@
       <!-- ===================================== -->
 
       <section class="checkout-card">
-
 
         <div class="section-header">
 
@@ -377,28 +395,23 @@
           <div>
 
             <h2>
-              {{'CHECKOUT.PAYMENT_METHOD' | translate }}
+              {{ 'CHECKOUT.PAYMENT_METHOD' | translate }}
             </h2>
-
-         
 
           </div>
 
         </div>
 
 
-
         <!-- Cash On Delivery -->
 
         <div class="payment-option selected">
-
 
           <div class="payment-radio">
 
             <div class="radio-dot"></div>
 
           </div>
-
 
 
           <div class="payment-content">
@@ -413,11 +426,14 @@
               <div>
 
                 <h3>
-                  {{'CHECKOUT.CASH_ON_DELIVERY' | translate }}
+                  {{ 'CHECKOUT.CASH_ON_DELIVERY' | translate }}
                 </h3>
 
                 <p>
-                   {{'CHECKOUT.CASH_ON_DELIVERY_DESCRIPTION' | translate }}
+                  {{
+                    'CHECKOUT.CASH_ON_DELIVERY_DESCRIPTION'
+                    | translate
+                  }}
                 </p>
 
               </div>
@@ -425,7 +441,6 @@
             </div>
 
           </div>
-
 
 
           <div class="payment-check">
@@ -439,7 +454,6 @@
       </section>
 
     </form>
-
 
 
     <!-- ======================================= -->
@@ -458,13 +472,15 @@
         <div>
 
           <span class="summary-label">
-            {{'CHECKOUT.YOUR_ORDER' | translate }}
-            
+
+            {{ 'CHECKOUT.YOUR_ORDER' | translate }}
+
           </span>
 
           <h2>
-            {{'CHECKOUT.Order_Summary' | translate }}
-            
+
+            {{ 'CHECKOUT.Order_Summary' | translate }}
+
           </h2>
 
         </div>
@@ -474,12 +490,15 @@
 
           {{ totalItems }}
 
-          {{ totalItems === 1 ? ('CART.ITEM' | translate) : ('CART.ITEMS' | translate) }}
+          {{
+            totalItems === 1
+              ? ('CART.ITEM' | translate)
+              : ('CART.ITEMS' | translate)
+          }}
 
         </span>
 
       </div>
-
 
 
       <!-- ===================================== -->
@@ -495,12 +514,11 @@
           </span>
 
           <h3>
-            {{'CART.EMPTY' | translate }}
+            {{ 'CART.EMPTY' | translate }}
           </h3>
 
           <p>
-            {{'CART.EMPTY_MESSAGE' | translate }}
-       
+            {{ 'CART.EMPTY_MESSAGE' | translate }}
           </p>
 
 
@@ -509,13 +527,12 @@
             class="back-to-products"
             (click)="goBackToCart()"
           >
-            {{'CHECKOUT.Back_to_Cart' | translate }}
+            {{ 'CHECKOUT.Back_to_Cart' | translate }}
           </button>
 
         </div>
 
       }
-
 
 
       <!-- ===================================== -->
@@ -526,12 +543,10 @@
 
         <div class="summary-products">
 
-
           @for (
             item of cartItems;
             track item.product.id
           ) {
-
 
             <div class="summary-product">
 
@@ -548,7 +563,6 @@
               </div>
 
 
-
               <!-- Product Info -->
 
               <div class="product-info">
@@ -559,57 +573,40 @@
 
 
                 <p>
-                  {{'CHECKOUT.Qty' | translate }}
+
+                  {{ 'CHECKOUT.Qty' | translate }}
+
                   : {{ item.quantity }}
+
                 </p>
 
 
-               <!-- Product Price -->
+                <!-- Product Price -->
 
-<div class="product-pricing">
+                <div class="product-pricing">
 
-  @if (item.product.discountPercentage > 0) {
+                  <div class="new-price">
 
-  
-    <div class="new-price">
+                    {{ getDiscountedPrice(item) | number:'1.2-2' }}
 
-      {{ getDiscountedPrice(item) | number:'1.2-2' }}
+                    {{ 'COMMON.EGP' | translate }}
 
-      {{'COMMON.EGP' | translate }}
+                  </div>
 
-    </div>
-
-  
-
-  }
-
-  @else {
-
-    <div class="new-price">
-
-      {{ getDiscountedPrice(item) | number:'1.2-2' }}
-
-      {{'COMMON.EGP' | translate }}
-
-    </div>
-
-  }
-
-</div>
+                </div>
 
               </div>
 
 
-
               <!-- Product Subtotal -->
 
-             <strong class="product-subtotal">
+              <strong class="product-subtotal">
 
-  {{ getItemSubtotal(item) | number:'1.2-2' }}
+                {{ getItemSubtotal(item) | number:'1.2-2' }}
 
-  {{'COMMON.EGP' | translate }}
+                {{ 'COMMON.EGP' | translate }}
 
-</strong>
+              </strong>
 
             </div>
 
@@ -618,7 +615,6 @@
         </div>
 
       }
-
 
 
       <!-- ===================================== -->
@@ -635,41 +631,20 @@
           <div class="summary-row">
 
             <span>
-              {{'CART.Subtotal' | translate }}
+              {{ 'CART.Subtotal' | translate }}
             </span>
 
             <strong>
 
               {{ subtotal }}
 
-              {{'COMMON.EGP' | translate }}
+              {{ 'COMMON.EGP' | translate }}
 
             </strong>
 
           </div>
 
-
-
-          <!-- Delivery -->
-
-         <!--  <div class="summary-row">
-
-            <span>
-              {{'CHECKOUT.DELIVERY_FEE' | translate }}
-            </span>
-
-            <strong>
-
-              {{ deliveryFee() }}
-
-              {{'COMMON.EGP' | translate }}
-
-            </strong>
-
-          </div> -->
-
         </div>
-
 
 
         <!-- ================================= -->
@@ -679,19 +654,27 @@
         <div class="summary-total">
 
           <span>
-            {{'CART.TOTAL' | translate }}
+            {{ 'CART.TOTAL' | translate }}
           </span>
 
           <strong>
 
             {{ total }}
 
-            {{'COMMON.EGP' | translate }}
+            {{ 'COMMON.EGP' | translate }}
 
           </strong>
 
         </div>
 
+
+        <div>
+
+          <p>
+            {{ 'CHECKOUT.DELIVERY' | translate }}
+          </p>
+
+        </div>
 
 
         <!-- ================================= -->
@@ -708,13 +691,12 @@
           (click)="placeOrder()"
         >
 
-
           @if (isSubmitting()) {
 
             <span class="spinner"></span>
 
             <span>
-              {{'COMMON.LOADING' | translate }}
+              {{ 'COMMON.LOADING' | translate }}
             </span>
 
           }
@@ -722,7 +704,7 @@
           @else {
 
             <span>
-              {{'CHECKOUT.PLACE_ORDER' | translate }}
+              {{ 'CHECKOUT.PLACE_ORDER' | translate }}
             </span>
 
             <span class="button-arrow">
@@ -732,7 +714,6 @@
           }
 
         </button>
-
 
 
         <!-- ================================= -->
@@ -746,8 +727,7 @@
           </span>
 
           <span>
-            
-            {{'CHECKOUT.INFO' |translate}}
+            {{ 'CHECKOUT.INFO' | translate }}
           </span>
 
         </div>

@@ -20,8 +20,12 @@
 },
 
 "HOME": {
+   "NEWARRIVAL": "احدث المنتجات",
+  "NEWARRIVALSUBTITLE": "احدث واجدد المنتجات",
    "BEST_SELLERS": "الأكثر طلبا",
   "BEST_SELLERS_SUBTITLE": "منتجاتنا الأكثر طلبًا",
+   "relative": "قد يعجبك ايضا  ",
+  "relativeSUBTITLE": "منتجات نفس الفئه ",
 "TITLE": "مرحباً بكم في متجرنا",
 "SHOP_NOW": "تسوق الآن",
 "VIEW_PRODUCTS": "عرض المنتجات",
@@ -157,6 +161,8 @@
 "CUSTOMER_INFORMATION": "بيانات العميل",
 "ORDER_INFORMATION": "بيانات الطلب",
 "DELIVERY_INFORMATION": "بيانات التوصيل",
+"DELIVERY": " يرجى ملاحظة أن رسوم التوصيل غير مشمولة في هذا الحساب",
+
 "FULL_NAME": "الاسم بالكامل",
 "PHONE": "رقم الهاتف",
 "EMAIL": "البريد الإلكتروني",

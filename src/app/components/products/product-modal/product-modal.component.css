@@ -27,14 +27,13 @@ CONTENT
 .container
 {
     padding: 20px;
-    display: flex;
-    justify-content: center;
+   
     margin-top: 20px;
 }
 .dialog-content {
 display: flex;
 gap: 32px;
-
+margin: 10px auto;
 width: 850px;
 max-width: 100%;
 min-height: 430px;
@@ -287,19 +286,15 @@ DESCRIPTION
 ============================================================ */
 
 .product-description {
-display: -webkit-box;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.65;
 
-margin: 0;
-
-color: var(--color-text-secondary);
-
-font-size: 13px;
-line-height: 1.65;
-
--webkit-line-clamp: 3;
--webkit-box-orient: vertical;
-
-overflow: hidden;
+  /* Keep text inside the parent */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* ============================================================
