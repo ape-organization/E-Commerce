@@ -743,109 +743,47 @@ private addedToCartTimer?:
   // LOAD PRODUCTS
   // ========================================================
 
-  loadProducts(): void {
+ loadProducts(): void {
 
-    const requestVersion =
-      ++this.requestVersion;
+  const requestVersion =
+    ++this.requestVersion;
 
-    const search =
-      this.searchName().trim();
+  const search =
+    this.searchName().trim();
 
-    // ======================================================
-    // SEARCH MODE
-    // ======================================================
-    //
-    // ONE API CALL.
-    //
-    // Filters are applied locally after the response.
-    //
-    // ======================================================
+  // ======================================================
+  // SEARCH MODE
+  // ======================================================
 
-    if (
-      search
-    ) {
+  if (search) {
 
-      this.loadSearchResults(
-        search,
-        requestVersion
-      );
-
-      return;
-    }
-
-    // ======================================================
-    // NORMAL MODE
-    // ======================================================
-
-    this.searchResults.set([]);
-
-    // ------------------------------------------------------
-    // FILTER ACTIVE + ALL NORMAL PRODUCTS LOADED
-    // ------------------------------------------------------
-
-    if (
-      this.hasApiFilters() &&
-      this.allUnfilteredProductsLoaded()
-    ) {
-
-      this.applyLocalApiFilters();
-
-      this.isLoading.set(false);
-
-      return;
-    }
-
-    // ------------------------------------------------------
-    // FILTER ACTIVE + NOT ALL PRODUCTS LOADED
-    // ------------------------------------------------------
-
-    if (
-      this.hasApiFilters()
-    ) {
-
-      this.loadFilteredProductsFromApi(
-        requestVersion
-      );
-
-      return;
-    }
-
-    // ------------------------------------------------------
-    // NO FILTERS + CACHE EXISTS
-    // ------------------------------------------------------
-
-    if (
-      this.allLoadedProducts().length > 0
-    ) {
-
-      const cachedProducts =
-        this.allLoadedProducts();
-
-      this.products.set(
-        cachedProducts
-      );
-
-      this.filteredProducts.set(
-        cachedProducts
-      );
-
-      this.resetQuantities(
-        cachedProducts
-      );
-
-      this.isLoading.set(false);
-
-      return;
-    }
-
-    // ------------------------------------------------------
-    // FIRST LOAD
-    // ------------------------------------------------------
-
-    this.loadFirstPage(
+    this.loadSearchResults(
+      search,
       requestVersion
     );
+
+    return;
   }
+
+  // ======================================================
+  // NORMAL / FILTERED MODE
+  // ======================================================
+
+  this.searchResults.set([]);
+
+  /*
+   * IMPORTANT:
+   *
+   * Always start from page 1 when the URL/filter state
+   * changes.
+   *
+   * The backend handles category, subcategory, brand
+   * and offers filtering BEFORE pagination.
+   */
+  this.loadFirstPage(
+    requestVersion
+  );
+}
 
   // ========================================================
   // LOAD SEARCH RESULTS
@@ -937,307 +875,368 @@ private addedToCartTimer?:
   // ========================================================
 
   private loadFirstPage(
-    requestVersion: number
-  ): void {
+  requestVersion: number
+): void {
 
-    this.isLoading.set(true);
+  this.isLoading.set(true);
 
-    this.isLoadingMore.set(false);
+  this.isLoadingMore.set(false);
 
-    this.currentPage = 1;
+  this.currentPage = 0;
 
-    this.productService
-      .getProducts(
-        1,
-        null,
-        null,
-        null,
-        false
-      )
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
+  this.hasMoreProducts.set(true);
 
-        next: (
-          response: ProductPageResponse
-        ) => {
+  /*
+   * Clear the previous result because this may be
+   * a completely different filter combination.
+   */
+  this.products.set([]);
 
-          if (
-            requestVersion !==
-            this.requestVersion
-          ) {
-            return;
-          }
+  this.filteredProducts.set([]);
 
-          const loadedProducts =
-            response.items ?? [];
+  this.quantities.set({});
 
-          this.allLoadedProducts.set(
-            loadedProducts
-          );
 
-          this.unfilteredTotalCount.set(
-            response.totalCount ??
-            loadedProducts.length
-          );
+  const categoryId =
+    this.selectedCategoryId();
 
-          this.currentPage =
-            response.page ?? 1;
+  const subCategoryId =
+    this.selectedSubCategoryId();
 
-          this.hasMoreProducts.set(
-            response.hasMore === true
-          );
+  const brandId =
+    this.selectedBrandId();
 
-          this.products.set(
-            loadedProducts
-          );
+  const offers =
+    this.showOffers();
 
-          this.filteredProducts.set(
-            loadedProducts
-          );
 
-          this.resetQuantities(
-            loadedProducts
-          );
+  this.productService
+    .getProducts(
+      1,
+      categoryId,
+      subCategoryId,
+      brandId,
+      offers
+    )
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe({
 
-          this.isLoading.set(false);
-        },
+      next: (
+        response: ProductPageResponse
+      ) => {
 
-        error: error => {
-
-          if (
-            requestVersion !==
-            this.requestVersion
-          ) {
-            return;
-          }
-
-        
-          this.products.set([]);
-
-          this.filteredProducts.set([]);
-
-          this.allLoadedProducts.set([]);
-
-          this.unfilteredTotalCount.set(0);
-
-          this.quantities.set({});
-
-          this.hasMoreProducts.set(false);
-
-          this.isLoading.set(false);
-
-          this.isLoadingMore.set(false);
+        if (
+          requestVersion !==
+          this.requestVersion
+        ) {
+          return;
         }
-      });
-  }
+
+
+        const loadedProducts =
+          response.items ?? [];
+
+
+        /*
+         * Keep the first page in the normal cache too.
+         *
+         * This preserves your existing property and any
+         * other code that may use it.
+         */
+        this.allLoadedProducts.set(
+          loadedProducts
+        );
+
+
+        this.unfilteredTotalCount.set(
+          response.totalCount ??
+          loadedProducts.length
+        );
+
+
+        this.currentPage =
+          response.page ?? 1;
+
+
+        this.hasMoreProducts.set(
+          response.hasMore === true
+        );
+
+
+        this.products.set(
+          loadedProducts
+        );
+
+
+        this.filteredProducts.set(
+          loadedProducts
+        );
+
+
+        this.resetQuantities(
+          loadedProducts
+        );
+
+
+        this.isLoading.set(false);
+      },
+
+      error: error => {
+
+        if (
+          requestVersion !==
+          this.requestVersion
+        ) {
+          return;
+        }
+
+
+        console.error(
+          'Failed to load products:',
+          error
+        );
+
+
+        this.products.set([]);
+
+        this.filteredProducts.set([]);
+
+        this.allLoadedProducts.set([]);
+
+        this.unfilteredTotalCount.set(0);
+
+        this.quantities.set({});
+
+        this.currentPage = 0;
+
+        this.hasMoreProducts.set(false);
+
+        this.isLoading.set(false);
+
+        this.isLoadingMore.set(false);
+      }
+    });
+}
 
   // ========================================================
   // LOAD NEXT PAGE
   // ========================================================
 
-  private loadNextPage(): void {
+private loadNextPage(): void {
 
-    // ------------------------------------------------------
-    // SEARCH RESULTS DO NOT USE NORMAL PAGINATION
-    // ------------------------------------------------------
+  // ------------------------------------------------------
+  // SEARCH RESULTS DO NOT USE NORMAL PAGINATION
+  // ------------------------------------------------------
 
-    if (
-      this.hasSearch()
-    ) {
-      return;
-    }
+  if (
+    this.hasSearch()
+  ) {
+    return;
+  }
 
-    if (
-      this.isLoading() ||
-      this.isLoadingMore() ||
-      !this.hasMoreProducts()
-    ) {
-      return;
-    }
 
-    // ------------------------------------------------------
-    // FILTERED RESULTS DON'T USE NORMAL INFINITE SCROLL
-    // ------------------------------------------------------
+  // ------------------------------------------------------
+  // LOADING / NO MORE PRODUCTS
+  // ------------------------------------------------------
 
-    if (
-      this.hasApiFilters()
-    ) {
-      return;
-    }
+  if (
+    this.isLoading() ||
+    this.isLoadingMore() ||
+    !this.hasMoreProducts()
+  ) {
+    return;
+  }
 
-    const nextPage =
-      this.currentPage + 1;
 
-    this.isLoadingMore.set(true);
+  const nextPage =
+    this.currentPage + 1;
 
-    this.productService
-      .getProducts(
-        nextPage,
-        null,
-        null,
-        null,
-        false
-      )
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
 
-        next: (
-          response: ProductPageResponse
-        ) => {
+  if (
+    nextPage <= 1
+  ) {
+    return;
+  }
 
-          const newProducts =
-            response.items ?? [];
 
-          const existingProducts =
-            this.allLoadedProducts();
+  /*
+   * Capture the current request version.
+   *
+   * If the user changes filters while this request is
+   * running, the old response will be ignored.
+   */
+  const requestVersion =
+    this.requestVersion;
 
-          const existingIds =
-            new Set(
-              existingProducts.map(
-                product =>
-                  product.id
+
+  this.isLoadingMore.set(true);
+
+
+  /*
+   * IMPORTANT:
+   *
+   * Send the SAME filters with every page request.
+   *
+   * Example:
+   *
+   * page 1:
+   * category=2
+   *
+   * page 2:
+   * category=2
+   *
+   * page 3:
+   * category=2
+   *
+   * The backend therefore paginates the filtered query.
+   */
+  const categoryId =
+    this.selectedCategoryId();
+
+  const subCategoryId =
+    this.selectedSubCategoryId();
+
+  const brandId =
+    this.selectedBrandId();
+
+  const offers =
+    this.showOffers();
+
+
+  this.productService
+    .getProducts(
+      nextPage,
+      categoryId,
+      subCategoryId,
+      brandId,
+      offers
+    )
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe({
+
+      next: (
+        response: ProductPageResponse
+      ) => {
+
+        if (
+          requestVersion !==
+          this.requestVersion
+        ) {
+          return;
+        }
+
+
+        const newProducts =
+          response.items ?? [];
+
+
+        /*
+         * Use allLoadedProducts as the accumulated
+         * server-side pages.
+         */
+        const existingProducts =
+          this.allLoadedProducts();
+
+
+        const existingIds =
+          new Set(
+            existingProducts.map(
+              product => product.id
+            )
+          );
+
+
+        const uniqueProducts =
+          newProducts.filter(
+            product =>
+              !existingIds.has(
+                product.id
               )
-            );
-
-          const uniqueProducts =
-            newProducts.filter(
-              product =>
-                !existingIds.has(
-                  product.id
-                )
-            );
-
-          if (
-            uniqueProducts.length > 0
-          ) {
-
-            const updatedProducts = [
-              ...existingProducts,
-              ...uniqueProducts
-            ];
-
-            this.allLoadedProducts.set(
-              updatedProducts
-            );
-
-            this.products.set(
-              updatedProducts
-            );
-
-            this.filteredProducts.set(
-              updatedProducts
-            );
-
-            this.addQuantities(
-              uniqueProducts
-            );
-          }
-
-          this.currentPage =
-            response.page ??
-            nextPage;
-
-          this.unfilteredTotalCount.set(
-            response.totalCount ??
-            this.unfilteredTotalCount()
           );
 
-          this.hasMoreProducts.set(
-            response.hasMore === true
-          );
 
-          this.isLoadingMore.set(false);
-        },
+        const updatedProducts = [
+          ...existingProducts,
+          ...uniqueProducts
+        ];
 
-        error: error => {
 
-         
-          this.isLoadingMore.set(false);
+        /*
+         * Keep the accumulated pages.
+         */
+        this.allLoadedProducts.set(
+          updatedProducts
+        );
+
+
+        /*
+         * Display all loaded pages.
+         */
+        this.products.set(
+          updatedProducts
+        );
+
+
+        this.filteredProducts.set(
+          updatedProducts
+        );
+
+
+        this.addQuantities(
+          uniqueProducts
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * The pagination state now comes directly
+         * from the backend response.
+         */
+        this.currentPage =
+          response.page ??
+          nextPage;
+
+
+        this.unfilteredTotalCount.set(
+          response.totalCount ??
+          this.unfilteredTotalCount()
+        );
+
+
+        this.hasMoreProducts.set(
+          response.hasMore === true
+        );
+
+
+        this.isLoadingMore.set(false);
+      },
+
+      error: error => {
+
+        if (
+          requestVersion !==
+          this.requestVersion
+        ) {
+          return;
         }
-      });
-  }
 
-  // ========================================================
-  // LOAD FILTERED PRODUCTS FROM API
-  // ========================================================
 
-  private loadFilteredProductsFromApi(
-    requestVersion: number
-  ): void {
+        console.error(
+          'Failed to load more products:',
+          error
+        );
 
-    this.isLoading.set(true);
 
-    this.isLoadingMore.set(false);
+        this.isLoadingMore.set(false);
+      }
+    });
+}
 
-    this.productService
-      .getProducts(
-        1,
-        this.selectedCategoryId(),
-        this.selectedSubCategoryId(),
-        this.selectedBrandId(),
-        this.showOffers()
-      )
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
-
-        next: (
-          response: ProductPageResponse
-        ) => {
-
-          if (
-            requestVersion !==
-            this.requestVersion
-          ) {
-            return;
-          }
-
-          const filtered =
-            response.items ?? [];
-
-          this.products.set(
-            filtered
-          );
-
-          this.filteredProducts.set(
-            filtered
-          );
-
-          this.resetQuantities(
-            filtered
-          );
-
-          this.isLoading.set(false);
-        },
-
-        error: error => {
-
-          if (
-            requestVersion !==
-            this.requestVersion
-          ) {
-            return;
-          }
-
-        
-
-          this.products.set([]);
-
-          this.filteredProducts.set([]);
-
-          this.quantities.set({});
-
-          this.isLoading.set(false);
-
-          this.isLoadingMore.set(false);
-        }
-      });
-  }
 
   // ========================================================
   // APPLY LOCAL FILTERS TO NORMAL PRODUCTS
@@ -1593,56 +1592,40 @@ private addedToCartTimer?:
   // INFINITE SCROLL
   // ========================================================
 
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
+@HostListener('window:scroll')
+onWindowScroll(): void {
 
-    // ------------------------------------------------------
-    // SEARCH MODE
-    // ------------------------------------------------------
-
-    if (
-      this.hasSearch()
-    ) {
-      return;
-    }
-
-    // ------------------------------------------------------
-    // FILTERED MODE
-    // ------------------------------------------------------
-
-    if (
-      this.hasApiFilters()
-    ) {
-      return;
-    }
-
-    // ------------------------------------------------------
-    // LOADING
-    // ------------------------------------------------------
-
-    if (
-      this.isLoading() ||
-      this.isLoadingMore() ||
-      !this.hasMoreProducts()
-    ) {
-      return;
-    }
-
-    const scrollPosition =
-      window.innerHeight +
-      window.scrollY;
-
-    const pageHeight =
-      document.documentElement.scrollHeight;
-
-    if (
-      scrollPosition >=
-      pageHeight - 500
-    ) {
-
-      this.loadNextPage();
-    }
+  // Search results are not paginated.
+  if (this.hasSearch()) {
+    return;
   }
+
+
+  if (
+    this.isLoading() ||
+    this.isLoadingMore() ||
+    !this.hasMoreProducts()
+  ) {
+    return;
+  }
+
+
+  const scrollPosition =
+    window.innerHeight +
+    window.scrollY;
+
+  const pageHeight =
+    document.documentElement.scrollHeight;
+
+
+  if (
+    scrollPosition >=
+    pageHeight - 500
+  ) {
+
+    this.loadNextPage();
+  }
+}
 
   // ========================================================
   // QUANTITIES

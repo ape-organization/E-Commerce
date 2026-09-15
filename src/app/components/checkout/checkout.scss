@@ -300,7 +300,7 @@
    ============================================================ */
 
 .form-field input,
-.form-field textarea 
+.form-field textarea ,
 .form-field select
 {
   width: 100%;
@@ -363,18 +363,21 @@
 }
 
 .form-field input::placeholder,
-.form-field textarea::placeholder {
+.form-field textarea::placeholder,
+.form-field select::placeholder
+{
   color: #aaa19c;
 }
 
 .form-field input:hover,
-.form-field textarea:hover
+.form-field textarea:hover,
 .form-field select:hover {
   border-color: #d4c8c1;
 }
 
 .form-field input:focus,
-.form-field textarea:focus {
+.form-field textarea:focus ,
+.form-field select:focus{
   background: #fff;
 
   border-color: var(--color-primary-light, #5a4036);
@@ -384,7 +387,8 @@
 }
 
 .form-field input.invalid,
-.form-field textarea.invalid {
+.form-field textarea.invalid,
+.form-field select.invalid {
   border-color: #c85b52;
 }
 

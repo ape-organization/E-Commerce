@@ -129,29 +129,34 @@ export class CartComponent
   // INIT
   // ==========================================================
 
-  ngOnInit(): void {
+ ngOnInit(): void {
 
-    this.cartService
-      .cartItems$
+  // Subscribe first so we receive the refreshed cart
+  this.cartService
+    .cartItems$
+    .pipe(
+      takeUntil(this.destroy$)
+    )
+    .subscribe(items => {
 
-      .pipe(
-        takeUntil(
-          this.destroy$
-        )
-      )
+      this.cartItems = items;
 
-      .subscribe(items => {
+      this.calculateCartTotal();
 
-        this.cartItems =
-          items;
+      this.cdr.detectChanges();
 
-        this.calculateCartTotal();
+    });
 
-        this.cdr.detectChanges();
 
-      });
+  // Refresh product data whenever Cart page is opened
+  this.cartService
+    .refreshCartFromApi()
+    .pipe(
+      takeUntil(this.destroy$)
+    )
+    .subscribe();
 
-  }
+}
 
 
   // ==========================================================

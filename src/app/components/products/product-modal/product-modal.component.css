@@ -254,7 +254,10 @@ gap: 6px;
 margin-top: 8px;
 
 color: var(--color-text-secondary);
-
+  padding: 10px;
+border: 1px solid var(--color-accent-light);
+border-radius: var(--radius-sm);
+background: rgba(184, 138, 90, 0.08);
 font-size: 12px;
 }
 
@@ -287,10 +290,18 @@ DESCRIPTION
 
 .product-description {
   margin: 0;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
   color: var(--color-text-secondary);
   font-size: 13px;
   line-height: 1.65;
 
+  padding: 10px;
+border: 1px solid var(--color-accent-light);
+border-radius: var(--radius-sm);
+background: rgba(184, 138, 90, 0.08);
+  
   /* Keep text inside the parent */
   white-space: normal;
   overflow-wrap: anywhere;
@@ -364,7 +375,10 @@ display: flex;
 align-items: baseline;
 flex-wrap: wrap;
 gap: 10px;
-
+  padding: 10px;
+border: 1px solid var(--color-accent-light);
+border-radius: var(--radius-sm);
+background: rgba(184, 138, 90, 0.08);
 margin: 18px 0;
 padding-bottom: 14px;
 

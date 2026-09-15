@@ -22,13 +22,14 @@ import { ProductFilterValue } from '../../../models/product.model';
 
 import { LanguageService } from '../../../services/language.service';
 
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-product-filters',
 
   standalone: true,
 
   imports: [
+      MatSelectModule,
     CommonModule,
     FormsModule,
     MaterialModule,

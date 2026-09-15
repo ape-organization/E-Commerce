@@ -1,5 +1,6 @@
 <article
   class="product-card"
+  [class.has-discount]="hasDiscount()"
   (click)="openDetails()"
 >
 
@@ -33,14 +34,50 @@
       {{ 'PRODUCT.OUT_OF_STOCK' | translate }}
     </span>
 
+  
+  </div>
 
-    <!-- ADD TO CART -->
 
-<!--     <div class="cart-action">
- -->
-     
-<!-- ADD TO CART -->
+  <!-- CONTENT -->
 
+  <div class="product-content">
+<div class="product-brand" *ngIf="getBrandName()">
+  <span class="brand-line"></span>
+
+  <span class="brand-diamond">◆</span>
+
+  <span class="brand-name">
+    {{ getBrandName() }}
+  </span>
+
+  <span class="brand-diamond">◆</span>
+
+  <span class="brand-line"></span>
+</div>
+    <h3 class="product-name">
+      {{ getProductName() }}
+    </h3>
+
+
+    <!-- PRICE -->
+
+    <div class="product-price">
+
+      <span
+        class="old-price"
+        *ngIf="hasDiscount()"
+      >
+        {{ product.price | number:'1.2-2' }}
+      </span>
+
+
+      <span class="current-price">
+        {{ getDiscountedPrice() | number:'1.2-2' }}
+      </span>
+
+    </div>
+<!-- add to cart here -->
+<div class="addToCart">
 <button
   type="button"
   class="add-cart-button"
@@ -69,9 +106,7 @@
   }
 
 </button>
-
-
-      <!-- ALREADY IN CART MESSAGE -->
+ <!-- ALREADY IN CART MESSAGE -->
 
       <span
         class="already-in-cart-message"
@@ -79,39 +114,14 @@
       >
         {{ 'PRODUCT.ALREADY_IN_CART' | translate }}
       </span>
-
-   <!--  </div> -->
-
-  </div>
+</div>
 
 
-  <!-- CONTENT -->
 
-  <div class="product-content">
-
-    <h3 class="product-name">
-      {{ getProductName() }}
-    </h3>
+     
 
 
-    <!-- PRICE -->
-
-    <div class="product-price">
-
-      <span
-        class="old-price"
-        *ngIf="hasDiscount()"
-      >
-        {{ product.price | number:'1.2-2' }}
-      </span>
-
-
-      <span class="current-price">
-        {{ getDiscountedPrice() | number:'1.2-2' }}
-      </span>
-
-    </div>
-
+ <!-- end add to cart-->
   </div>
 
 </article>

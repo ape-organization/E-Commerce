@@ -22,9 +22,6 @@
   </div>
 
 
- 
-
-
   <!-- ====================================================
        CATEGORY
        ==================================================== -->
@@ -35,25 +32,31 @@
       {{ 'FILTER.CATEGORY' | translate }}
     </label>
 
-    <select
-      [(ngModel)]="tempCategoryId"
-      (ngModelChange)="onCategoryChange()"
+    <mat-form-field
+      appearance="outline"
+      class="filter-select"
     >
 
-      <option [ngValue]="null">
-        {{ 'FILTER.All_Categories' | translate }}
-      </option>
-
-      <option
-        *ngFor="let category of categories"
-        [ngValue]="category.id"
+      <mat-select
+        [(ngModel)]="tempCategoryId"
+        (ngModelChange)="onCategoryChange()"
+        panelClass="product-filter-select-panel"
       >
 
-        {{ getCategoryName(category) }}
+        <mat-option [value]="null">
+          {{ 'FILTER.All_Categories' | translate }}
+        </mat-option>
 
-      </option>
+        <mat-option
+          *ngFor="let category of categories"
+          [value]="category.id"
+        >
+          {{ getCategoryName(category) }}
+        </mat-option>
 
-    </select>
+      </mat-select>
+
+    </mat-form-field>
 
   </div>
 
@@ -71,27 +74,33 @@
       {{ 'FILTER.SUBCATEGORY' | translate }}
     </label>
 
-    <select
-      [(ngModel)]="tempSubCategoryId"
+    <mat-form-field
+      appearance="outline"
+      class="filter-select"
     >
 
-      <option [ngValue]="null">
-        {{ 'FILTER.ALL_SUBCATEGORIES' | translate }}
-      </option>
-
-      <option
-        *ngFor="
-          let subCategory of
-          availableSubCategories
-        "
-        [ngValue]="subCategory.id"
+      <mat-select
+        [(ngModel)]="tempSubCategoryId"
+        panelClass="product-filter-select-panel"
       >
 
-        {{ getSubCategoryName(subCategory) }}
+        <mat-option [value]="null">
+          {{ 'FILTER.ALL_SUBCATEGORIES' | translate }}
+        </mat-option>
 
-      </option>
+        <mat-option
+          *ngFor="
+            let subCategory of
+            availableSubCategories
+          "
+          [value]="subCategory.id"
+        >
+          {{ getSubCategoryName(subCategory) }}
+        </mat-option>
 
-    </select>
+      </mat-select>
+
+    </mat-form-field>
 
   </div>
 
@@ -106,24 +115,30 @@
       {{ 'FILTER.BRAND' | translate }}
     </label>
 
-    <select
-      [(ngModel)]="tempBrandId"
+    <mat-form-field
+      appearance="outline"
+      class="filter-select"
     >
 
-      <option [ngValue]="null">
-        {{ 'FILTER.ALL_BRANDS' | translate }}
-      </option>
-
-      <option
-        *ngFor="let brand of brands"
-        [ngValue]="brand.id"
+      <mat-select
+        [(ngModel)]="tempBrandId"
+        panelClass="product-filter-select-panel"
       >
 
-        {{ getBrandName(brand) }}
+        <mat-option [value]="null">
+          {{ 'FILTER.ALL_BRANDS' | translate }}
+        </mat-option>
 
-      </option>
+        <mat-option
+          *ngFor="let brand of brands"
+          [value]="brand.id"
+        >
+          {{ getBrandName(brand) }}
+        </mat-option>
 
-    </select>
+      </mat-select>
+
+    </mat-form-field>
 
   </div>
 

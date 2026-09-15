@@ -65,7 +65,7 @@ showAddedCheck = false;
   // ========================================================
 
   getProductName(): string {
-
+console.log(this.product)
     if (this.languageService.isArabic()) {
 
       return (
@@ -81,7 +81,26 @@ showAddedCheck = false;
       'Product'
     );
   }
+  // ========================================================
+  // Brand NAME
+  // ========================================================
 
+  getBrandName(): string {
+    if (this.languageService.isArabic()) {
+
+      return (
+        this.product?.brand?.nameAr?.trim() ||
+        this.product?.brand?.nameEn ||
+        'brand'
+      );
+    }
+
+    return (
+      this.product?.brand?.nameEn?.trim() ||
+      this.product?.brand?.nameAr ||
+      'brand'
+    );
+  }
 
   // ========================================================
   // IMAGE URL
