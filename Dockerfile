@@ -1,4 +1,6 @@
+# ==================================================
 # Stage 1: Build Angular application
+# ==================================================
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -12,10 +14,27 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build Angular application
-RUN npm run build
+# ==================================================
+# Select Angular environment
+# ==================================================
+ARG APP_ENV=prod
 
+RUN echo "Building Angular application with environment: ${APP_ENV}" && \
+    if [ "$APP_ENV" = "dev" ]; then \
+        npm run build -- --configuration development; \
+    elif [ "$APP_ENV" = "preprod" ]; then \
+        npm run build -- --configuration preprod; \
+    elif [ "$APP_ENV" = "prod" ]; then \
+        npm run build -- --configuration production; \
+    else \
+        echo "ERROR: Unknown APP_ENV: ${APP_ENV}" && \
+        exit 1; \
+    fi
+
+
+# ==================================================
 # Stage 2: Serve Angular with Nginx
+# ==================================================
 FROM nginx:alpine
 
 # Remove default Nginx files
