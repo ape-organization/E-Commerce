@@ -128,8 +128,7 @@ export class RelativeProducts implements OnChanges {
       this.subCategoryId;
  const currentProductId =
       this.currentProductId;
-      console.log(currentProductId)
-console.log(subCategoryId)
+  
     if (!subCategoryId) {
 
       this.products.set([]);
@@ -144,9 +143,7 @@ console.log(subCategoryId)
       .subscribe({
 
         next: (products) => {
-console.log(products)
-
-          const currentProductId =
+  const currentProductId =
             this.currentProductId;
 
           const relativeProducts =
@@ -163,13 +160,7 @@ console.log(products)
         },
 
         error: (error) => {
-
-          console.error(
-            'Failed to load relative products:',
-            error
-          );
-
-          this.products.set([]);
+ this.products.set([]);
 
           this.isLoading.set(false);
         }

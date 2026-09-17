@@ -1,0 +1,437 @@
+.otp-page {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background: var(--color-background, #faf7f2);
+}
+
+
+.otp-card {
+  width: min(100%, 440px);
+  padding: 38px 36px 30px;
+  background: #ffffff;
+  border: 1px solid rgba(58, 39, 33, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 14px 45px rgba(40, 26, 22, 0.08);
+  text-align: center;
+}
+
+
+/* ==========================================================
+   ICON
+   ========================================================== */
+
+.otp-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: rgba(177, 138, 85, 0.11);
+  border: 1px solid rgba(177, 138, 85, 0.18);
+}
+
+
+.lock-icon {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-accent, #b18a55);
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.otp-header h2 {
+  margin: 0;
+
+  color: var(--color-primary, #3a2721);
+
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+
+.otp-header p {
+  max-width: 340px;
+  margin: 11px auto 7px;
+
+  color: var(--color-text-secondary, #756963);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+.phone-number {
+  margin-top: 4px;
+
+  color: var(--color-primary, #3a2721);
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+
+/* ==========================================================
+   FORM
+   ========================================================== */
+
+.otp-form {
+  margin-top: 28px;
+}
+
+
+.otp-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+
+.otp-inputs input {
+  width: 48px;
+  height: 54px;
+
+  padding: 0;
+
+  border: 1px solid #ddd6d0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: var(--color-primary, #3a2721);
+
+  font-size: 21px;
+  font-weight: 600;
+  text-align: center;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+
+.otp-inputs input:hover {
+  border-color: #cbbcae;
+}
+
+
+.otp-inputs input:focus {
+  border-color: var(--color-accent, #b18a55);
+
+  box-shadow:
+    0 0 0 3px rgba(177, 138, 85, 0.12);
+
+  background: #fffdfa;
+}
+
+
+.otp-separator {
+  margin: 0 1px;
+
+  color: #b9aea7;
+
+  font-size: 17px;
+}
+
+
+/* ==========================================================
+   ATTEMPTS
+   ========================================================== */
+
+.attempts {
+  margin-top: 13px;
+
+  color: #8a7770;
+
+  font-size: 12px;
+}
+
+
+.attempts strong {
+  color: var(--color-primary, #3a2721);
+}
+
+
+/* ==========================================================
+   MESSAGES
+   ========================================================== */
+
+.message {
+  margin-top: 14px;
+  padding: 10px 12px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+.message-error {
+  border: 1px solid rgba(170, 65, 65, 0.15);
+  background: #fff6f6;
+  color: #a33f3f;
+}
+
+
+.message-success {
+  border: 1px solid rgba(75, 125, 82, 0.16);
+  background: #f5faf5;
+  color: #527a57;
+}
+
+
+/* ==========================================================
+   VERIFY BUTTON
+   ========================================================== */
+
+.verify-button {
+  width: 100%;
+  height: 48px;
+
+  margin-top: 20px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: var(--color-primary, #3a2721);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+}
+
+
+.verify-button:hover:not(:disabled) {
+  background: #281a16;
+}
+
+
+.verify-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+
+.verify-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   SPINNER
+   ========================================================== */
+
+.spinner {
+  width: 15px;
+  height: 15px;
+
+  display: inline-block;
+
+  margin-inline-end: 8px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: otp-spin 0.7s linear infinite;
+
+  vertical-align: -3px;
+}
+
+
+@keyframes otp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ==========================================================
+   RESEND
+   ========================================================== */
+
+.resend-section {
+  min-height: 24px;
+
+  margin-top: 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  font-size: 12px;
+}
+
+
+.resend-label {
+  color: #887a73;
+}
+
+
+.timer {
+  color: #887a73;
+}
+
+
+.timer strong {
+  color: var(--color-primary, #3a2721);
+  font-weight: 600;
+}
+
+
+.resend-button {
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--color-accent, #b18a55);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.resend-button:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+
+.resend-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   SECURITY NOTE
+   ========================================================== */
+
+.security-note {
+  margin-top: 25px;
+  padding-top: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border-top: 1px solid #eee9e5;
+
+  color: #a0958f;
+
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+
+.security-icon {
+  color: var(--color-accent, #b18a55);
+  font-size: 14px;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 480px) {
+
+  .otp-page {
+    padding: 20px 14px;
+  }
+
+
+  .otp-card {
+    padding: 30px 20px 25px;
+    border-radius: 15px;
+  }
+
+
+  .otp-header h2 {
+    font-size: 22px;
+  }
+
+
+  .otp-inputs {
+    gap: 6px;
+  }
+
+
+  .otp-inputs input {
+    width: 43px;
+    height: 50px;
+    font-size: 19px;
+    border-radius: 9px;
+  }
+
+
+  .otp-separator {
+    margin: 0;
+  }
+}
+
+
+@media (max-width: 360px) {
+
+  .otp-card {
+    padding-inline: 15px;
+  }
+
+
+  .otp-inputs {
+    gap: 4px;
+  }
+
+
+  .otp-inputs input {
+    width: 39px;
+    height: 47px;
+  }
+
+
+  .otp-separator {
+    font-size: 14px;
+  }
+}

@@ -43,7 +43,6 @@ export class NewArrivalProducts {
       },
 
       error: (error) => {
-        console.error('Failed to load new arrival:', error);
         this.products.set([]);
         this.isLoading.set(false);
       }

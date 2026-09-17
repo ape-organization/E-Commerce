@@ -1,0 +1,230 @@
+<div class="otp-page">
+
+  <div class="otp-card">
+
+    <!-- Icon -->
+    <div class="otp-icon">
+      <span class="lock-icon">✓</span>
+    </div>
+
+
+    <!-- Header -->
+    <div class="otp-header">
+
+      <h2>
+        {{ 'OTP.TITLE' | translate }}
+      </h2>
+
+      <p>
+        {{ 'OTP.DESCRIPTION' | translate }}
+      </p>
+
+      <div class="phone-number">
+        {{ phoneNumber() }}
+      </div>
+
+    </div>
+
+
+    <!-- OTP -->
+    <form
+      [formGroup]="otpForm"
+      (ngSubmit)="verifyOtp()"
+      class="otp-form"
+    >
+
+      <div
+        class="otp-inputs"
+        dir="ltr"
+        (paste)="onPaste($event)"
+      >
+
+        <input
+          #otpInput
+          data-otp-index="0"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          maxlength="1"
+          formControlName="digit1"
+          aria-label="OTP digit 1"
+          (input)="onInput($event, 0)"
+          (keydown)="onKeyDown($event, 0)"
+        />
+
+        <input
+          #otpInput
+          data-otp-index="1"
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          formControlName="digit2"
+          aria-label="OTP digit 2"
+          (input)="onInput($event, 1)"
+          (keydown)="onKeyDown($event, 1)"
+        />
+
+        <input
+          #otpInput
+          data-otp-index="2"
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          formControlName="digit3"
+          aria-label="OTP digit 3"
+          (input)="onInput($event, 2)"
+          (keydown)="onKeyDown($event, 2)"
+        />
+
+        <span class="otp-separator">—</span>
+
+        <input
+          #otpInput
+          data-otp-index="3"
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          formControlName="digit4"
+          aria-label="OTP digit 4"
+          (input)="onInput($event, 3)"
+          (keydown)="onKeyDown($event, 3)"
+        />
+
+        <input
+          #otpInput
+          data-otp-index="4"
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          formControlName="digit5"
+          aria-label="OTP digit 5"
+          (input)="onInput($event, 4)"
+          (keydown)="onKeyDown($event, 4)"
+        />
+
+        <input
+          #otpInput
+          data-otp-index="5"
+          type="text"
+          inputmode="numeric"
+          maxlength="1"
+          formControlName="digit6"
+          aria-label="OTP digit 6"
+          (input)="onInput($event, 5)"
+          (keydown)="onKeyDown($event, 5)"
+        />
+
+      </div>
+
+
+      <!-- Attempts -->
+      @if (attemptsRemaining() < 5 && attemptsRemaining() > 0) {
+
+        <div class="attempts">
+          {{ 'OTP.ATTEMPTS_REMAINING' | translate }}
+          <strong>{{ attemptsRemaining() }}</strong>
+        </div>
+
+      }
+
+
+      <!-- Error -->
+      @if (errorMessage()) {
+
+        <div class="message message-error">
+          {{ errorMessage() }}
+        </div>
+
+      }
+
+
+      <!-- Success -->
+      @if (successMessage()) {
+
+        <div class="message message-success">
+          {{ successMessage() }}
+        </div>
+
+      }
+
+
+      <!-- Verify -->
+      <button
+        type="submit"
+        class="verify-button"
+        [disabled]="isLoading()"
+      >
+
+        @if (isLoading()) {
+
+          <span class="spinner"></span>
+
+          <span>
+            {{ 'OTP.VERIFYING' | translate }}
+          </span>
+
+        } @else {
+
+          <span>
+            {{ 'OTP.VERIFY' | translate }}
+          </span>
+
+        }
+
+      </button>
+
+    </form>
+
+
+    <!-- Resend -->
+    <div class="resend-section">
+
+      <span class="resend-label">
+        {{ 'OTP.DID_NOT_RECEIVE' | translate }}
+      </span>
+
+      @if (!canResend()) {
+
+        <span class="timer">
+          {{ 'OTP.RESEND_IN' | translate }}
+          <strong>
+            {{ secondsRemaining() }}s
+          </strong>
+        </span>
+
+      } @else {
+
+        <button
+          type="button"
+          class="resend-button"
+          [disabled]="isResending()"
+          (click)="resendOtp()"
+        >
+
+          @if (isResending()) {
+            {{ 'OTP.SENDING' | translate }}
+          } @else {
+            {{ 'OTP.RESEND' | translate }}
+          }
+
+        </button>
+
+      }
+
+    </div>
+
+
+    <!-- Security note -->
+    <div class="security-note">
+
+      <span class="security-icon">•</span>
+
+      <span>
+        {{ 'OTP.SECURITY_NOTE' | translate }}
+      </span>
+
+    </div>
+
+  </div>
+
+</div>

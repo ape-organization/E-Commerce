@@ -991,15 +991,7 @@ private addedToCartTimer?:
         ) {
           return;
         }
-
-
-        console.error(
-          'Failed to load products:',
-          error
-        );
-
-
-        this.products.set([]);
+ this.products.set([]);
 
         this.filteredProducts.set([]);
 
@@ -1225,11 +1217,6 @@ private loadNextPage(): void {
           return;
         }
 
-
-        console.error(
-          'Failed to load more products:',
-          error
-        );
 
 
         this.isLoadingMore.set(false);

@@ -310,13 +310,7 @@ export class Categories
         },
 
         error: (error) => {
-
-          console.error(
-            'CATEGORIES ERROR:',
-            error
-          );
-
-          this.categories.set([]);
+this.categories.set([]);
 
           this.isLoadingCategories.set(false);
 

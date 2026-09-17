@@ -79,6 +79,8 @@ import {
 import {
   LanguageService
 } from '../../services/language.service';
+import { OtpVerificationComponent } from '../shared/otp-verification.component/otp-verification.component';
+import { OtpService } from '../../services/otp.service';
 
 
 @Component({
@@ -109,7 +111,8 @@ export class CheckoutComponent implements OnInit {
 
   readonly governorates =
     EGYPT_GOVERNORATES;
-
+ private readonly OtpService =
+    inject(OtpService);
   private readonly languageService =
     inject(LanguageService);
 
@@ -448,13 +451,7 @@ export class CheckoutComponent implements OnInit {
         },
 
         error: error => {
-
-          console.error(
-            'Client lookup error:',
-            error
-          );
-
-          this.isSearchingClient.set(false);
+ this.isSearchingClient.set(false);
 
           this.clientFound.set(false);
 
@@ -692,13 +689,10 @@ export class CheckoutComponent implements OnInit {
 
       return;
     }
-
-
-    // ===============================================
-    // REQUEST
-    // ===============================================
-
-    const request = {
+      const request = {
+      phoneNumber: form.phone.trim()
+    };
+       const orderRequest = {
 
       client: {
 
@@ -711,15 +705,6 @@ export class CheckoutComponent implements OnInit {
         address:
           form.address.trim(),
 
-        /**
-         * IMPORTANT:
-         *
-         * form.governorate is ALWAYS the
-         * Arabic governorate name.
-         *
-         * Example:
-         * "السويس"
-         */
         governorate:
           form.governorate.trim(),
 
@@ -735,93 +720,48 @@ export class CheckoutComponent implements OnInit {
     };
 
 
-    console.log(
-      'Order request:',
-      request
-    );
 
+this.OtpService.sendOtp(request)
+ .subscribe({
 
-    // ===============================================
-    // SUBMIT
-    // ===============================================
+        next: (res) => 
+          {
+            console.log(res)
+            if(res.success){
+this.dialog.open(OtpVerificationComponent, {
+  data: {
+    order:orderRequest,
+    phoneNumber: form.phone.trim()
+  }
+}).afterClosed().subscribe((res:any)=>{
+  console.log(res)
+  if(!res)
+  {
+    this.isSubmitting.set(false);
 
-    this.isSubmitting.set(true);
-
-    this.orderService
-      .createOrder(request)
-      .subscribe({
-
-        next: () => {
-
-          this.isSubmitting.set(false);
-
-          this.handleSuccessfulOrder();
-
-        },
-
-        error: error => {
-
-          console.error(
-            'Create order error:',
-            error
-          );
-
-          this.isSubmitting.set(false);
-
-          const message =
-            error?.error?.message ??
-            'CHECKOUT.ORDER_FAILED';
+          const message ='CHECKOUT.ORDER_FAILED';
 
           this.showError(
             message
           );
 
-        }
+  }
+  return
+})
+            }
+          },
+        error:()=>{}})
 
-      });
+
+    // ===============================================
+    // REQUEST
+    // ===============================================
+
+  
   }
 
 
-  // =========================================================
-  // SUCCESS
-  // =========================================================
-
-  private handleSuccessfulOrder(): void {
-
-    this.cartService.clearCart();
-
-
-    const dialogRef =
-      this.dialog.open(
-        NotifyMessage,
-        {
-          width: '400px',
-
-          disableClose: true,
-
-          data: {
-
-            title:
-              'ORDER.SUCCESS',
-
-            message:
-              'ORDER.SUCCESSORDER'
-
-          }
-        }
-      );
-
-
-    dialogRef
-      .afterClosed()
-      .subscribe(() => {
-
-        this.router.navigate([
-          '/products'
-        ]);
-
-      });
-  }
+ 
 
 
   // =========================================================

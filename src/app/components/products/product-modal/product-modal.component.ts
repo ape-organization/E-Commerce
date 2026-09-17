@@ -178,13 +178,7 @@ export class ProductModalComponent
         },
 
         error: (error) => {
-
-          console.error(
-            'Failed to load product:',
-            error
-          );
-
-          this.goBack();
+  this.goBack();
         }
       });
   }
@@ -349,16 +343,6 @@ export class ProductModalComponent
     product: Product
   ): void {
 
-    /**
-     * Navigate to the new product ID.
-     *
-     * Because this component listens to paramMap,
-     * the same ProductModalComponent instance will
-     * automatically reload with the new product.
-     */
-    console.log("__________")
-    console.log(product.id)
-    console.log(product)
     this.router.navigate([
       '/product',
       product.id
@@ -497,7 +481,6 @@ export class ProductModalComponent
 
     const product =
       this.product();
-console.log(product)
     const subCategory =
       product?.subCategories?.[0];
 

@@ -35,7 +35,18 @@
 "SPECIAL_OFFERS": "Special Offers",
 "POPULAR_CATEGORIES": "Popular Categories"
 },
-
+  "OTP": {
+    "TITLE": "Verify your phone",
+    "DESCRIPTION": "Enter the 6-digit verification code we sent to",
+    "VERIFY": "Verify code",
+    "VERIFYING": "Verifying...",
+    "DID_NOT_RECEIVE": "Didn't receive the code?",
+    "RESEND_IN": "Resend in",
+    "RESEND": "Resend code",
+    "SENDING": "Sending...",
+    "ATTEMPTS_REMAINING": "Attempts remaining:",
+    "SECURITY_NOTE": "Your verification code expires in 5 minutes."
+  },
 "SHOP": {
 "TITLE": "Shop",
 "ALL_PRODUCTS": "All Products",
@@ -225,6 +236,7 @@
 },
 
 "COMMON": {
+  "searching":"Searching...",
       "client-found":"Client found",
 
 "SAVE": "Save",

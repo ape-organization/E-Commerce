@@ -65,7 +65,6 @@ showAddedCheck = false;
   // ========================================================
 
   getProductName(): string {
-console.log(this.product)
     if (this.languageService.isArabic()) {
 
       return (

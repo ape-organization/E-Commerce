@@ -284,13 +284,7 @@ export class Brands
         },
 
         error: (error) => {
-
-          console.error(
-            'BRANDS ERROR:',
-            error
-          );
-
-          this.brands.set([]);
+ this.brands.set([]);
 
           this.isLoadingBrands.set(false);
 

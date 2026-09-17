@@ -58,7 +58,6 @@ export class BestSellers implements OnInit {
       },
 
       error: (error) => {
-        console.error('Failed to load best sellers:', error);
         this.products.set([]);
         this.isLoading.set(false);
       }
