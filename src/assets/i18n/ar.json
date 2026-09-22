@@ -66,6 +66,8 @@
 },
 
 "PRODUCT": {
+      "SHOW_MORE": "عرض المزيد",
+    "SHOW_LESS": "عرض أقل",
 "Show_All_Products":"كل المنتجات",
 "TITLE": "المنتجات",
 "PRODUCT": "المنتج",

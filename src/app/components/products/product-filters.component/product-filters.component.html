@@ -43,7 +43,9 @@
         panelClass="product-filter-select-panel"
       >
 
-        <mat-option [value]="null">
+        <!-- 0 = ALL CATEGORIES -->
+
+        <mat-option [value]="0">
           {{ 'FILTER.All_Categories' | translate }}
         </mat-option>
 
@@ -84,7 +86,9 @@
         panelClass="product-filter-select-panel"
       >
 
-        <mat-option [value]="null">
+        <!-- 0 = ALL SUBCATEGORIES -->
+
+        <mat-option [value]="0">
           {{ 'FILTER.ALL_SUBCATEGORIES' | translate }}
         </mat-option>
 
@@ -125,7 +129,9 @@
         panelClass="product-filter-select-panel"
       >
 
-        <mat-option [value]="null">
+        <!-- 0 = ALL BRANDS -->
+
+        <mat-option [value]="0">
           {{ 'FILTER.ALL_BRANDS' | translate }}
         </mat-option>
 

@@ -721,20 +721,12 @@ export class CheckoutComponent implements OnInit {
 
 
 
-this.OtpService.sendOtp(request)
- .subscribe({
-
-        next: (res) => 
-          {
-            console.log(res)
-            if(res.success){
 this.dialog.open(OtpVerificationComponent, {
   data: {
     order:orderRequest,
     phoneNumber: form.phone.trim()
   }
 }).afterClosed().subscribe((res:any)=>{
-  console.log(res)
   if(!res)
   {
     this.isSubmitting.set(false);
@@ -748,9 +740,7 @@ this.dialog.open(OtpVerificationComponent, {
   }
   return
 })
-            }
-          },
-        error:()=>{}})
+           
 
 
     // ===============================================

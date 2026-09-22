@@ -57,7 +57,7 @@ import { RelativeProducts } from '../relative-products/relative-products';
 export class ProductModalComponent
   implements OnInit, OnDestroy {
 
-
+descriptionExpanded = true;
   // =====================================================
   // SERVICES
   // =====================================================

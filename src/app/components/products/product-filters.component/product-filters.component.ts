@@ -23,28 +23,22 @@ import { ProductFilterValue } from '../../../models/product.model';
 import { LanguageService } from '../../../services/language.service';
 
 import { MatSelectModule } from '@angular/material/select';
+
 @Component({
   selector: 'app-product-filters',
-
   standalone: true,
-
   imports: [
-      MatSelectModule,
+    MatSelectModule,
     CommonModule,
     FormsModule,
     MaterialModule,
     TranslatePipe
   ],
-
   templateUrl: './product-filters.component.html',
-
-  styleUrls: [
-    './product-filters.component.scss'
-  ]
+  styleUrls: ['./product-filters.component.scss']
 })
 export class ProductFiltersComponent
   implements OnInit, OnChanges {
-
 
   // ========================================================
   // INPUTS
@@ -87,13 +81,14 @@ export class ProductFiltersComponent
 
   // ========================================================
   // TEMPORARY VALUES
+  // 0 = ALL
   // ========================================================
 
-  tempCategoryId: number | null = null;
+  tempCategoryId = 0;
 
-  tempSubCategoryId: number | null = null;
+  tempSubCategoryId = 0;
 
-  tempBrandId: number | null = null;
+  tempBrandId = 0;
 
   tempOffers = false;
 
@@ -112,9 +107,7 @@ export class ProductFiltersComponent
   // ========================================================
 
   ngOnInit(): void {
-
     this.syncInputs();
-
   }
 
 
@@ -132,11 +125,8 @@ export class ProductFiltersComponent
       changes['selectedBrandId'] ||
       changes['showOffers']
     ) {
-
       this.syncInputs();
-
     }
-
   }
 
 
@@ -146,18 +136,25 @@ export class ProductFiltersComponent
 
   syncInputs(): void {
 
+    /*
+     * null from parent = 0 in the dropdown
+     *
+     * This makes "All Categories",
+     * "All Subcategories" and "All Brands"
+     * appear automatically.
+     */
+
     this.tempCategoryId =
-      this.selectedCategoryId;
+      this.selectedCategoryId ?? 0;
 
     this.tempSubCategoryId =
-      this.selectedSubCategoryId;
+      this.selectedSubCategoryId ?? 0;
 
     this.tempBrandId =
-      this.selectedBrandId;
+      this.selectedBrandId ?? 0;
 
     this.tempOffers =
       this.showOffers;
-
   }
 
 
@@ -167,8 +164,12 @@ export class ProductFiltersComponent
 
   onCategoryChange(): void {
 
-    this.tempSubCategoryId = null;
+    /*
+     * Whenever category changes,
+     * reset subcategory to ALL.
+     */
 
+    this.tempSubCategoryId = 0;
   }
 
 
@@ -180,20 +181,29 @@ export class ProductFiltersComponent
 
     this.filterApplied.emit({
 
+      /*
+       * 0 = ALL
+       * Backend expects null when no filter is selected.
+       */
+
       categoryId:
-        this.tempCategoryId,
+        this.tempCategoryId === 0
+          ? null
+          : this.tempCategoryId,
 
       subCategoryId:
-        this.tempSubCategoryId,
+        this.tempSubCategoryId === 0
+          ? null
+          : this.tempSubCategoryId,
 
       brandId:
-        this.tempBrandId,
+        this.tempBrandId === 0
+          ? null
+          : this.tempBrandId,
 
       offers:
         this.tempOffers
-
     });
-
   }
 
 
@@ -203,16 +213,19 @@ export class ProductFiltersComponent
 
   clearFilters(): void {
 
-    this.tempCategoryId = null;
+    /*
+     * 0 means ALL in the UI.
+     */
 
-    this.tempSubCategoryId = null;
+    this.tempCategoryId = 0;
 
-    this.tempBrandId = null;
+    this.tempSubCategoryId = 0;
+
+    this.tempBrandId = 0;
 
     this.tempOffers = false;
 
     this.clearFiltersEvent.emit();
-
   }
 
 
@@ -223,12 +236,13 @@ export class ProductFiltersComponent
   get availableSubCategories():
     SubCategoryFilter[] {
 
-    if (
-      this.tempCategoryId === null
-    ) {
+    /*
+     * No category selected = no specific
+     * category subcategories.
+     */
 
-      return this.subCategories;
-
+    if (this.tempCategoryId === 0) {
+      return [];
     }
 
     const category =
@@ -239,7 +253,6 @@ export class ProductFiltersComponent
       );
 
     return category?.subCategories ?? [];
-
   }
 
 
@@ -268,7 +281,6 @@ export class ProductFiltersComponent
       category.nameAr?.trim() ||
       ''
     );
-
   }
 
 
@@ -297,7 +309,6 @@ export class ProductFiltersComponent
       subCategory.nameAr?.trim() ||
       ''
     );
-
   }
 
 
@@ -326,7 +337,6 @@ export class ProductFiltersComponent
       brand.nameAr?.trim() ||
       ''
     );
-
   }
 
 }

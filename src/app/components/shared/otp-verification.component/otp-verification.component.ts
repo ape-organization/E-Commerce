@@ -62,154 +62,46 @@ private readonly data =
 
   readonly canResend = signal(false);
 
+
   readonly otpForm = this.fb.group({
-    digit1: ['', [Validators.required, Validators.pattern('[0-9]')]],
-    digit2: ['', [Validators.required, Validators.pattern('[0-9]')]],
-    digit3: ['', [Validators.required, Validators.pattern('[0-9]')]],
-    digit4: ['', [Validators.required, Validators.pattern('[0-9]')]],
-    digit5: ['', [Validators.required, Validators.pattern('[0-9]')]],
-    digit6: ['', [Validators.required, Validators.pattern('[0-9]')]]
-  });
+  otp: [
+    '',
+    [
+      Validators.required,
+      Validators.pattern(/^\d{6}$/)
+    ]
+  ]
+});
 
 
   ngOnInit(): void {
 
-    console.log(this.data.phoneNumber)
     this.phoneNumber.set(this.data.phoneNumber);
+this.sendOtp();
+   
+  }
 
-    this.startTimer();
+get otp(): string {
+  return this.otpForm.value.otp ?? '';
+}
 
-    setTimeout(() => {
-      this.focusInput(0);
+onOtpInput(event: Event): void {
+
+  const input =
+    event.target as HTMLInputElement;
+
+  // Keep numbers only
+  const value =
+    input.value.replace(/\D/g, '').slice(0, 6);
+
+  input.value = value;
+
+  this.otpForm
+    .get('otp')
+    ?.setValue(value, {
+      emitEvent: false
     });
-  }
-
-
-  get otp(): string {
-    return [
-      this.otpForm.controls.digit1.value,
-      this.otpForm.controls.digit2.value,
-      this.otpForm.controls.digit3.value,
-      this.otpForm.controls.digit4.value,
-      this.otpForm.controls.digit5.value,
-      this.otpForm.controls.digit6.value
-    ].join('');
-  }
-
-
-  onInput(
-    event: Event,
-    index: number
-  ): void {
-
-    const input = event.target as HTMLInputElement;
-
-    let value = input.value;
-
-    /*
-     * Keep only numbers.
-     */
-    value = value.replace(/\D/g, '');
-
-    /*
-     * Only one digit per input.
-     */
-    value = value.charAt(0);
-
-    input.value = value;
-
-    this.setDigit(index, value);
-
-    if (value && index < 5) {
-      this.focusInput(index + 1);
-    }
-
-    this.clearMessages();
-
-    this.cdr.markForCheck();
-  }
-
-
-  onKeyDown(
-    event: KeyboardEvent,
-    index: number
-  ): void {
-
-    if (
-      event.key === 'Backspace' &&
-      !this.getDigit(index) &&
-      index > 0
-    ) {
-      event.preventDefault();
-
-      this.setDigit(index - 1, '');
-
-      this.focusInput(index - 1);
-
-      return;
-    }
-
-    if (
-      event.key === 'ArrowLeft' &&
-      index > 0
-    ) {
-      event.preventDefault();
-
-      this.focusInput(index - 1);
-
-      return;
-    }
-
-    if (
-      event.key === 'ArrowRight' &&
-      index < 5
-    ) {
-      event.preventDefault();
-
-      this.focusInput(index + 1);
-    }
-  }
-
-
-  onPaste(event: ClipboardEvent): void {
-
-    event.preventDefault();
-
-    const pastedText =
-      event.clipboardData
-        ?.getData('text')
-        .replace(/\D/g, '')
-        .substring(0, 6);
-
-    if (!pastedText) {
-      return;
-    }
-
-    const digits = pastedText.split('');
-
-    const controls = [
-      this.otpForm.controls.digit1,
-      this.otpForm.controls.digit2,
-      this.otpForm.controls.digit3,
-      this.otpForm.controls.digit4,
-      this.otpForm.controls.digit5,
-      this.otpForm.controls.digit6
-    ];
-
-    controls.forEach((control, index) => {
-      control.setValue(digits[index] ?? '');
-    });
-
-    if (digits.length < 6) {
-      this.focusInput(digits.length);
-    } else {
-      this.focusInput(5);
-    }
-
-    this.clearMessages();
-
-    this.cdr.markForCheck();
-  }
+}
 
  // =========================================================
   // SUCCESS
@@ -263,10 +155,10 @@ private readonly router=inject(Router)
     if (this.otpForm.invalid) {
 
       this.errorMessage.set(
-        'Please enter the complete verification code.'
+        'من فضلك ادخل كود التحقق'
       );
 
-      this.focusFirstEmptyInput();
+      this.focusInput();
 
       return;
     }
@@ -289,9 +181,7 @@ private readonly router=inject(Router)
 
           if (response.success) {
 
-            this.successMessage.set(
-              response.message ||
-              'OTP verified successfully.'
+            this.successMessage.set( 'تم التحقق بنجاح . برجاء الانتظار لاتمام الطلب'
             );
 
             /*
@@ -333,9 +223,7 @@ this.dialogRef.close(true)
 
           this.isLoading.set(false);
 
-          const message =
-            error?.error?.message ||
-            'Invalid or expired verification code.';
+          const message = 'كود التحقق خطأ او منتهي الصلاحيه.';
 
           this.errorMessage.set(message);
 
@@ -352,7 +240,7 @@ this.dialogRef.close(true)
            */
           this.clearOtp();
 
-          this.focusInput(0);
+          this.focusInput();
 
           this.cdr.markForCheck();
         }
@@ -390,12 +278,10 @@ this.dialogRef.close(true)
 
           this.startTimer();
 
-          this.successMessage.set(
-            response.message ||
-            'A new verification code has been sent.'
+          this.successMessage.set( 'تم ارسال كود تحقق جديد'
           );
 
-          this.focusInput(0);
+          this.focusInput();
 
           this.cdr.markForCheck();
         },
@@ -404,16 +290,54 @@ this.dialogRef.close(true)
 
           this.isResending.set(false);
 
-          this.errorMessage.set(
-            error?.error?.message ||
-            'Unable to send a new verification code.'
+          this.errorMessage.set( 'حدث خطأ لم يتم ارسال ارسال كود التحقق'
           );
 
           this.cdr.markForCheck();
         }
       });
   }
+ sendOtp(): void {
 
+   
+    this.isResending.set(true);
+    this.clearMessages();
+
+    const request = {
+      phoneNumber: this.phoneNumber()
+    };
+
+    this.otpService.sendOtp(request)
+     
+      .subscribe({
+
+        next: response => {
+
+          this.isResending.set(false);
+
+          this.clearOtp();
+
+          this.attemptsRemaining.set(5);
+
+           this.startTimer();
+
+    setTimeout(() => {
+      this.focusInput();
+    });
+ this.cdr.markForCheck();
+        },
+
+        error: error => {
+
+          this.isResending.set(false);
+
+          this.errorMessage.set('حدث خطأ لم يتم ارسال كود التحقق'
+          );
+
+          this.cdr.markForCheck();
+        }
+      });
+  }
 
   private startTimer(): void {
 
@@ -456,17 +380,12 @@ this.dialogRef.close(true)
   }
 
 
-  private clearOtp(): void {
+ private clearOtp(): void {
 
-    this.otpForm.reset({
-      digit1: '',
-      digit2: '',
-      digit3: '',
-      digit4: '',
-      digit5: '',
-      digit6: ''
-    });
-  }
+  this.otpForm.reset({
+    otp: ''
+  });
+}
 
 
   private clearMessages(): void {
@@ -475,61 +394,21 @@ this.dialogRef.close(true)
   }
 
 
-  private getDigit(index: number): string {
+ 
 
-    const controls = [
-      this.otpForm.controls.digit1,
-      this.otpForm.controls.digit2,
-      this.otpForm.controls.digit3,
-      this.otpForm.controls.digit4,
-      this.otpForm.controls.digit5,
-      this.otpForm.controls.digit6
-    ];
+private focusInput(): void {
 
-    return controls[index].value ?? '';
-  }
+  const input =
+    document.querySelector(
+      'input[formControlName="otp"]'
+    ) as HTMLInputElement | null;
 
-
-  private setDigit(
-    index: number,
-    value: string
-  ): void {
-
-    const controls = [
-      this.otpForm.controls.digit1,
-      this.otpForm.controls.digit2,
-      this.otpForm.controls.digit3,
-      this.otpForm.controls.digit4,
-      this.otpForm.controls.digit5,
-      this.otpForm.controls.digit6
-    ];
-
-    controls[index].setValue(value);
-  }
+  input?.focus();
+  input?.select();
+}
 
 
-  private focusInput(index: number): void {
-
-    const input =
-      document.querySelector(
-        `input[data-otp-index="${index}"]`
-      ) as HTMLInputElement | null;
-
-    input?.focus();
-    input?.select();
-  }
-
-
-  private focusFirstEmptyInput(): void {
-
-    for (let i = 0; i < 6; i++) {
-
-      if (!this.getDigit(i)) {
-        this.focusInput(i);
-        return;
-      }
-    }
-  }
+ 
 
 
   ngOnDestroy(): void {

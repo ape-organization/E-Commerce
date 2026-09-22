@@ -87,10 +87,10 @@
            HEADER
            =================================================== -->
 
-      <div class="details-header">
+      <div class="product-data">
 
-
-        <span class="product-brand">
+<div>
+  <span class="product-brand">
 
           {{ getBrandName() }}
 
@@ -101,46 +101,36 @@
           {{ getProductName() }}
 
         </h2>
+</div>
+<div >
 
-        <div class="product-location">
+          <span class="price">
 
-          <span class="category-name">
-
-            {{ getCategoryName() }}
+            {{ newPrice | number:'1.0-2' }}
+{{ 'COMMON.EGP' | translate }}
 
           </span>
 
+          <h5 class="old-price" *ngIf="hasDiscount">
 
-          <ng-container
-            *ngIf="product.subCategories.length"
-          >
+            {{ oldPrice | number:'1.0-2' }}  {{ 'COMMON.EGP' | translate }}
 
-            <span class="separator">
-              /
-            </span>
+         
 
-            <span
-              class="subcategory-name"
-              *ngFor="
-                let sub of product.subCategories;
-                let last = last
-              "
-            >
+          </h5>
 
-              {{ getSubCategoryName(sub) }}
+         
 
-              <span *ngIf="!last">
-                ,
-              </span>
+       
 
-            </span>
+      
+</div>
+      
 
-          </ng-container>
-
-        </div>
+       
 
 
-        <div class="title-line"></div>
+        <!-- <div class="title-line"></div> -->
 
       </div>
 
@@ -150,16 +140,48 @@
            DESCRIPTION
            =================================================== -->
 
-      <p
-        class="product-description"
-        *ngIf="getProductDescription()"
-      >
+<div
+  class="product-description"
+  *ngIf="getProductDescription()"
+>
 
-        {{ getProductDescription() }}
+  <!-- HEADER -->
 
-      </p>
+  <button
+    type="button"
+    class="description-header"
+    (click)="descriptionExpanded = !descriptionExpanded"
+  >
+
+    <span class="description-title">
+      {{ 'PRODUCT.DESCRIPTION' | translate }}
+    </span>
+
+    <mat-icon>
+      {{
+        descriptionExpanded
+          ? 'keyboard_arrow_up'
+          : 'keyboard_arrow_down'
+      }}
+    </mat-icon>
+
+  </button>
 
 
+  <!-- CONTENT -->
+
+  <div
+    class="description-content"
+    *ngIf="descriptionExpanded"
+  >
+
+    <p >
+      {{ getProductDescription() }}
+    </p>
+
+  </div>
+
+</div>
 
       <!-- ===================================================
            OFFER
@@ -196,49 +218,7 @@
 
 
 
-      <!-- ===================================================
-           PRICE
-           =================================================== -->
-
-      <div class="price-section">
-
-        <div class="current-price-wrapper">
-
-          <span class="price">
-
-            {{ newPrice | number:'1.0-2' }}
-
-          </span>
-
-          <span class="currency">
-
-            {{ 'COMMON.EGP' | translate }}
-
-          </span>
-
-        </div>
-
-
-        <div
-          class="old-price-wrapper"
-          *ngIf="hasDiscount"
-        >
-
-          <span class="old-price">
-
-            {{ oldPrice | number:'1.0-2' }}
-
-          </span>
-
-          <span class="old-currency">
-
-            {{ 'COMMON.EGP' | translate }}
-
-          </span>
-
-        </div>
-
-      </div>
+     
 
 
 
@@ -270,15 +250,15 @@
            =================================================== -->
 
       <div
-        class="quantity-section"
+        class="product-description"
         *ngIf="!isOutOfStock"
       >
 
-        <label for="quantity">
+      <!--   <label for="quantity">
 
           {{ 'PRODUCT.QUANTITY' | translate }}
 
-        </label>
+        </label> -->
 
 
         <div class="quantity-control">
@@ -322,9 +302,51 @@
         </div>
 
       </div>
+<!--=============================================
+category and sub category
+==========================================-->
+ <div class="product-description">
+
+   <span class="description-title">
+      {{ 'PRODUCT.CATEGORY' | translate }}
+    </span>
+          <div class="category-name">
+
+            {{ getCategoryName() }}
+
+          </div>
 
 
+        
 
+        </div>
+<div class="product-description">
+  <ng-container
+            *ngIf="product.subCategories.length"
+          >
+ <span class="description-title">
+      {{ 'PRODUCT.SUBCATEGORY' | translate }}
+    </span>
+           
+
+            <div
+              class="category-name"
+              *ngFor="
+                let sub of product.subCategories;
+                let last = last
+              "
+            >
+
+              {{ getSubCategoryName(sub) }}
+
+              <!-- <span *ngIf="!last">
+                ,
+              </span> -->
+
+            </div>
+
+          </ng-container>
+</div>
       <!-- ===================================================
            ACTIONS
            =================================================== -->

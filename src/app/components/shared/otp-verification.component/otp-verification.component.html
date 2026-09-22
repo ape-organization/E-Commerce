@@ -33,88 +33,21 @@
       class="otp-form"
     >
 
-      <div
-        class="otp-inputs"
-        dir="ltr"
-        (paste)="onPaste($event)"
-      >
+     
+<div class="otp-inputs" dir="ltr">
 
-        <input
-          #otpInput
-          data-otp-index="0"
-          type="text"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          maxlength="1"
-          formControlName="digit1"
-          aria-label="OTP digit 1"
-          (input)="onInput($event, 0)"
-          (keydown)="onKeyDown($event, 0)"
-        />
+  <input
+    #otpInput
+    type="text"
+    inputmode="numeric"
+    autocomplete="one-time-code"
+    maxlength="6"
+    formControlName="otp"
+    aria-label="6 digit OTP"
+    (input)="onOtpInput($event)"
+  />
 
-        <input
-          #otpInput
-          data-otp-index="1"
-          type="text"
-          inputmode="numeric"
-          maxlength="1"
-          formControlName="digit2"
-          aria-label="OTP digit 2"
-          (input)="onInput($event, 1)"
-          (keydown)="onKeyDown($event, 1)"
-        />
-
-        <input
-          #otpInput
-          data-otp-index="2"
-          type="text"
-          inputmode="numeric"
-          maxlength="1"
-          formControlName="digit3"
-          aria-label="OTP digit 3"
-          (input)="onInput($event, 2)"
-          (keydown)="onKeyDown($event, 2)"
-        />
-
-        <span class="otp-separator">—</span>
-
-        <input
-          #otpInput
-          data-otp-index="3"
-          type="text"
-          inputmode="numeric"
-          maxlength="1"
-          formControlName="digit4"
-          aria-label="OTP digit 4"
-          (input)="onInput($event, 3)"
-          (keydown)="onKeyDown($event, 3)"
-        />
-
-        <input
-          #otpInput
-          data-otp-index="4"
-          type="text"
-          inputmode="numeric"
-          maxlength="1"
-          formControlName="digit5"
-          aria-label="OTP digit 5"
-          (input)="onInput($event, 4)"
-          (keydown)="onKeyDown($event, 4)"
-        />
-
-        <input
-          #otpInput
-          data-otp-index="5"
-          type="text"
-          inputmode="numeric"
-          maxlength="1"
-          formControlName="digit6"
-          aria-label="OTP digit 6"
-          (input)="onInput($event, 5)"
-          (keydown)="onKeyDown($event, 5)"
-        />
-
-      </div>
+</div>
 
 
       <!-- Attempts -->

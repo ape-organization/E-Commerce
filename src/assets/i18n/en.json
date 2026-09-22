@@ -67,6 +67,8 @@
 },
 
 "PRODUCT": {
+   "SHOW_MORE": "Show more",
+    "SHOW_LESS": "Show less",
 "Show_All_Products":"Show_All_Products",
 "TITLE": "Products",
 "PRODUCT": "Product",
