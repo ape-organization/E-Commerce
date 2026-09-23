@@ -1,4 +1,3 @@
-
 /* ============================================================
    PRODUCT CARD FONT
    ============================================================ */
@@ -24,6 +23,7 @@
 :host {
   display: block;
   width: 100%;
+  height: 100%;
   min-width: 0;
   box-sizing: border-box;
 }
@@ -35,17 +35,22 @@
 
 .product-card {
   width: 100%;
+  height: 100%;
   min-width: 0;
+
   box-sizing: border-box;
 
   position: relative;
+
+  display: flex;
+  flex-direction: column;
 
   border-radius: 10px;
 
   cursor: pointer;
 
   /*
-   * Must remain visible so the ribbon can extend
+   * Keep visible so the discount ribbon can extend
    * outside the card.
    */
   overflow: visible;
@@ -75,7 +80,13 @@
   position: relative;
 
   width: 100%;
+
+  /*
+   * Keeps every product image the same size.
+   */
   aspect-ratio: 1 / 1;
+
+  flex-shrink: 0;
 
   /*
    * Only the image area is clipped.
@@ -108,7 +119,6 @@
 
 /* ============================================================
    DISCOUNT RIBBON
-   WRAPPED AROUND THE CARD
    ============================================================ */
 
 
@@ -116,20 +126,12 @@
    BACK / FOLDED SECTION
    ------------------------------------------------------------ */
 
-.product-card.has-discount::before  {
+.product-card.has-discount::before {
   content: '';
 
   position: absolute;
 
-  /*
-   * Slightly lower than the front ribbon.
-   * This makes it look like it continues behind it.
-   */
   top: 17px;
-
-  /*
-   * This small offset creates the wrapped effect.
-   */
   left: -5px;
 
   width: 8px;
@@ -137,10 +139,6 @@
 
   z-index: 1;
 
-  /*
-   * Slightly darker than the main ribbon.
-   * This creates the folded/hidden section.
-   */
   background: color-mix(
     in srgb,
     var(--color-sale) 72%,
@@ -154,9 +152,6 @@
     0 76%
   );
 
-  /*
-   * Very subtle depth.
-   */
   filter:
     drop-shadow(
       1px 2px 3px rgba(58, 39, 33, 0.16)
@@ -200,12 +195,6 @@
 
   white-space: nowrap;
 
-  /*
-   * Straight left edge.
-   *
-   * The right side forms the two sharp
-   * ribbon points.
-   */
   clip-path: polygon(
     0 0,
     100% 0,
@@ -214,10 +203,6 @@
     0 100%
   );
 
-  /*
-   * Subtle raised effect.
-   * Not too heavy, so it remains elegant.
-   */
   filter:
     drop-shadow(
       0 3px 3px rgba(58, 39, 33, 0.18)
@@ -233,11 +218,6 @@
 /* ------------------------------------------------------------
    WHITE SEPARATION
    ------------------------------------------------------------ */
-
-/*
- * A very small white edge helps separate the ribbon
- * from the product card and makes the wrap easier to see.
- */
 
 .discount-badge::before {
   content: '';
@@ -261,11 +241,6 @@
 /* ------------------------------------------------------------
    TOP HIGHLIGHT
    ------------------------------------------------------------ */
-
-/*
- * Small highlight along the top of the ribbon.
- * This gives the ribbon a slightly raised material look.
- */
 
 .discount-badge::after {
   content: '';
@@ -317,9 +292,18 @@
    ============================================================ */
 
 .product-content {
-  padding: 12px 4px 14px;
+  width: 100%;
+
+  flex: 1;
+
+  min-width: 0;
 
   box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 12px 4px 14px;
 }
 
 
@@ -329,6 +313,8 @@
 
 .product-brand {
   width: 100%;
+
+  min-width: 0;
 
   display: flex;
   align-items: center;
@@ -349,6 +335,8 @@
   white-space: nowrap;
 
   overflow: hidden;
+
+  flex-shrink: 0;
 }
 
 .product-brand::before,
@@ -357,19 +345,26 @@
 
   flex: 1;
 
+  min-width: 8px;
+
   height: 1px;
 
   background: var(--color-border);
 }
-.brand-name{
-    color: var(--color-accent);
 
-}
 .product-brand span {
   flex: 0 0 auto;
 }
 
+.brand-name {
+  max-width: 70%;
 
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  color: var(--color-accent);
+}
 
 
 /* ============================================================
@@ -379,10 +374,15 @@
 .product-name {
   margin: 0 0 8px;
 
+  min-height: 42px;
+  max-height: 42px;
+
   color: var(--color-primary);
 
   font-size: 15px;
   font-weight: 600;
+
+  line-height: 1.4;
 
   display: -webkit-box;
 
@@ -390,6 +390,8 @@
   -webkit-box-orient: vertical;
 
   overflow: hidden;
+
+  flex-shrink: 0;
 }
 
 
@@ -398,27 +400,39 @@
    ============================================================ */
 
 .product-price {
+  min-width: 0;
+
   display: flex;
   align-items: center;
 
   gap: 8px;
 
-  min-width: 0;
+  margin-bottom: 12px;
+
+  flex-shrink: 0;
 }
 
 .old-price {
+  min-width: 0;
+
   color: #999;
 
   font-size: 13px;
 
   text-decoration: line-through;
+
+  white-space: nowrap;
 }
 
 .current-price {
+  min-width: 0;
+
   color: var(--color-accent);
 
   font-size: 17px;
   font-weight: 700;
+
+  white-space: nowrap;
 }
 
 
@@ -429,11 +443,15 @@
 .addToCart {
   width: 100%;
 
+  margin-top: auto;
+
   display: flex;
   align-items: center;
   justify-content: center;
 
   position: relative;
+
+  flex-shrink: 0;
 }
 
 
@@ -518,12 +536,16 @@
 .already-in-cart-message {
   position: absolute;
 
-  top: calc(70% + 5px);
+  /*
+   * Keep the message attached to the button area.
+   */
+  top: calc(100% + 5px);
+
   left: 50%;
 
   transform: translateX(-50%);
 
-  z-index: 4;
+  z-index: 10;
 
   width: max-content;
 
@@ -548,6 +570,9 @@
   white-space: nowrap;
 
   pointer-events: none;
+
+  box-shadow:
+    0 3px 10px rgba(58, 39, 33, 0.12);
 }
 
 
@@ -566,10 +591,6 @@
 
   cursor: default;
 
-  /*
-   * Keep the button centered by flexbox.
-   * Do not use translate(-50%, -50%).
-   */
   transform: scale(1);
 
   box-shadow:
@@ -657,7 +678,115 @@
     left: -8px;
   }
 
-  .product-card.has-discount::before  {
+  .product-card.has-discount::before {
     left: -3px;
+  }
+}
+
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+  .product-content {
+    padding:
+      10px
+      3px
+      12px;
+  }
+
+  .product-name {
+    min-height: 40px;
+    max-height: 40px;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    margin-bottom: 7px;
+  }
+
+  .product-price {
+    gap: 6px;
+
+    margin-bottom: 10px;
+  }
+
+  .old-price {
+    font-size: 12px;
+  }
+
+  .current-price {
+    font-size: 15px;
+  }
+
+  .add-cart-button {
+    width: 100%;
+    max-width: 180px;
+
+    height: 36px;
+  }
+
+  .product-brand {
+    font-size: 8px;
+
+    letter-spacing: 1.2px;
+  }
+
+  .stock-badge {
+    top: 8px;
+    right: 8px;
+
+    padding: 4px 7px;
+
+    font-size: 10px;
+  }
+
+  .discount-badge {
+    top: 10px;
+
+    height: 23px;
+
+    min-width: 48px;
+
+    font-size: 9px;
+  }
+}
+
+
+/* ============================================================
+   VERY SMALL MOBILE
+   ============================================================ */
+
+@media (max-width: 360px) {
+
+  .product-name {
+    font-size: 13px;
+
+    min-height: 37px;
+    max-height: 37px;
+
+    line-height: 1.4;
+  }
+
+  .current-price {
+    font-size: 14px;
+  }
+
+  .old-price {
+    font-size: 11px;
+  }
+
+  .add-cart-button {
+    height: 34px;
+  }
+
+  .add-cart-button mat-icon {
+    width: 20px;
+    height: 20px;
+
+    font-size: 20px;
   }
 }
