@@ -169,6 +169,7 @@
 },
 
 "CHECKOUT": {
+   "LOADING_CART": "جاري تحميل السلة...",
 "TITLE": "إتمام الطلب",
 "Complete_your_order":"اكمل طلبك",
 "CUSTOMER_INFORMATION": "بيانات العميل",

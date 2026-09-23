@@ -92,6 +92,7 @@ import {
   standalone: true,
 
   imports: [
+    
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
@@ -176,6 +177,8 @@ export class CheckoutComponent implements OnInit {
   readonly clientFound =
     signal(false);
 
+readonly cartLoading$ =
+  this.cartService.cartLoading$;
 
   // =========================================================
   // CART

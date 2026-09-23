@@ -170,6 +170,7 @@
 },
 
 "CHECKOUT": {
+  "LOADING_CART": "Loading your cart...",
 "TITLE": "Checkout",
 "Complete_your_order":"Complete your order",
 "CUSTOMER_INFORMATION": "Customer Information",

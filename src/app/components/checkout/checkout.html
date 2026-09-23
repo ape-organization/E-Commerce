@@ -501,8 +501,18 @@
       <!-- ===================================== -->
       <!-- EMPTY CART -->
       <!-- ===================================== -->
+@if (cartLoading$ | async) {
 
-      @if (cartItems.length === 0) {
+  <div class="cart-loading">
+   
+
+    <span>
+      {{ 'CHECKOUT.LOADING_CART' | translate }}
+    </span>
+  </div>
+
+} @else if (cartItems.length === 0) {
+     
 
         <div class="empty-cart">
 

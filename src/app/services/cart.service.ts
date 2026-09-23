@@ -115,7 +115,7 @@ export class CartService {
   // ==========================================================
 
   private cartLoading =
-    new BehaviorSubject<boolean>(false);
+    new BehaviorSubject<boolean>(true);
 
   public cartLoading$ =
     this.cartLoading.asObservable();
@@ -138,27 +138,23 @@ export class CartService {
   // INITIALIZE CART
   // ==========================================================
 
-  private initializeCart(): void {
+private initializeCart(): void {
 
-    const storedItems =
-      this.readStoredCart();
+  const storedItems = this.readStoredCart();
 
+  if (storedItems.length === 0) {
 
-    if (storedItems.length === 0) {
+    this.cartItems.next([]);
 
-      this.cartItems.next([]);
+    this.updateCartCount();
 
-      this.updateCartCount();
+    this.cartLoading.next(false);
 
-      return;
-
-    }
-
-
-    this.refreshCartFromApi()
-      .subscribe();
-
+    return;
   }
+
+  this.refreshCartFromApi().subscribe();
+}
 
 
   // ==========================================================
