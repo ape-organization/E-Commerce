@@ -1,4 +1,3 @@
-
 import {
   CommonModule
 } from '@angular/common';
@@ -6,6 +5,7 @@ import {
 import {
   Component,
   OnInit,
+  DestroyRef,
   inject,
   signal
 } from '@angular/core';
@@ -30,13 +30,26 @@ import {
 } from '@angular/material/icon';
 
 import {
-  MatProgressSpinnerModule
-} from '@angular/material/progress-spinner';
-
-import {
   Router,
   RouterModule
 } from '@angular/router';
+
+import {
+  TranslatePipe
+} from '@ngx-translate/core';
+
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  catchError,
+  of
+} from 'rxjs';
+
+import {
+  takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
   CartItem,
@@ -48,20 +61,8 @@ import {
 } from '../../models/product.model';
 
 import {
-  ProductService
-} from '../../services/product.service';
-
-import {
-  OrderService
-} from '../../services/order.service';
-
-import {
   environment
 } from '../../../environments/environment';
-
-import {
-  TranslatePipe
-} from '@ngx-translate/core';
 
 import {
   ClientService
@@ -79,8 +80,10 @@ import {
 import {
   LanguageService
 } from '../../services/language.service';
-import { OtpVerificationComponent } from '../shared/otp-verification.component/otp-verification.component';
-import { OtpService } from '../../services/otp.service';
+
+import {
+  OtpVerificationComponent
+} from '../shared/otp-verification.component/otp-verification.component';
 
 
 @Component({
@@ -95,7 +98,6 @@ import { OtpService } from '../../services/otp.service';
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
-    MatProgressSpinnerModule,
     TranslatePipe
   ],
 
@@ -104,55 +106,6 @@ import { OtpService } from '../../services/otp.service';
   styleUrls: ['./checkout.scss']
 })
 export class CheckoutComponent implements OnInit {
-
-  // =========================================================
-  // GOVERNORATES
-  // =========================================================
-
-  readonly governorates =
-    EGYPT_GOVERNORATES;
- private readonly OtpService =
-    inject(OtpService);
-  private readonly languageService =
-    inject(LanguageService);
-
-  get isArabic(): boolean {
-    return this.languageService.currentLanguage() === 'ar';
-  }
-
-  /**
-   * Display name according to the current language.
-   *
-   * IMPORTANT:
-   * This is ONLY for displaying the governorate.
-   *
-   * The value stored in the form is ALWAYS nameAr.
-   */
-  getGovernorateName(
-    governorate: Governorate
-  ): string {
-
-    return this.isArabic
-      ? governorate.nameAr
-      : governorate.nameEn;
-  }
-
-  /**
-   * Select governorate.
-   *
-   * IMPORTANT:
-   * We save the Arabic name in the form,
-   * regardless of the current UI language.
-   */
-  selectGovernorate(
-    governorate: Governorate
-  ): void {
-
-    this.checkoutForm.patchValue({
-      governorate: governorate.nameAr
-    });
-  }
-
 
   // =========================================================
   // SERVICES
@@ -167,14 +120,47 @@ export class CheckoutComponent implements OnInit {
   private readonly clientService =
     inject(ClientService);
 
-  private readonly orderService =
-    inject(OrderService);
-
   private readonly dialog =
     inject(MatDialog);
 
   private readonly router =
     inject(Router);
+
+  private readonly languageService =
+    inject(LanguageService);
+
+  private readonly destroyRef =
+    inject(DestroyRef);
+
+
+  // =========================================================
+  // GOVERNORATES
+  // =========================================================
+
+  readonly governorates =
+    EGYPT_GOVERNORATES;
+
+
+  // =========================================================
+  // LANGUAGE
+  // =========================================================
+
+  get isArabic(): boolean {
+
+    return this.languageService.currentLanguage() === 'ar';
+
+  }
+
+
+  getGovernorateName(
+    governorate: Governorate
+  ): string {
+
+    return this.isArabic
+      ? governorate.nameAr
+      : governorate.nameEn;
+
+  }
 
 
   // =========================================================
@@ -217,9 +203,7 @@ export class CheckoutComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.pattern(
-            /^[0-9+\-\s()]{7,20}$/
-          )
+          Validators.pattern(/^01[0-9]{9}$/)
         ]
       ],
 
@@ -254,14 +238,35 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.subscribeToCart();
+
+    this.setupPhoneLookup();
+
+  }
+
+
+  // =========================================================
+  // CART SUBSCRIPTION
+  // =========================================================
+
+  private subscribeToCart(): void {
+
     this.cartService.cartItems$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(items => {
 
-        this.cartItems = items;
+        /*
+         * Always create a new array reference.
+         *
+         * This prevents UI problems when the cart service
+         * internally changes the array.
+         */
+        this.cartItems = [...items];
 
       });
 
-    this.setupPhoneLookup();
   }
 
 
@@ -273,9 +278,10 @@ export class CheckoutComponent implements OnInit {
 
     return this.cartItems.reduce(
       (total, item) =>
-        total + item.quantity,
+        total + Number(item.quantity || 0),
       0
     );
+
   }
 
 
@@ -293,6 +299,7 @@ export class CheckoutComponent implements OnInit {
       );
 
     return this.roundPrice(total);
+
   }
 
 
@@ -305,6 +312,7 @@ export class CheckoutComponent implements OnInit {
     return this.roundPrice(
       this.subtotal
     );
+
   }
 
 
@@ -317,35 +325,160 @@ export class CheckoutComponent implements OnInit {
     const phoneControl =
       this.checkoutForm.controls.phone;
 
+
     phoneControl.valueChanges
-      .subscribe(phone => {
+      .pipe(
 
-        const normalizedPhone =
-          phone.trim();
+        debounceTime(350),
 
-        if (normalizedPhone.length < 7) {
+        distinctUntilChanged(),
+
+        filter(phone => {
+
+          const normalized =
+            this.normalizePhone(phone);
+
+          return normalized.length === 11;
+
+        }),
+
+        switchMap(phone => {
+
+          const normalized =
+            this.normalizePhone(phone);
+
+          this.isSearchingClient.set(true);
+
+          this.clientFound.set(false);
+
+          return this.clientService
+            .getByPhone(normalized)
+            .pipe(
+
+              catchError(() => {
+
+                return of(null);
+
+              })
+
+            );
+
+        }),
+
+        takeUntilDestroyed(this.destroyRef)
+
+      )
+      .subscribe(client => {
+
+        this.isSearchingClient.set(false);
+
+
+        /*
+         * Check that the phone value has not changed while
+         * the request was running.
+         *
+         * switchMap already protects us from most stale
+         * responses, but this gives us another safe guard.
+         */
+        const currentPhone =
+          this.normalizePhone(
+            phoneControl.value
+          );
+
+
+        if (currentPhone.length !== 11) {
 
           this.clientFound.set(false);
 
           return;
+
         }
 
-        this.searchClient(
-          normalizedPhone
+
+        // =====================================================
+        // CLIENT NOT FOUND
+        // =====================================================
+
+        if (!client) {
+
+          this.clientFound.set(false);
+
+          return;
+
+        }
+
+
+        // =====================================================
+        // CLIENT FOUND
+        // =====================================================
+
+        this.clientFound.set(true);
+
+
+        this.checkoutForm.patchValue(
+          {
+            fullName:
+              client.name ?? '',
+
+            email:
+              client.email ?? '',
+
+            address:
+              client.address ?? '',
+
+            governorate:
+              this.getArabicGovernorateName(
+                client.governorate
+              )
+
+          },
+          {
+            emitEvent: false
+          }
         );
 
       });
+
+
+    /*
+     * If the user deletes the phone or enters an invalid
+     * phone, immediately remove the searching state.
+     */
+    phoneControl.valueChanges
+      .pipe(
+        filter(phone =>
+          this.normalizePhone(phone).length < 11
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+
+        this.isSearchingClient.set(false);
+
+        this.clientFound.set(false);
+
+      });
+
+  }
+
+
+  // =========================================================
+  // NORMALIZE PHONE
+  // =========================================================
+
+  private normalizePhone(
+    phone: string | null | undefined
+  ): string {
+
+    return (phone ?? '')
+      .replace(/\D/g, '')
+      .trim();
+
   }
 
 
   // =========================================================
   // NORMALIZE GOVERNORATE
-  //
-  // The form must ALWAYS contain the Arabic
-  // governorate name.
-  //
-  // This also handles old client records that
-  // may contain the English governorate name.
   // =========================================================
 
   private getArabicGovernorateName(
@@ -353,111 +486,49 @@ export class CheckoutComponent implements OnInit {
   ): string {
 
     if (!value?.trim()) {
+
       return '';
+
     }
+
 
     const normalized =
       value.trim();
 
+
     const governorate =
       this.governorates.find(
         item =>
+
           item.nameAr.trim() === normalized ||
-          item.nameEn.trim().toLowerCase() ===
+
+          item.nameEn
+            .trim()
+            .toLowerCase() ===
             normalized.toLowerCase()
       );
 
+
     return governorate?.nameAr ?? '';
+
   }
 
 
   // =========================================================
-  // SEARCH CLIENT
+  // GOVERNORATE
   // =========================================================
 
-  private searchClient(
-    phone: string
+  selectGovernorate(
+    governorate: Governorate
   ): void {
 
-    this.isSearchingClient.set(true);
+    this.checkoutForm.patchValue({
 
-    this.clientService
-      .getByPhone(phone)
-      .subscribe({
+      governorate:
+        governorate.nameAr
 
-        next: client => {
+    });
 
-          this.isSearchingClient.set(false);
-
-          // ===============================================
-          // CLIENT NOT FOUND
-          // ===============================================
-
-          if (!client) {
-
-            this.clientFound.set(false);
-
-            this.checkoutForm.patchValue(
-              {
-                fullName: '',
-                email: '',
-                address: '',
-                governorate: ''
-              },
-              {
-                emitEvent: false
-              }
-            );
-
-            return;
-          }
-
-
-          // ===============================================
-          // CLIENT FOUND
-          // ===============================================
-
-          this.clientFound.set(true);
-
-          this.checkoutForm.patchValue(
-            {
-              fullName:
-                client.name ?? '',
-
-              email:
-                client.email ?? '',
-
-              address:
-                client.address ?? '',
-
-              /**
-               * IMPORTANT:
-               *
-               * Regardless of whether the existing
-               * client record contains Arabic or
-               * English, convert it to Arabic before
-               * putting it into the form.
-               */
-              governorate:
-                this.getArabicGovernorateName(
-                  client.governorate
-                )
-            },
-            {
-              emitEvent: false
-            }
-          );
-
-        },
-
-        error: error => {
- this.isSearchingClient.set(false);
-
-          this.clientFound.set(false);
-
-        }
-
-      });
   }
 
 
@@ -470,6 +541,7 @@ export class CheckoutComponent implements OnInit {
     this.router.navigate([
       '/cart'
     ]);
+
   }
 
 
@@ -481,10 +553,8 @@ export class CheckoutComponent implements OnInit {
     item: CartItem
   ): string {
 
-    const product =
-      item.product;
+    return item.product.nameEn ?? '';
 
-    return product.nameEn ?? '';
   }
 
 
@@ -499,6 +569,7 @@ export class CheckoutComponent implements OnInit {
     return this.getFinalPrice(
       item.product
     );
+
   }
 
 
@@ -518,20 +589,45 @@ export class CheckoutComponent implements OnInit {
         product.discountPercentage ?? 0
       );
 
-    if (discount <= 0) {
+
+    if (
+      !Number.isFinite(price) ||
+      price <= 0
+    ) {
+
+      return 0;
+
+    }
+
+
+    if (
+      !Number.isFinite(discount) ||
+      discount <= 0
+    ) {
 
       return this.roundPrice(
         price
       );
+
     }
+
+
+    const safeDiscount =
+      Math.min(
+        Math.max(discount, 0),
+        100
+      );
+
 
     const finalPrice =
       price *
-      (1 - discount / 100);
+      (1 - safeDiscount / 100);
+
 
     return this.roundPrice(
       finalPrice
     );
+
   }
 
 
@@ -543,14 +639,19 @@ export class CheckoutComponent implements OnInit {
     item: CartItem
   ): number {
 
+    const quantity =
+      Number(item.quantity ?? 0);
+
     const price =
       this.getFinalPrice(
         item.product
       );
 
+
     return this.roundPrice(
-      price * item.quantity
+      price * quantity
     );
+
   }
 
 
@@ -565,6 +666,7 @@ export class CheckoutComponent implements OnInit {
     return this.getItemSubtotal(
       item
     );
+
   }
 
 
@@ -579,7 +681,9 @@ export class CheckoutComponent implements OnInit {
     if (!imageUrl) {
 
       return 'assets/images/product-placeholder.png';
+
     }
+
 
     if (
       imageUrl.startsWith('http://') ||
@@ -587,9 +691,52 @@ export class CheckoutComponent implements OnInit {
     ) {
 
       return imageUrl;
+
     }
 
-    return `${environment.imageApiBaseUrl}${imageUrl}`;
+
+    const baseUrl =
+      environment.imageApiBaseUrl
+        .replace(/\/+$/, '');
+
+
+    const path =
+      imageUrl.startsWith('/')
+        ? imageUrl
+        : `/${imageUrl}`;
+
+
+    return `${baseUrl}${path}`;
+
+  }
+
+
+  // =========================================================
+  // IMAGE ERROR
+  // =========================================================
+
+  onImageError(
+    event: Event
+  ): void {
+
+    const image =
+      event.target as HTMLImageElement;
+
+
+    if (
+      image.src.includes(
+        'product-placeholder.png'
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    image.src =
+      'assets/images/product-placeholder.png';
+
   }
 
 
@@ -603,6 +750,7 @@ export class CheckoutComponent implements OnInit {
 
     this.cartService
       .increaseQuantity(productId);
+
   }
 
 
@@ -616,6 +764,7 @@ export class CheckoutComponent implements OnInit {
 
     this.cartService
       .decreaseQuantity(productId);
+
   }
 
 
@@ -629,6 +778,7 @@ export class CheckoutComponent implements OnInit {
 
     this.cartService
       .removeFromCart(productId);
+
   }
 
 
@@ -638,14 +788,20 @@ export class CheckoutComponent implements OnInit {
 
   placeOrder(): void {
 
+    /*
+     * Prevent double clicks and accidental multiple
+     * submissions.
+     */
     if (this.isSubmitting()) {
+
       return;
+
     }
 
 
-    // ===============================================
+    // =======================================================
     // EMPTY CART
-    // ===============================================
+    // =======================================================
 
     if (this.cartItems.length === 0) {
 
@@ -654,45 +810,74 @@ export class CheckoutComponent implements OnInit {
       );
 
       return;
+
     }
 
 
-    // ===============================================
-    // FORM VALIDATION
-    // ===============================================
+    // =======================================================
+    // VALIDATE FORM
+    // =======================================================
 
     if (this.checkoutForm.invalid) {
 
       this.checkoutForm.markAllAsTouched();
 
       return;
+
     }
 
+
+    // =======================================================
+    // FORM VALUES
+    // =======================================================
 
     const form =
       this.checkoutForm.getRawValue();
 
 
-    // ===============================================
+    const phone =
+      this.normalizePhone(
+        form.phone
+      );
+
+
+    // =======================================================
+    // PHONE SAFETY
+    // =======================================================
+
+    if (!/^01[0-9]{9}$/.test(phone)) {
+
+      this.checkoutForm.controls.phone.markAsTouched();
+
+      return;
+
+    }
+
+
+    // =======================================================
     // ORDER ITEMS
-    // ===============================================
+    // =======================================================
 
     const items =
       this.cartService.getOrderItems();
 
 
-    if (items.length === 0) {
+    if (!items.length) {
 
       this.showError(
         'CHECKOUT.EMPTY_CART'
       );
 
       return;
+
     }
-      const request = {
-      phoneNumber: form.phone.trim()
-    };
-       const orderRequest = {
+
+
+    // =======================================================
+    // ORDER REQUEST
+    // =======================================================
+
+    const orderRequest = {
 
       client: {
 
@@ -700,7 +885,7 @@ export class CheckoutComponent implements OnInit {
           form.fullName.trim(),
 
         phoneNumber:
-          form.phone.trim(),
+          phone,
 
         address:
           form.address.trim(),
@@ -720,38 +905,86 @@ export class CheckoutComponent implements OnInit {
     };
 
 
+    // =======================================================
+    // START SUBMISSION
+    // =======================================================
 
-this.dialog.open(OtpVerificationComponent, {
-  data: {
-    order:orderRequest,
-    phoneNumber: form.phone.trim()
-  }
-}).afterClosed().subscribe((res:any)=>{
-  if(!res)
-  {
-    this.isSubmitting.set(false);
+    this.isSubmitting.set(true);
 
-          const message ='CHECKOUT.ORDER_FAILED';
+
+    // =======================================================
+    // OTP
+    // =======================================================
+
+    this.dialog
+      .open(
+        OtpVerificationComponent,
+        {
+          width: '420px',
+          maxWidth: 'calc(100vw - 24px)',
+          disableClose: true,
+
+          data: {
+
+            order:
+              orderRequest,
+
+            phoneNumber:
+              phone
+
+          }
+
+        }
+      )
+      .afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+
+        next: (result: any) => {
+
+          /*
+           * The OTP component is responsible for the
+           * verification/order flow.
+           *
+           * If it closes without success, allow the
+           * user to try again.
+           */
+          if (!result) {
+
+            this.isSubmitting.set(false);
+
+            return;
+
+          }
+
+
+          /*
+           * If the OTP component returned successfully,
+           * keep the submission locked while it finishes
+           * navigation/order processing.
+           *
+           * If your OTP component closes with success after
+           * completing the order, it will navigate away.
+           */
+          this.isSubmitting.set(false);
+
+        },
+
+        error: () => {
+
+          this.isSubmitting.set(false);
 
           this.showError(
-            message
+            'CHECKOUT.ORDER_FAILED'
           );
 
+        }
+
+      });
+
   }
-  return
-})
-           
-
-
-    // ===============================================
-    // REQUEST
-    // ===============================================
-
-  
-  }
-
-
- 
 
 
   // =========================================================
@@ -766,6 +999,7 @@ this.dialog.open(OtpVerificationComponent, {
       NotifyMessage,
       {
         width: '400px',
+        maxWidth: 'calc(100vw - 24px)',
 
         data: {
 
@@ -775,8 +1009,10 @@ this.dialog.open(OtpVerificationComponent, {
           message
 
         }
+
       }
     );
+
   }
 
 
@@ -793,6 +1029,7 @@ this.dialog.open(OtpVerificationComponent, {
         controlName
       );
 
+
     return !!(
       control &&
       control.invalid &&
@@ -801,6 +1038,7 @@ this.dialog.open(OtpVerificationComponent, {
         control.touched
       )
     );
+
   }
 
 
@@ -815,6 +1053,7 @@ this.dialog.open(OtpVerificationComponent, {
     return Math.round(
       (value + Number.EPSILON) * 100
     ) / 100;
+
   }
 
 }

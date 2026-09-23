@@ -57,7 +57,7 @@
     <form
       class="checkout-form"
       [formGroup]="checkoutForm"
-      (ngSubmit)="placeOrder()"
+   
       novalidate
     >
 
@@ -542,7 +542,7 @@
 
           @for (
             item of cartItems;
-            track item.product.id
+            track item.product.id 
           ) {
 
             <div class="summary-product">
@@ -552,10 +552,11 @@
 
               <div class="product-image">
 
-                <img
-                  [src]="getImageUrl(item.product.imageUrl)"
-                  [alt]="getProductName(item)"
-                />
+               <img
+  [src]="getImageUrl(item.product.imageUrl)"
+  [alt]="getProductName(item)"
+  (error)="onImageError($event)"
+/>
 
               </div>
 
