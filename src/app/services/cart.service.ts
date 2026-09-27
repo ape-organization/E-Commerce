@@ -291,7 +291,7 @@ replaceCartItem(product: Product, quantity: number): boolean {
   }
 
   quantity = this.normalizeQuantity(quantity);
-
+console.log(quantity)
   if (quantity <= 0) {
     return false;
   }

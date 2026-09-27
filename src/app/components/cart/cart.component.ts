@@ -159,6 +159,7 @@ export class CartComponent
 }
 
 
+
   // ==========================================================
   // DESTROY
   // ==========================================================
@@ -440,49 +441,49 @@ export class CartComponent
   // UPDATE QUANTITY
   // ==========================================================
 
-  updateQuantity(
-    productId: number,
-    quantity: number
-  ): void {
 
-    quantity =
-      Number(quantity);
+updateQuantity(
+  productId: number,
+  quantity: number,
+  max: number
+): void {
 
+  console.log('max:', max);
 
-    if (
-      !Number.isFinite(quantity)
-    ) {
+  const maxQuantity =
+    max > 0
+      ? max
+      : 5;
 
-      return;
+  quantity = Number(quantity);
 
-    }
-
-
-    quantity =
-      Math.floor(quantity);
-
-
-    if (
-      quantity <= 0
-    ) {
-
-      this.cartService
-        .removeFromCart(
-          productId
-        );
-
-      return;
-
-    }
-
-
-    this.cartService
-      .updateQuantity(
-        productId,
-        quantity
-      );
-
+  if (!Number.isFinite(quantity)) {
+    return;
   }
+
+  quantity = Math.floor(quantity);
+
+  if (quantity <= 0) {
+
+    this.cartService.removeFromCart(
+      productId
+    );
+
+    return;
+  }
+
+  // Only limit the quantity if it exceeds the maximum.
+  if (quantity > maxQuantity) {
+
+    quantity = maxQuantity;
+  }
+
+  this.cartService.updateQuantity(
+    productId,
+    quantity
+  );
+}
+
 
 
   // ==========================================================

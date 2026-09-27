@@ -199,7 +199,8 @@
 
               (click)="updateQuantity(
                 item.product.id,
-                item.quantity - 1
+                item.quantity - 1,
+                item.product.stockQuantity
               )"
 
               [disabled]="item.quantity <= 1"
@@ -217,11 +218,12 @@
 
               (change)="updateQuantity(
                 item.product.id,
-                item.quantity
+                item.quantity,
+                item.product.stockQuantity
               )"
 
               min="1"
-
+[max]="item.product.stockQuantity"
               class="quantity-input"
             />
 
@@ -232,7 +234,8 @@
 
               (click)="updateQuantity(
                 item.product.id,
-                item.quantity + 1
+                item.quantity + 1,
+                item.product.stockQuantity
               )"
             >
 

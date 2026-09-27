@@ -1,3 +1,4 @@
+
 import {
   Component,
   OnDestroy,
@@ -34,7 +35,9 @@ import {
   Subject,
   takeUntil
 } from 'rxjs';
+
 import { RelativeProducts } from '../relative-products/relative-products';
+
 
 @Component({
   selector: 'app-product-modal',
@@ -57,14 +60,18 @@ import { RelativeProducts } from '../relative-products/relative-products';
 export class ProductModalComponent
   implements OnInit, OnDestroy {
 
-descriptionExpanded = true;
+  descriptionExpanded = true;
+
+
   // =====================================================
   // SERVICES
   // =====================================================
 
-  private readonly router = inject(Router);
+  private readonly router =
+    inject(Router);
 
-  private readonly route = inject(ActivatedRoute);
+  private readonly route =
+    inject(ActivatedRoute);
 
   private readonly productService =
     inject(ProductService);
@@ -101,6 +108,23 @@ descriptionExpanded = true;
 
 
   // =====================================================
+  // RELATIVE PRODUCT CART FEEDBACK
+  // =====================================================
+
+  readonly addedToCartProductId =
+    signal<number | null>(null);
+
+  readonly alreadyInCartProductId =
+    signal<number | null>(null);
+
+  private addedToCartTimer:
+    ReturnType<typeof setTimeout> | null = null;
+
+  private alreadyInCartMessageTimer:
+    ReturnType<typeof setTimeout> | null = null;
+
+
+  // =====================================================
   // IMAGE API
   // =====================================================
 
@@ -130,6 +154,7 @@ descriptionExpanded = true;
      *        ↓
      * /products/20
      */
+
     this.route.paramMap
       .pipe(
         takeUntil(this.destroy$)
@@ -155,11 +180,14 @@ descriptionExpanded = true;
   // LOAD PRODUCT
   // =====================================================
 
-  private loadProduct(id: number): void {
+  private loadProduct(
+    id: number
+  ): void {
 
     /**
      * Reset UI state immediately when changing products.
      */
+
     this.product.set(null);
 
     this.quantity.set(1);
@@ -177,9 +205,12 @@ descriptionExpanded = true;
 
         },
 
-        error: (error) => {
-  this.goBack();
+        error: () => {
+
+          this.goBack();
+
         }
+
       });
   }
 
@@ -188,12 +219,13 @@ descriptionExpanded = true;
   // STOCK
   // =====================================================
 
-  get stock(): number {
+ get stock(): number {
+  const stockQuantity = Number(
+    this.product()?.stockQuantity ?? 0
+  );
 
-    return Number(
-      this.product()?.stockQuantity ?? 0
-    );
-  }
+  return stockQuantity > 0 ? stockQuantity : 5;
+}
 
 
   get isOutOfStock(): boolean {
@@ -246,7 +278,11 @@ descriptionExpanded = true;
     return Math.max(
       0,
       this.oldPrice -
-      (this.oldPrice * discount / 100)
+      (
+        this.oldPrice *
+        discount /
+        100
+      )
     );
   }
 
@@ -255,26 +291,41 @@ descriptionExpanded = true;
   // QUANTITY
   // =====================================================
 
-  setQuantity(value: number): void {
+ 
+setQuantity(
+  value: number
+): void {
 
-    let newQuantity =
-      Number(value);
+  let newQuantity =
+    Number(value);
 
-    if (!Number.isFinite(newQuantity)) {
+  if (!Number.isFinite(newQuantity)) {
 
-      newQuantity = 1;
-    }
-
-    newQuantity =
-      Math.floor(newQuantity);
-
-    if (newQuantity < 1) {
-
-      newQuantity = 1;
-    }
-
-    this.quantity.set(newQuantity);
+    newQuantity = 1;
   }
+
+  newQuantity =
+    Math.floor(newQuantity);
+
+  if (newQuantity < 1) {
+
+    newQuantity = 1;
+  }
+
+  const maxQuantity =
+    this.stock > 0
+      ? this.stock
+      : 5;
+
+  if (newQuantity > maxQuantity) {
+
+    newQuantity = maxQuantity;
+  }
+  this.quantity.set(
+    newQuantity
+  );
+}
+
 
 
   validateQuantity(): void {
@@ -286,14 +337,13 @@ descriptionExpanded = true;
 
 
   // =====================================================
-  // ADD TO CART
+  // ADD CURRENT PRODUCT TO CART
   // =====================================================
 
   addToCart(): void {
 
     const product =
       this.product();
-
     if (!product?.isInStock) {
 
       return;
@@ -301,20 +351,22 @@ descriptionExpanded = true;
 
     this.validateQuantity();
 
-    const selectedQuantity =
+    var selectedQuantity =
       this.quantity();
-
     if (selectedQuantity <= 0) {
 
       return;
     }
-
+if(selectedQuantity>this.stock)
+{
+  
+  selectedQuantity=this.stock
+}
     const added =
       this.cartService.replaceCartItem(
         product,
         selectedQuantity
       );
-
     if (!added) {
 
       return;
@@ -322,18 +374,22 @@ descriptionExpanded = true;
 
     this.goBack();
   }
-  // ============================================================
+
+
+  // =====================================================
   // OPEN PRODUCT DETAILS
-  // ============================================================
+  // =====================================================
 
   openProductDetails(
     product: Product
   ): void {
+
     this.router.navigate([
       '/product',
       product.id
     ]);
   }
+
 
   // =====================================================
   // RELATIVE PRODUCT CLICK
@@ -358,15 +414,149 @@ descriptionExpanded = true;
     product: Product
   ): void {
 
+    // ---------------------------------------------------
+    // OUT OF STOCK
+    // ---------------------------------------------------
+
     if (!product.isInStock) {
 
       return;
     }
 
-    this.cartService.replaceCartItem(
-      product,
-      1
+    // ---------------------------------------------------
+    // ADD PRODUCT
+    //
+    // Same behavior as Home:
+    //
+    // true  = added successfully
+    // false = already in cart
+    // ---------------------------------------------------
+
+    const alreadyExists =
+      this.cartService.addToCart(
+        product
+      );
+
+
+    // ---------------------------------------------------
+    // PRODUCT ALREADY EXISTS
+    // ---------------------------------------------------
+
+    if (!alreadyExists) {
+
+      this.addedToCartProductId.set(
+        null
+      );
+
+      this.showAlreadyInCartMessage(
+        product.id
+      );
+
+      return;
+    }
+
+
+    // ---------------------------------------------------
+    // PRODUCT ADDED SUCCESSFULLY
+    // ---------------------------------------------------
+
+    this.alreadyInCartProductId.set(
+      null
     );
+
+    this.showAddedToCartSuccess(
+      product.id
+    );
+  }
+
+
+  // =====================================================
+  // SHOW ADDED SUCCESS
+  // =====================================================
+
+  private showAddedToCartSuccess(
+    productId: number
+  ): void {
+
+    // Clear previous timer
+
+    if (this.addedToCartTimer) {
+
+      clearTimeout(
+        this.addedToCartTimer
+      );
+    }
+
+
+    // Show check mark
+
+    this.addedToCartProductId.set(
+      productId
+    );
+
+
+    // Hide after 1.5 seconds
+
+    this.addedToCartTimer =
+      setTimeout(() => {
+
+        if (
+          this.addedToCartProductId() ===
+          productId
+        ) {
+
+          this.addedToCartProductId.set(
+            null
+          );
+        }
+
+      }, 1500);
+  }
+
+
+  // =====================================================
+  // SHOW ALREADY IN CART
+  // =====================================================
+
+  private showAlreadyInCartMessage(
+    productId: number
+  ): void {
+
+    // Clear previous timer
+
+    if (
+      this.alreadyInCartMessageTimer
+    ) {
+
+      clearTimeout(
+        this.alreadyInCartMessageTimer
+      );
+    }
+
+
+    // Show message
+
+    this.alreadyInCartProductId.set(
+      productId
+    );
+
+
+    // Hide after 3 seconds
+
+    this.alreadyInCartMessageTimer =
+      setTimeout(() => {
+
+        if (
+          this.alreadyInCartProductId() ===
+          productId
+        ) {
+
+          this.alreadyInCartProductId.set(
+            null
+          );
+        }
+
+      }, 3000);
   }
 
 
@@ -481,6 +671,7 @@ descriptionExpanded = true;
 
     const product =
       this.product();
+
     const subCategory =
       product?.subCategories?.[0];
 
@@ -577,5 +768,27 @@ descriptionExpanded = true;
     this.destroy$.next();
 
     this.destroy$.complete();
+
+
+    // Clear success timer
+
+    if (this.addedToCartTimer) {
+
+      clearTimeout(
+        this.addedToCartTimer
+      );
+    }
+
+
+    // Clear already-in-cart timer
+
+    if (
+      this.alreadyInCartMessageTimer
+    ) {
+
+      clearTimeout(
+        this.alreadyInCartMessageTimer
+      );
+    }
   }
 }
