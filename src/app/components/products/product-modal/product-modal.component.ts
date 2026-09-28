@@ -187,7 +187,6 @@ export class ProductModalComponent
     /**
      * Reset UI state immediately when changing products.
      */
-
     this.product.set(null);
 
     this.quantity.set(1);
@@ -200,7 +199,7 @@ export class ProductModalComponent
       .subscribe({
 
         next: (product) => {
-
+console.log(product)
           this.product.set(product);
 
         },

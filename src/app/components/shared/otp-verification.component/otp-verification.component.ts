@@ -170,13 +170,13 @@ private readonly router=inject(Router)
       phoneNumber: this.phoneNumber(),
       otp: this.otp
     };
-
+console.log(this.otp)
     this.otpService.verifyOtp(request)
      
      .subscribe({
 
         next: response => {
-
+console.log(response)
           this.isLoading.set(false);
 
           if (response.success) {
@@ -312,7 +312,7 @@ this.dialogRef.close(true)
       .subscribe({
 
         next: response => {
-
+console.log(response)
           this.isResending.set(false);
 
           this.clearOtp();
