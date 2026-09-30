@@ -199,7 +199,6 @@ export class ProductModalComponent
       .subscribe({
 
         next: (product) => {
-console.log(product)
           this.product.set(product);
 
         },
@@ -440,9 +439,7 @@ if(selectedQuantity>this.stock)
     // ---------------------------------------------------
     // PRODUCT ALREADY EXISTS
     // ---------------------------------------------------
-
     if (!alreadyExists) {
-
       this.addedToCartProductId.set(
         null
       );

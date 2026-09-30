@@ -1,0 +1,67 @@
+<div class="container">
+
+    <div class="section-heading">
+
+  <span class="section-small-title">
+    {{ 'BRAND.BRAND' | translate }}
+  </span>
+
+  <h2>
+    {{ 'BRAND.Shop_By_Brand' | translate }}
+  </h2>
+
+  <div class="title-line">
+    <span>✦</span>
+  </div>
+
+</div>
+
+
+<div
+
+  *ngIf="brands().length > 0"
+>
+
+
+
+
+  <!-- =====================================================
+       BRAND TRACK
+       ===================================================== -->
+
+  <div
+    class=" brand-track"
+    #brandTrack
+  >
+
+    <div
+      class="brand-card"
+      *ngFor="let brand of brands()"
+      (click)="selectBrand(brand)"
+    >
+
+      <div class="brand-image">
+
+        <img
+          [src]="getBrandImage(brand)"
+          [alt]="getBrandName(brand)"
+          loading="lazy"
+        />
+
+      </div>
+
+      <h3>
+        {{ getBrandName(brand) }}
+      </h3>
+
+    </div>
+
+  </div>
+
+
+
+
+</div>
+
+
+</div>

@@ -341,7 +341,13 @@ html[dir="rtl"] .slider-next {
   width: 100%;
 }
 
-
+.seeMore
+{
+  display: flex;
+  justify-content: center;
+  color: var( --color-accent);
+  cursor: pointer;
+}
 /* ============================================================
    MOBILE - TABLET
    ============================================================ */

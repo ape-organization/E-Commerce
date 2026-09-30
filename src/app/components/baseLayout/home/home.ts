@@ -216,7 +216,10 @@ export class Home implements OnInit, OnDestroy {
       }, 3000);
   }
 
-
+headToAllBrands()
+{
+  this.router.navigate(['/allBrands'])
+}
   // =====================================================
   // PRODUCT DETAILS
   // =====================================================

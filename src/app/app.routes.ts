@@ -6,10 +6,13 @@ import { Home } from './components/baseLayout/home/home';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { CheckoutComponent } from './components/checkout/checkout';
 import { ProductModalComponent } from './components/products/product-modal/product-modal.component';
+import { AllBrands } from './components/baseLayout/all-brands/all-brands';
 
 export const routes: Routes = [
   { path: '', component: Home },
     { path: 'home', component: Home },
+    
+      { path: 'allBrands', component: AllBrands },
 {path: 'product/:id',component: ProductModalComponent},
   { path: 'products', component: ProductListComponent },
   { path: 'footer', component: FooterComponent },

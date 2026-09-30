@@ -410,24 +410,26 @@ category and sub category
        ===================================================== -->
 
   <app-relative-products
+  *ngIf="product() as currentProduct"
 
-    *ngIf="product() as currentProduct"
+  [currentProductId]="currentProduct.id"
 
-    [currentProductId]="currentProduct.id"
+  [subCategoryId]="
+    currentProduct.subCategories[0]?.id ?? null
+  "
 
-    [subCategoryId]="
-      currentProduct.subCategories[0]?.id ?? null
-    "
- 
-    (productClicked)="
-      onRelativeProductClicked($event)
-    "
+  [addedToCartProductId]="addedToCartProductId()"
 
-    (addToCartClicked)="
-      onRelativeAddToCartClicked($event)
-    "
+  [alreadyInCartProductId]="alreadyInCartProductId()"
 
-  >
-  </app-relative-products>
+  (productClicked)="
+    onRelativeProductClicked($event)
+  "
+
+  (addToCartClicked)="
+    onRelativeAddToCartClicked($event)
+  "
+>
+</app-relative-products>
 
 </div>
