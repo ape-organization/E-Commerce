@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   HostListener,
   OnInit,
   inject,
@@ -50,6 +51,8 @@ import {
 import {
   TranslatePipe
 } from '@ngx-translate/core';
+import { ProductService } from '../../../services/product.service';
+import { Product } from '../../../models/product.model';
 
 
 // ============================================================
@@ -84,7 +87,8 @@ export class HeaderComponent implements OnInit {
 
   private readonly brandService =
     inject(BrandService);
-
+private readonly productService =
+  inject(ProductService);
   private readonly cartService =
     inject(CartService);
 
@@ -106,9 +110,21 @@ export class HeaderComponent implements OnInit {
   // SEARCH
   // ==========================================================
 
-  searchTerm = signal('');
+searchTerm = signal('');
 
-  mobileSearchOpen = signal(false);
+mobileSearchOpen = signal(false);
+
+searchProductsResults = signal<Product[]>([]);
+
+searchBrandResults = signal<Brand[]>([]);
+
+isSearching = signal(false);
+
+showSearchSuggestions = signal(false);
+
+private searchTimer?: ReturnType<typeof setTimeout>;
+
+private searchRequestId = 0;
 
 
   // ==========================================================
@@ -177,10 +193,25 @@ export class HeaderComponent implements OnInit {
 
   searchProducts(): void {
 
-    const search =
-      this.searchTerm().trim();
+   const search =
+    this.searchTerm().trim();
 
-    this.closeAllMenus();
+  if (this.searchTimer) {
+    clearTimeout(this.searchTimer);
+    this.searchTimer = undefined;
+  }
+
+  this.searchRequestId++;
+
+  this.searchProductsResults.set([]);
+
+  this.searchBrandResults.set([]);
+
+  this.isSearching.set(false);
+
+  this.showSearchSuggestions.set(false);
+
+  this.closeAllMenus();
 
     if (!search) {
 
@@ -215,8 +246,180 @@ export class HeaderComponent implements OnInit {
     this.mobileSearchOpen.set(false);
 
   }
+onSearchInput(value: string): void {
+
+  this.searchTerm.set(value);
+
+  if (this.searchTimer) {
+    clearTimeout(this.searchTimer);
+  }
+
+  const search = value.trim();
+
+  // Less than 2 characters = no autocomplete
+  if (search.length < 2) {
+
+    this.searchProductsResults.set([]);
+
+    this.searchBrandResults.set([]);
+
+    this.isSearching.set(false);
+
+    this.showSearchSuggestions.set(false);
+
+    return;
+  }
 
 
+  // ==========================================================
+  // SEARCH BRANDS LOCALLY
+  // ==========================================================
+
+  const normalizedSearch =
+    search.toLowerCase();
+
+  const matchingBrands =
+    this.brands()
+      .filter(brand => {
+
+        const nameEn =
+          brand.nameEn?.toLowerCase() ?? '';
+
+        const nameAr =
+          brand.nameAr?.toLowerCase() ?? '';
+
+        return (
+          nameEn.includes(normalizedSearch) ||
+          nameAr.includes(normalizedSearch)
+        );
+
+      })
+      .slice(0, 5);
+
+
+  this.searchBrandResults.set(
+    matchingBrands
+  );
+
+  this.showSearchSuggestions.set(true);
+
+
+  // ==========================================================
+  // SEARCH PRODUCTS AFTER 300ms
+  // ==========================================================
+
+  this.searchTimer = setTimeout(() => {
+
+    this.searchProductsFromApi(search);
+
+  }, 300);
+}
+private searchProductsFromApi(
+  search: string
+): void {
+
+  const requestId =
+    ++this.searchRequestId;
+
+  this.isSearching.set(true);
+
+  this.showSearchSuggestions.set(true);
+
+
+  this.productService
+    .getProductsByName(search)
+    .subscribe({
+
+      next: (response: any) => {
+
+        // Ignore an old request if the user
+        // has already typed something newer.
+        if (
+          requestId !==
+          this.searchRequestId
+        ) {
+          return;
+        }
+
+
+        const data =
+          response?.data ??
+          response?.items ??
+          response ??
+          [];
+
+
+        const products =
+          Array.isArray(data)
+            ? data
+            : [];
+
+
+        this.searchProductsResults.set(
+          products.slice(0, 6)
+        );
+
+        this.isSearching.set(false);
+
+        this.showSearchSuggestions.set(true);
+      },
+
+
+      error: error => {
+
+        if (
+          requestId !==
+          this.searchRequestId
+        ) {
+          return;
+        }
+
+        console.error(
+          'Search autocomplete error:',
+          error
+        );
+
+        this.searchProductsResults.set([]);
+
+        this.isSearching.set(false);
+
+        this.showSearchSuggestions.set(true);
+      }
+
+    });
+}
+selectSearchProduct(
+  product: Product
+): void {
+
+  this.clearSearch();
+
+  this.closeAllMenus();
+
+  this.router.navigate([
+    '/product',
+    product.id
+  ]);
+}
+clearSearch(): void {
+
+  if (this.searchTimer) {
+    clearTimeout(this.searchTimer);
+    this.searchTimer = undefined;
+  }
+
+  this.searchRequestId++;
+
+  this.searchTerm.set('');
+
+  this.searchProductsResults.set([]);
+
+  this.searchBrandResults.set([]);
+
+  this.isSearching.set(false);
+
+  this.showSearchSuggestions.set(false);
+}
   // ==========================================================
   // MOBILE SEARCH
   // ==========================================================
@@ -639,12 +842,14 @@ export class HeaderComponent implements OnInit {
   // ==========================================================
   // CLOSE EVERYTHING
   // ==========================================================
+  
 
   private closeAllMenus(): void {
 
     this.categoryMenuOpen.set(false);
 
     this.brandMenuOpen.set(false);
+    this.showSearchSuggestions.set(false);
 
     this.expandedCategoryId.set(null);
 
@@ -661,6 +866,8 @@ export class HeaderComponent implements OnInit {
     'document:click',
     ['$event']
   )
+  private readonly elementRef = inject(ElementRef);
+@HostListener('document:click', ['$event'])
   onDocumentClick(
     event: MouseEvent
   ): void {
@@ -688,7 +895,11 @@ export class HeaderComponent implements OnInit {
       this.closeMobileSearch();
 
     }
+const targete = event.target as Node;
 
+  if (!this.elementRef.nativeElement.contains(targete)) {
+    this.showSearchSuggestions.set(false);
+  }
   }
 
 }

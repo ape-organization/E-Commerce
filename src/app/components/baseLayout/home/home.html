@@ -94,7 +94,7 @@
        CATEGORIES
        ===================================================== -->
 
-  <section class="categories-section">
+  <section class="categories-section scroll-reveal">
 <app-categories></app-categories>
 
   </section>
@@ -104,13 +104,13 @@
      BRANDS
      ===================================================== -->
 
-<section class="brands-section">
+<section class="brands-section scroll-reveal">
 
   
 <app-brands></app-brands>
 
  <div class="seeMore">
-<h3 (click)="headToAllBrands()">See More ...</h3>
+<h3 (click)="headToAllBrands()">{{'COMMON.seeMore'| translate}}</h3>
  </div>
 
 
@@ -123,7 +123,7 @@
        BEST SELLERS
        ===================================================== -->
 
-  <section class="best-sellers-section">
+  <section class="best-sellers-section scroll-reveal">
 
     <app-best-sellers
     [addedToCartProductId]="addedToCartProductId()"
@@ -135,7 +135,7 @@
 
   </section>
 
-   <section class="best-sellers-section">
+   <section class="best-sellers-section scroll-reveal">
 
     <app-new-arrival-products
     [addedToCartProductId]="addedToCartProductId()"

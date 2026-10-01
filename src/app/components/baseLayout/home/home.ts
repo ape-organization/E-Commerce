@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   inject,
   OnDestroy,
@@ -52,7 +53,7 @@ interface HomeSlide {
     './home.scss'
   ]
 })
-export class Home implements OnInit, OnDestroy {
+export class Home implements OnInit, AfterViewInit,OnDestroy {
 
   // =====================================================
   // SERVICES
@@ -216,6 +217,51 @@ export class Home implements OnInit, OnDestroy {
       }, 3000);
   }
 
+
+
+
+private observer?: IntersectionObserver;
+private handleScroll = (): void => {
+  this.checkScrollAnimation();
+};
+
+
+private checkScrollAnimation(): void {
+
+  const elements =
+    document.querySelectorAll('.scroll-reveal');
+
+  const windowHeight =
+    window.innerHeight;
+
+  elements.forEach(element => {
+
+    const rect =
+      element.getBoundingClientRect();
+
+    if (
+      rect.top <
+      windowHeight * 0.90
+    ) {
+
+      element.classList.add('visible');
+
+    }
+
+  });
+}
+ngAfterViewInit(): void {
+
+  setTimeout(() => {
+    this.checkScrollAnimation();
+  }, 300);
+
+  window.addEventListener(
+    'scroll',
+    this.handleScroll,
+    { passive: true }
+  );
+}
 headToAllBrands()
 {
   this.router.navigate(['/allBrands'])
@@ -477,7 +523,10 @@ headToAllBrands()
   // =====================================================
 
   ngOnDestroy(): void {
-
+window.removeEventListener(
+  'scroll',
+  this.handleScroll
+);
     this.stopSlider();
 
 

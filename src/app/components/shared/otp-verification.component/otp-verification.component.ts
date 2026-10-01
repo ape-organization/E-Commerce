@@ -246,7 +246,9 @@ this.dialogRef.close(true)
         }
       });
   }
-
+closeDialog(): void {
+  this.dialogRef.close(false);
+}
 
   resendOtp(): void {
 

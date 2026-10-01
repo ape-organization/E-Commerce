@@ -1,4 +1,3 @@
-
 <header class="main-header">
 
   <!-- ==================== DESKTOP HEADER ==================== -->
@@ -8,8 +7,7 @@
     <!-- LOGO -->
     <a routerLink="/" class="logo">
       <span class="logo-symbol">
-<img src="../../../../assets/images/pinkylogo.png" />
-
+        <img src="../../../../assets/images/pinkylogo.png" />
       </span>
 
       <span class="logo-text">
@@ -30,16 +28,18 @@
       <input
         type="search"
         [value]="searchTerm()"
-        (input)="searchTerm.set($any($event.target).value)"
+        (input)="onSearchInput($any($event.target).value)"
+        (focus)="showSearchSuggestions.set(searchTerm().trim().length >= 2)"
         [placeholder]="'HEADER.SEARCH_PRODUCTS' | translate"
         autocomplete="off">
+
 
       @if (searchTerm()) {
 
         <button
           type="button"
           class="search-clear-button"
-          (click)="searchTerm.set('')">
+          (click)="clearSearch()">
 
           <mat-icon>
             close
@@ -48,6 +48,7 @@
         </button>
 
       }
+
 
       <button
         type="submit"
@@ -59,6 +60,205 @@
         </mat-icon>
 
       </button>
+
+
+      <!-- ==================== SEARCH AUTOCOMPLETE ==================== -->
+
+      @if (
+        showSearchSuggestions() &&
+        searchTerm().trim().length >= 2
+      ) {
+
+        <div
+          class="search-suggestions"
+          (click)="$event.stopPropagation()">
+
+
+          <!-- ==================== PRODUCTS ==================== -->
+
+          @if (searchProductsResults().length > 0) {
+
+            <div class="search-section">
+
+              <div class="search-section-title">
+
+                <mat-icon>
+                  inventory_2
+                </mat-icon>
+
+                <span>
+                  {{ 'HEADER.PRODUCTS' | translate }}
+                </span>
+
+              </div>
+
+
+              @for (
+                product of searchProductsResults();
+                track product.id
+              ) {
+
+                <button
+                  type="button"
+                  class="search-suggestion-item"
+                  (click)="selectSearchProduct(product)">
+
+                  <span class="suggestion-icon">
+
+                    <mat-icon>
+                      inventory_2
+                    </mat-icon>
+
+                  </span>
+
+
+                  <span class="suggestion-content">
+
+                    <span class="suggestion-name">
+
+                      {{
+                        languageService.isArabic()
+                          ? (
+                              product.nameAr.trim()
+                                ? product.nameAr
+                                : product.nameEn
+                            )
+                          : (
+                              product.nameEn.trim()
+                                ? product.nameEn
+                                : product.nameAr
+                            )
+                      }}
+
+                    </span>
+
+
+                    <span class="suggestion-subtitle">
+
+                      {{ 'HEADER.PRODUCTS' | translate }}
+
+                    </span>
+
+                  </span>
+
+                </button>
+
+              }
+
+            </div>
+
+          }
+
+
+          <!-- ==================== BRANDS ==================== -->
+
+          @if (searchBrandResults().length > 0) {
+
+            <div class="search-section">
+
+              <div class="search-section-title">
+
+                <mat-icon>
+                  sell
+                </mat-icon>
+
+                <span>
+                  {{ 'HEADER.BRANDS' | translate }}
+                </span>
+
+              </div>
+
+
+              @for (
+                brand of searchBrandResults();
+                track brand.id
+              ) {
+
+                <button
+                  type="button"
+                  class="search-suggestion-item"
+                  (click)="selectBrand(brand.id)">
+
+                  <span class="suggestion-icon">
+
+                    <mat-icon>
+                      sell
+                    </mat-icon>
+
+                  </span>
+
+
+                  <span class="suggestion-content">
+
+                    <span class="suggestion-name">
+
+                      {{ getBrandName(brand) }}
+
+                    </span>
+
+
+                    <span class="suggestion-subtitle">
+
+                      {{ 'HEADER.BRANDS' | translate }}
+
+                    </span>
+
+                  </span>
+
+                </button>
+
+              }
+
+            </div>
+
+          }
+
+
+          <!-- ==================== LOADING ==================== -->
+
+          @if (
+            isSearching() &&
+            searchProductsResults().length === 0
+          ) {
+
+            <div class="search-loading">
+
+              <mat-icon class="loading-icon">
+                sync
+              </mat-icon>
+
+              <span>
+                {{ 'COMMON.LOADING' | translate }}
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- ==================== NO RESULTS ==================== -->
+
+          @if (
+            !isSearching() &&
+            searchProductsResults().length === 0 &&
+            searchBrandResults().length === 0
+          ) {
+
+            <div class="search-no-results">
+
+              <mat-icon>
+                search_off
+              </mat-icon>
+
+            
+
+            </div>
+
+          }
+
+        </div>
+
+      }
 
     </form>
 
@@ -486,9 +686,8 @@
       routerLink="/"
       class="logo">
 
-     <span class="logo-symbol">
-<img src="../../../../assets/images/pinkylogo.png" />
-
+      <span class="logo-symbol">
+        <img src="../../../../assets/images/pinkylogo.png" />
       </span>
 
       <span class="logo-text">
@@ -567,16 +766,18 @@
         <input
           type="search"
           [value]="searchTerm()"
-          (input)="searchTerm.set($any($event.target).value)"
+          (input)="onSearchInput($any($event.target).value)"
+          (focus)="showSearchSuggestions.set(searchTerm().trim().length >= 2)"
           [placeholder]="'HEADER.SEARCH_PRODUCTS' | translate"
           autocomplete="off">
+
 
         @if (searchTerm()) {
 
           <button
             type="button"
             class="search-clear-button"
-            (click)="searchTerm.set('')">
+            (click)="clearSearch()">
 
             <mat-icon>
               close
@@ -585,6 +786,7 @@
           </button>
 
         }
+
 
         <button
           type="submit"
@@ -598,6 +800,207 @@
         </button>
 
       </div>
+
+
+      <!-- ==================== MOBILE SEARCH AUTOCOMPLETE ==================== -->
+
+      @if (
+        showSearchSuggestions() &&
+        searchTerm().trim().length >= 2
+      ) {
+
+        <div
+          class="search-suggestions mobile-suggestions"
+          (click)="$event.stopPropagation()">
+
+
+          <!-- ==================== PRODUCTS ==================== -->
+
+          @if (searchProductsResults().length > 0) {
+
+            <div class="search-section">
+
+              <div class="search-section-title">
+
+                <mat-icon>
+                  inventory_2
+                </mat-icon>
+
+                <span>
+                  {{ 'HEADER.PRODUCTS' | translate }}
+                </span>
+
+              </div>
+
+
+              @for (
+                product of searchProductsResults();
+                track product.id
+              ) {
+
+                <button
+                  type="button"
+                  class="search-suggestion-item"
+                  (click)="selectSearchProduct(product)">
+
+                  <span class="suggestion-icon">
+
+                    <mat-icon>
+                      inventory_2
+                    </mat-icon>
+
+                  </span>
+
+
+                  <span class="suggestion-content">
+
+                    <span class="suggestion-name">
+
+                      {{
+                        languageService.isArabic()
+                          ? (
+                              product.nameAr.trim()
+                                ? product.nameAr
+                                : product.nameEn
+                            )
+                          : (
+                              product.nameEn.trim()
+                                ? product.nameEn
+                                : product.nameAr
+                            )
+                      }}
+
+                    </span>
+
+
+                    <span class="suggestion-subtitle">
+
+                      {{ 'HEADER.PRODUCTS' | translate }}
+
+                    </span>
+
+                  </span>
+
+                </button>
+
+              }
+
+            </div>
+
+          }
+
+
+          <!-- ==================== BRANDS ==================== -->
+
+          @if (searchBrandResults().length > 0) {
+
+            <div class="search-section">
+
+              <div class="search-section-title">
+
+                <mat-icon>
+                  sell
+                </mat-icon>
+
+                <span>
+                  {{ 'HEADER.BRANDS' | translate }}
+                </span>
+
+              </div>
+
+
+              @for (
+                brand of searchBrandResults();
+                track brand.id
+              ) {
+
+                <button
+                  type="button"
+                  class="search-suggestion-item"
+                  (click)="selectBrand(brand.id)">
+
+                  <span class="suggestion-icon">
+
+                    <mat-icon>
+                      sell
+                    </mat-icon>
+
+                  </span>
+
+
+                  <span class="suggestion-content">
+
+                    <span class="suggestion-name">
+
+                      {{ getBrandName(brand) }}
+
+                    </span>
+
+
+                    <span class="suggestion-subtitle">
+
+                      {{ 'HEADER.BRANDS' | translate }}
+
+                    </span>
+
+                  </span>
+
+                </button>
+
+              }
+
+            </div>
+
+          }
+
+
+          <!-- ==================== LOADING ==================== -->
+
+          @if (
+            isSearching() &&
+            searchProductsResults().length === 0
+          ) {
+
+            <div class="search-loading">
+
+              <mat-icon class="loading-icon">
+                sync
+              </mat-icon>
+
+              <span>
+                {{ 'COMMON.LOADING' | translate }}
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- ==================== NO RESULTS ==================== -->
+
+          @if (
+            !isSearching() &&
+            searchProductsResults().length === 0 &&
+            searchBrandResults().length === 0
+          ) {
+
+            <div class="search-no-results">
+
+              <mat-icon>
+                search_off
+              </mat-icon>
+
+              <span>
+                {{ 'HEADER.NO_RESULTS' | translate }}
+              </span>
+
+            </div>
+
+          }
+
+        </div>
+
+      }
 
     </form>
 
@@ -625,10 +1028,9 @@
 
       <div class="sidebar-logo">
 
-         <span class="logo-symbol">
-<img src="../../../../assets/images/pinkylogo.png" />
-
-      </span>
+        <span class="logo-symbol">
+          <img src="../../../../assets/images/pinkylogo.png" />
+        </span>
 
         <span>
           {{ 'HEADER.TITLE' | translate }}

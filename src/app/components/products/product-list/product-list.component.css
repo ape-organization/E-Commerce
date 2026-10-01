@@ -393,6 +393,7 @@
   .product-card, cards in the same row stay equal height.
 */
 
+
 .product-grid app-product-card {
   display: block;
 

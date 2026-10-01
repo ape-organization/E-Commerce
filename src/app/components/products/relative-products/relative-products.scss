@@ -96,7 +96,7 @@
 .best-sellers-products app-product-card {
   display: block;
 
-  width: 170px;
+  width: 100%;
   min-width: 0;
 
   height: 100%;
@@ -167,18 +167,21 @@
 @media (max-width: 1100px) {
 
   .best-sellers-products {
-    grid-template-columns:
+  /*   grid-template-columns:
       repeat(
         auto-fit,
         170px
       );
 
-    gap: 8px;
+    gap: 8px; */
+     grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
   }
 
-  .best-sellers-products app-product-card {
+ /*  .best-sellers-products app-product-card {
     width: 170px;
-  }
+  } */
 }
 
 
@@ -193,7 +196,7 @@
   }
 
   .best-sellers-products {
-    width: 100%;
+  /*   width: 100%;
 
     grid-template-columns:
       repeat(
@@ -204,12 +207,15 @@
     justify-content: center;
 
     column-gap: 5px;
-    row-gap: 30px;
+    row-gap: 30px; */
+     grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
   }
 
-  .best-sellers-products app-product-card {
+ /*  .best-sellers-products app-product-card {
     width: 145px;
-  }
+  } */
 
   .section-title h2 {
     font-size: 26px;
@@ -232,7 +238,7 @@
   }
 
   .best-sellers-products {
-    width: 100%;
+ /*    width: 100%;
 
     padding: 0 5px;
 
@@ -247,12 +253,15 @@
     justify-content: center;
 
     column-gap: 5px;
-    row-gap: 35px;
+    row-gap: 35px; */
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
   }
 
-  .best-sellers-products app-product-card {
+ /*  .best-sellers-products app-product-card {
     width: 145px;
-  }
+  } */
 
   .section-header {
     margin-bottom: 20px;
@@ -285,7 +294,7 @@
 @media (max-width: 380px) {
 
   .best-sellers-products {
-    grid-template-columns:
+    /* grid-template-columns:
       repeat(
         2,
         145px
@@ -293,12 +302,13 @@
 
     column-gap: 5px;
 
-    row-gap: 30px;
+    row-gap: 30px; */
+     gap: 8px;
   }
 
-  .best-sellers-products app-product-card {
+  /* .best-sellers-products app-product-card {
     width: 145px;
-  }
+  } */
 
   .section-title h2 {
     font-size: 21px;

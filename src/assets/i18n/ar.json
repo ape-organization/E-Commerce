@@ -238,6 +238,8 @@
 },
 
 "COMMON": {
+    "seeMore":"عرض المزيد",
+
   "searching":"بحث ...",
       "client-found":"تم ايجاد البيانات",
 

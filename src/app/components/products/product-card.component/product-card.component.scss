@@ -1,24 +1,6 @@
-/* ============================================================
-   PRODUCT CARD FONT
-   ============================================================ */
-
-/*
-.product-card,
-.product-card .discount-badge,
-.product-card .stock-badge,
-.product-card .already-in-cart-message,
-.product-card .product-name,
-.product-card .old-price,
-.product-card .current-price,
-.product-card button {
-  font-family: Cursive !important;
-}
-*/
-
-
-/* ============================================================
-   PRODUCT CARD HOST
-   ============================================================ */
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
 
 :host {
   display: block;
@@ -28,16 +10,14 @@
   box-sizing: border-box;
 }
 
-
-/* ============================================================
+/* =========================================================
    PRODUCT CARD
-   ============================================================ */
+   ========================================================= */
 
 .product-card {
   width: 100%;
   height: 100%;
   min-width: 0;
-
   box-sizing: border-box;
 
   position: relative;
@@ -49,18 +29,39 @@
 
   cursor: pointer;
 
-  /*
-   * Keep visible so the discount ribbon can extend
-   * outside the card.
-   */
   overflow: visible;
 
   background: var(--color-background);
 
+  animation: cardReveal 0.6s ease both;
+
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
 }
+
+
+/* =========================================================
+   CARD REVEAL ANIMATION
+   ========================================================= */
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
 
 .product-card:hover {
   background-color: var(--color-surface);
@@ -71,544 +72,340 @@
     0 8px 24px rgba(58, 39, 33, 0.12);
 }
 
-
-/* ============================================================
-   IMAGE
-   ============================================================ */
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
 
 .product-image {
   position: relative;
 
   width: 100%;
-
-  /*
-   * Keeps every product image the same size.
-   */
   aspect-ratio: 1 / 1;
 
-  flex-shrink: 0;
-
-  /*
-   * Only the image area is clipped.
-   * The card itself stays overflow: visible
-   * for the ribbon.
-   */
   overflow: hidden;
 
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
 
-  background: #f3eee8;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
 
-  display: block;
-
   object-fit: cover;
+
+  display: block;
 
   transition:
     transform 0.35s ease;
 }
 
 .product-card:hover .product-image img {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 
-/* ============================================================
-   DISCOUNT RIBBON
-   ============================================================ */
-
-
-/* ------------------------------------------------------------
-   BACK / FOLDED SECTION
-   ------------------------------------------------------------ */
-
-.product-card.has-discount::before {
-  content: '';
-
-  position: absolute;
-
-  top: 17px;
-  left: -5px;
-
-  width: 8px;
-  height: 34px;
-
-  z-index: 1;
-
-  background: color-mix(
-    in srgb,
-    var(--color-sale) 72%,
-    #000
-  );
-
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 100%,
-    0 76%
-  );
-
-  filter:
-    drop-shadow(
-      1px 2px 3px rgba(58, 39, 33, 0.16)
-    );
-
-  pointer-events: none;
-}
-
-
-/* ------------------------------------------------------------
-   MAIN FRONT RIBBON
-   ------------------------------------------------------------ */
+/* =========================================================
+   DISCOUNT BADGE
+   ========================================================= */
 
 .discount-badge {
   position: absolute;
 
-  top: 12px;
-  left: -12px;
+  top: 10px;
+  left: 10px;
 
-  z-index: 4;
+  z-index: 2;
 
-  height: 25px;
-  min-width: 52px;
+  padding: 5px 9px;
 
-  padding: 1px;
+  border-radius: 5px;
 
-  box-sizing: border-box;
+  background: var(--color-accent, #b88a5a);
+  color: #fff;
+
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   OUT OF STOCK BADGE
+   ========================================================= */
+
+.stock-badge {
+  position: absolute;
+
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+
+  z-index: 2;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: var(--color-sale);
+  padding: 7px 10px;
 
-  color: #fff;
+  border-radius: 5px;
 
-  font-size: 10px;
-  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
 
-  letter-spacing: 0.1px;
-
-  white-space: nowrap;
-
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    88% 50%,
-    100% 100%,
-    0 100%
-  );
-
-  filter:
-    drop-shadow(
-      0 3px 3px rgba(58, 39, 33, 0.18)
-    )
-    drop-shadow(
-      0 1px 1px rgba(58, 39, 33, 0.10)
-    );
-
-  pointer-events: none;
-}
-
-
-/* ------------------------------------------------------------
-   WHITE SEPARATION
-   ------------------------------------------------------------ */
-
-.discount-badge::before {
-  content: '';
-
-  position: absolute;
-
-  left: 0;
-  top: 0;
-
-  width: 4px;
-  height: 100%;
-
-  background: var(--color-surface);
-
-  opacity: 0.95;
-
-  pointer-events: none;
-}
-
-
-/* ------------------------------------------------------------
-   TOP HIGHLIGHT
-   ------------------------------------------------------------ */
-
-.discount-badge::after {
-  content: '';
-
-  position: absolute;
-
-  left: 7px;
-  right: 11px;
-
-  top: 1px;
-
-  height: 1px;
-
-  background: rgba(255, 255, 255, 0.25);
-
-  pointer-events: none;
-}
-
-
-/* ============================================================
-   STOCK BADGE
-   ============================================================ */
-
-.stock-badge {
-  position: absolute;
-
-  top: 10px;
-  right: 10px;
-
-  z-index: 5;
-
-  padding: 5px 9px;
-
-  border-radius: 6px;
-
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+
+  text-align: center;
 }
 
-.out-of-stock {
-  background: rgba(58, 39, 33, 0.85);
-
+.stock-badge.out-of-stock {
+  background: rgba(40, 26, 22, 0.88);
   color: #fff;
 }
 
 
-/* ============================================================
+/* =========================================================
    PRODUCT CONTENT
-   ============================================================ */
+   ========================================================= */
 
 .product-content {
-  width: 100%;
-
   flex: 1;
-
-  min-width: 0;
-
-  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
 
-  padding: 12px 4px 14px;
+  padding: 14px 4px 4px;
 }
 
 
-/* ============================================================
+/* =========================================================
    BRAND
-   ============================================================ */
+   ========================================================= */
 
 .product-brand {
-  width: 100%;
-
-  min-width: 0;
-
   display: flex;
+
   align-items: center;
+  justify-content: center;
 
-  gap: 1px;
+  gap: 6px;
 
-  margin-bottom: 1px;
+  margin-bottom: 6px;
 
-  color: var(--color-primary-light);
+  min-height: 14px;
 
-  font-size: 9px;
-  font-weight: 600;
-
-  letter-spacing: 1.5px;
-
-  text-transform: uppercase;
-
-  white-space: nowrap;
+  color: var(--color-secondary, #5a4036);
 
   overflow: hidden;
+}
+
+.brand-line {
+  flex: 1;
+
+  height: 1px;
+
+  max-width: 25px;
+
+  background: rgba(90, 64, 54, 0.3);
+}
+
+.brand-diamond {
+  font-size: 6px;
+
+  color: var(--color-accent, #b88a5a);
 
   flex-shrink: 0;
 }
 
-.product-brand::before,
-.product-brand::after {
-  content: '';
-
-  flex: 1;
-
-  min-width: 8px;
-
-  height: 1px;
-
-  background: var(--color-border);
-}
-
-.product-brand span {
-  flex: 0 0 auto;
-}
-
 .brand-name {
-  max-width: 70%;
+  max-width: 75%;
 
   overflow: hidden;
 
   text-overflow: ellipsis;
 
-  color: var(--color-accent);
+  white-space: nowrap;
+
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.8px;
+
+  text-transform: uppercase;
 }
 
 
-/* ============================================================
+/* =========================================================
    PRODUCT NAME
-   ============================================================ */
+   ========================================================= */
 
 .product-name {
-  margin: 0 0 8px;
+  margin: 0;
 
-  min-height: 42px;
-  max-height: 42px;
+  color: var(--color-primary, #3a2721);
 
-  color: var(--color-primary);
+  font-family: 'Montserrat', sans-serif;
 
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
 
-  line-height: 1.4;
+  font-weight: 500;
+
+  line-height: 1.45;
+
+  text-align: center;
 
   display: -webkit-box;
 
   -webkit-line-clamp: 2;
+
   -webkit-box-orient: vertical;
 
   overflow: hidden;
 
-  flex-shrink: 0;
+  min-height: 40px;
 }
 
 
-/* ============================================================
-   PRODUCT PRICE
-   ============================================================ */
+/* =========================================================
+   PRICE
+   ========================================================= */
 
 .product-price {
-  min-width: 0;
-
   display: flex;
+
   align-items: center;
+  justify-content: center;
 
   gap: 8px;
 
-  margin-bottom: 12px;
+  margin-top: 8px;
 
-  flex-shrink: 0;
+  min-height: 24px;
 }
 
 .old-price {
-  min-width: 0;
-
   color: #999;
 
-  font-size: 13px;
-
-  text-decoration: line-through;
-
-  white-space: nowrap;
-}
-
-.current-price {
-  min-width: 0;
-
-  color: var(--color-accent);
-
-  font-size: 17px;
-  font-weight: 700;
-
-  white-space: nowrap;
-}
-
-
-/* ============================================================
-   ADD TO CART
-   ============================================================ */
-
-.addToCart {
-  width: 100%;
-
-  margin-top: auto;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  position: relative;
-
-  flex-shrink: 0;
-}
-
-
-/* ============================================================
-   ADD TO CART BUTTON
-   ============================================================ */
-
-.add-cart-button {
-  width: 180px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0;
-  margin: 0;
-
-  border: none;
-
-  border-radius: 5px;
-
-  background: var(--color-surface);
-
-  color: var(--color-primary-light);
-
-  cursor: pointer;
-
-  opacity: 1;
-  visibility: visible;
-
-  transform: scale(1);
-
-  transition:
-    opacity 0.25s ease,
-    visibility 0.25s ease,
-    transform 0.25s ease,
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.add-cart-button mat-icon {
-  margin: 0;
-
-  width: 22px;
-  height: 22px;
-
-  font-size: 22px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-/* ============================================================
-   ADD TO CART HOVER
-   ============================================================ */
-
-.product-card:hover .add-cart-button:not(:disabled) {
-  background-color: var(--color-primary-light);
-
-  color: var(--color-surface-soft);
-}
-
-
-/* ============================================================
-   ADD TO CART DISABLED
-   ============================================================ */
-
-.add-cart-button:disabled {
-  cursor: not-allowed;
-
-  opacity: 0.7;
-}
-
-
-/* ============================================================
-   ALREADY IN CART MESSAGE
-   ============================================================ */
-
-.already-in-cart-message {
-  position: absolute;
-
-  /*
-   * Keep the message attached to the button area.
-   */
-  top: calc(100% + 5px);
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  z-index: 10;
-
-  width: max-content;
-
-  max-width: 150px;
-
-  padding: 5px 9px;
-
-  border-radius: 5px;
-
-  background: var(--color-surface-soft);
-
-  color: var(--color-primary-light);
+  font-family: 'Montserrat', sans-serif;
 
   font-size: 11px;
 
-  font-weight: 600;
+  text-decoration: line-through;
+}
 
-  line-height: 1.3;
+.current-price {
+  color: var(--color-primary, #3a2721);
 
-  text-align: center;
+  font-family: 'Montserrat', sans-serif;
 
-  white-space: nowrap;
+  font-size: 15px;
 
-  pointer-events: none;
-
-  box-shadow:
-    0 3px 10px rgba(58, 39, 33, 0.12);
+  font-weight: 700;
 }
 
 
-/* ============================================================
-   ADDED TO CART SUCCESS
-   ============================================================ */
+/* =========================================================
+   ADD TO CART
+   ========================================================= */
 
-.add-cart-button.added {
-  background: var(--color-surface);
+.addToCart {
+  position: relative;
 
-  color: var(--color-text-secondary);
+  display: flex;
 
-  opacity: 1;
+  align-items: center;
+  justify-content: center;
 
-  visibility: visible;
+  margin-top: auto;
 
+  padding-top: 10px;
+}
+
+
+/* =========================================================
+   ADD TO CART BUTTON
+   ========================================================= */
+
+.add-cart-button {
+  width: 100%;
+  height: 38px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  background: var(--color-primary, #3a2721);
+  color: #fff;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.add-cart-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  background: var(--color-secondary, #5a4036);
+
+  box-shadow:
+    0 5px 14px rgba(58, 39, 33, 0.18);
+}
+
+.add-cart-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.add-cart-button:disabled {
   cursor: default;
 
-  transform: scale(1);
-
-  box-shadow:
-    0 3px 12px rgba(46, 155, 87, 0.15);
-}
-
-.add-cart-button.added:hover {
-  background: var(--color-surface);
-
-  color: var(--color-text-secondary);
-
-  transform: scale(1);
+  opacity: 0.6;
 }
 
 
-/* ============================================================
-   ADDED CHECK ICON
-   ============================================================ */
+/* =========================================================
+   CART ICON
+   ========================================================= */
+
+.add-cart-button mat-icon {
+  width: 20px;
+  height: 20px;
+
+  font-size: 20px;
+
+  line-height: 20px;
+}
+
+
+/* =========================================================
+   ADDED CHECK
+   ========================================================= */
+
+.add-cart-button.added {
+  background: var(--color-accent, #b88a5a);
+
+  opacity: 1;
+}
 
 .added-check-icon {
   width: 23px !important;
@@ -623,7 +420,6 @@
 }
 
 @keyframes addedCheckAnimation {
-
   0% {
     opacity: 0;
 
@@ -644,149 +440,232 @@
 }
 
 
-/* ============================================================
-   MOBILE / TABLET
-   ============================================================ */
+/* =========================================================
+   ALREADY IN CART MESSAGE
+   ========================================================= */
+
+.already-in-cart-message {
+  position: absolute;
+
+  bottom: 44px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: max-content;
+
+  max-width: 180px;
+
+  padding: 6px 10px;
+
+  border-radius: 5px;
+
+  background: var(--color-primary, #3a2721);
+
+  color: #fff;
+
+  font-family: 'Montserrat', sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 500;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  z-index: 5;
+
+  animation: cartMessageAnimation 0.2s ease;
+}
+
+@keyframes cartMessageAnimation {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+
+/* =========================================================
+   DISCOUNT CARD
+   ========================================================= */
+
+.product-card.has-discount .current-price {
+  color: var(--color-accent, #b88a5a);
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
 
 @media (max-width: 768px) {
 
-  .product-card {
-    background-color: var(--color-surface);
+  .product-content {
+    padding-top: 12px;
   }
 
+  .product-name {
+    font-size: 13px;
+
+    min-height: 38px;
+  }
+
+  .current-price {
+    font-size: 14px;
+  }
+
+  .old-price {
+    font-size: 10px;
+  }
+
+/*   .add-cart-button {
+    width: 36px;
+    height: 36px;
+  } */
+
+  .discount-badge {
+    top: 8px;
+    left: 8px;
+
+    padding: 5px 8px;
+
+    font-size: 10px;
+  }
+
+  .stock-badge {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
   .product-card:hover {
-    transform: none;
+    --reveal-y: 0;
 
     box-shadow: none;
+
+    background-color: var(--color-background);
   }
 
   .product-card:hover .product-image img {
     transform: none;
   }
 
-  .add-cart-button {
-    background-color: var(--color-primary-light);
-
-    color: var(--color-surface-soft);
-  }
-
-  /*
-   * Slightly reduce the ribbon extension
-   * on smaller screens.
-   */
-  .discount-badge {
-    left: -8px;
-  }
-
-  .product-card.has-discount::before {
-    left: -3px;
-  }
-}
-
-
-/* ============================================================
-   SMALL MOBILE
-   ============================================================ */
-
-@media (max-width: 480px) {
-
   .product-content {
-    padding:
-      10px
-      3px
-      12px;
-  }
-
-  .product-name {
-    min-height: 40px;
-    max-height: 40px;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-    margin-bottom: 7px;
-  }
-
-  .product-price {
-    gap: 6px;
-
-    margin-bottom: 10px;
-  }
-
-  .old-price {
-    font-size: 12px;
-  }
-
-  .current-price {
-    font-size: 15px;
-  }
-
-  .add-cart-button {
-    width: 100%;
-    max-width: 180px;
-
-    height: 36px;
+    padding: 10px 2px 2px;
   }
 
   .product-brand {
+    gap: 4px;
+
+    margin-bottom: 5px;
+  }
+
+  .brand-line {
+    max-width: 18px;
+  }
+
+  .brand-name {
     font-size: 8px;
 
-    letter-spacing: 1.2px;
+    letter-spacing: 0.5px;
   }
 
-  .stock-badge {
-    top: 8px;
-    right: 8px;
+  .product-name {
+    font-size: 12px;
 
-    padding: 4px 7px;
+    line-height: 1.4;
 
-    font-size: 10px;
+    min-height: 34px;
   }
 
-  .discount-badge {
-    top: 10px;
+  .product-price {
+    gap: 5px;
 
-    height: 23px;
+    margin-top: 6px;
+  }
 
-    min-width: 48px;
+  .current-price {
+    font-size: 13px;
+  }
+
+  .old-price {
+    font-size: 9px;
+  }
+
+  .addToCart {
+    padding-top: 8px;
+  }
+
+ /*  .add-cart-button {
+    width: 34px;
+    height: 34px;
+  } */
+
+  /* .add-cart-button mat-icon {
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+  } */
+
+  .already-in-cart-message {
+    bottom: 40px;
+
+    max-width: 150px;
+
+    padding: 5px 8px;
 
     font-size: 9px;
   }
 }
 
 
-/* ============================================================
-   VERY SMALL MOBILE
-   ============================================================ */
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
-@media (max-width: 360px) {
+@media (prefers-reduced-motion: reduce) {
 
-  .product-name {
-    font-size: 13px;
+  .product-card {
+    opacity: 1;
 
-    min-height: 37px;
-    max-height: 37px;
+    --reveal-y: 0;
 
-    line-height: 1.4;
+    transition: none;
   }
 
-  .current-price {
-    font-size: 14px;
+  .product-card:hover {
+    --reveal-y: 0;
   }
 
-  .old-price {
-    font-size: 11px;
-  }
-
-  .add-cart-button {
-    height: 34px;
-  }
-
-  .add-cart-button mat-icon {
-    width: 20px;
-    height: 20px;
-
-    font-size: 20px;
+  .product-image img,
+  .add-cart-button,
+  .added-check-icon {
+    transition: none;
+    animation: none;
   }
 }
