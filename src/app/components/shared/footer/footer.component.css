@@ -1,62 +1,32 @@
-/* ============================================================
-   FOOTER 
-   ============================================================ */
-/* 
-.footer,
-.footer * {
-  font-family: Cursive !important;
-}
 
-.footer {
-  position: relative;
-  padding: 10px;
-  background: var(--color-footer);
-  color: var(--color-text);
-  border-top: 1px solid var(--color-footer);
-  overflow: hidden;
-}
- */
 /* ============================================================
    FOOTER
    ============================================================ */
 
 .footer {
   position: relative;
-
-padding: 10px;
+  padding: 42px 0 16px;
   background: var(--color-footer);
-  color: var( --color-text);
-
-  border-top: 1px solid var(--color-footer);
-
+  color: var(--color-text);
+  border-top: 1px solid var(--color-border);
   overflow: hidden;
+  isolation: isolate;
 }
 
-
-/* ============================================================
-   SUBTLE DECORATION
-   ============================================================ */
-
+/* Soft decorative glow */
 .footer::before {
   content: '';
-
   position: absolute;
-
-  top: -140px;
+  top: -180px;
   left: 50%;
-
-  width: 320px;
-  height: 320px;
-
-  background: rgba(184, 138, 90, 0.06);
-
+  width: 360px;
+  height: 360px;
+  background: rgba(184, 138, 90, 0.07);
   border-radius: 50%;
-
   transform: translateX(-50%);
-
   pointer-events: none;
+  z-index: -1;
 }
-
 
 /* ============================================================
    CONTAINER
@@ -64,63 +34,159 @@ padding: 10px;
 
 .container {
   position: relative;
-
   max-width: 1200px;
-
   margin: 0 auto;
-  padding: 0 1.5rem;
-
-  text-align: center;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
+/* ============================================================
+   MAIN FOOTER LAYOUT
+   ============================================================ */
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 1fr;
+  align-items: start;
+  gap: 55px;
+  padding: 0 0 30px;
+}
 
 /* ============================================================
    BRAND
    ============================================================ */
 
 .footer-brand {
-  margin-bottom: 2rem;
+  text-align: left;
 }
 
-.brand-logo {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 0.5rem;
-
-  color: var( --color-text);
-
-  font-size: 1.7rem;
+.footer-brand-name {
+  display: inline-block;
+  color: var(--color-text);
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
   font-weight: 700;
-
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: color 0.25s ease;
 }
 
-.logo-icon {
-  color: var( --color-text);
-
-  font-size: 1.7rem;
-
-  transition: transform 0.25s ease;
+.footer-brand-name:hover {
+  color: var(--color-accent);
 }
 
-.brand-logo:hover .logo-icon {
-  transform: rotate(20deg) scale(1.1);
+.brand-period {
+  color: var(--color-accent);
 }
 
 .brand-description {
-  max-width: 500px;
-
-  margin: 1rem auto 0;
-
-  color: var( --color-text);
-
-  font-size: 0.95rem;
-  line-height: 1.7;
+  max-width: 310px;
+  margin: 12px 0 16px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.9;
 }
 
+/* Decorative beauty symbol */
+
+.footer-brand-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  color: var(--color-accent);
+}
+
+.footer-brand-decoration span {
+  width: 34px;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.55;
+}
+
+.footer-brand-decoration mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+/* ============================================================
+   QUICK LINKS
+   ============================================================ */
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  padding-top: 7px;
+}
+
+.footer-links h3,
+.footer-note h3 {
+  margin: 0 0 5px;
+  color: var(--color-text);
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.footer-links a {
+  position: relative;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   BEAUTY NOTE
+   ============================================================ */
+
+.footer-note {
+  position: relative;
+  padding: 20px;
+  border: 1px solid rgba(184, 138, 90, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  text-align: left;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
+}
+
+.footer-note:hover {
+  border-color: rgba(184, 138, 90, 0.4);
+  background: rgba(184, 138, 90, 0.04);
+}
+
+.footer-note > mat-icon {
+  display: block;
+  width: 23px;
+  height: 23px;
+  margin-bottom: 12px;
+  color: var(--color-accent);
+  font-size: 23px;
+}
+
+.footer-note h3 {
+  font-size: 16px;
+}
+
+.footer-note p {
+  margin: 9px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.8;
+}
 
 /* ============================================================
    DIVIDER
@@ -129,115 +195,10 @@ padding: 10px;
 .footer-divider {
   width: 100%;
   height: 1px;
-
-  margin: 5px 0;
-
+  margin: 0 0 14px;
   background: var(--color-border);
+  opacity: 0.8;
 }
-
-
-/* ============================================================
-   CONTACT
-   ============================================================ */
-
-.contact-section h3 {
-  position: relative;
-
-  display: inline-block;
-
-
-  color: var( --color-text);
-
-  font-size: 1.2rem;
-  font-weight: 600;
-
-  letter-spacing: 0.5px;
-}
-
-.contact-section h3::after {
-  content: '';
-
-  position: absolute;
-
-  left: 50%;
-  bottom: -8px;
-
-  width: 32px;
-  height: 2px;
-
-  background: var(--color-accent);
-
-  transform: translateX(-50%);
-}
-
-
-/* ============================================================
-   CONTACT ITEMS
-   ============================================================ */
-
-.contact-item {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-
-  margin: 0.7rem 0;
-
-  color: var( --color-text);
-}
-
-.contact-icon {
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  width: 30px;
-  height: 30px;
-
-  color: var( --color-text);
-
-  border: 1px solid rgba(184, 138, 90, 0.35);
-  border-radius: 50%;
-
-  font-size: 0.85rem;
-
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease,
-    transform 0.25s ease;
-}
-
-.contact-item:hover .contact-icon {
-  background: var(--color-accent);
-
-  color: var( --color-text);
-
-  border-color: var(--color-accent);
-
-  transform: translateY(-2px);
-}
-
-.contact-item a {
-  color: var( --color-text);
-
-  text-decoration: none;
-
-  font-size: 0.95rem;
-
-  transition:
-    color 0.25s ease,
-    transform 0.25s ease;
-}
-
-.contact-item a:hover {
-  color: var( --color-text);
-
-  transform: translateX(3px);
-}
-
 
 /* ============================================================
    FOOTER BOTTOM
@@ -245,42 +206,82 @@ padding: 10px;
 
 .footer-bottom {
   display: flex;
-
   align-items: center;
   justify-content: space-between;
-
-  gap: 1rem;
-padding-bottom: 20px;
-}
-
-.copyright {
-  margin: 0;
-
-  color: var( --color-text);
-
-  font-size: 0.8rem;
+  gap: 16px;
+  min-height: 35px;
 }
 
 .footer-tagline {
   display: flex;
-
   align-items: center;
+  gap: 8px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
 
-  gap: 0.5rem;
+.footer-tagline a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
 
-  color: var( --color-text);
+.footer-tagline a:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
 
-  font-size: 0.78rem;
-
-  letter-spacing: 0.5px;
+.footer-tagline img {
+  display: block;
+  width: 50px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .gold-dot {
-  color: var( --color-text);
-
-  font-size: 1rem;
+  color: var(--color-accent);
+  font-size: 16px;
 }
 
+.copyright {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-align: center;
+}
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.back-to-top:hover {
+  color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.back-to-top mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
 
 /* ============================================================
    TABLET
@@ -289,28 +290,42 @@ padding-bottom: 20px;
 @media (max-width: 768px) {
 
   .footer {
-    padding: 3rem 0 1.5rem;
-
-    margin-top: 3rem;
+    padding: 32px 0 15px;
   }
 
-  .brand-logo {
-    font-size: 1.5rem;
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 24px;
+    padding-bottom: 25px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+    text-align: center;
   }
 
   .brand-description {
-    font-size: 0.9rem;
+    margin: 10px auto 14px;
+  }
+
+  .footer-brand-decoration {
+    justify-content: center;
+  }
+
+  .footer-links {
+    padding-top: 4px;
+  }
+
+  .footer-note {
+    padding: 17px;
   }
 
   .footer-bottom {
-    flex-direction: column;
-
+    flex-wrap: wrap;
     justify-content: center;
-
-    gap: 0.5rem;
+    gap: 10px 20px;
   }
 }
-
 
 /* ============================================================
    MOBILE
@@ -319,28 +334,110 @@ padding-bottom: 20px;
 @media (max-width: 480px) {
 
   .footer {
-    padding: 2.5rem 0 1.25rem;
+    padding: 27px 0 14px;
   }
 
   .container {
-    padding: 0 1rem;
+    padding: 0 17px;
   }
 
-  .brand-logo {
-    font-size: 1.35rem;
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 23px;
+  }
+
+  .footer-brand {
+    grid-column: auto;
+  }
+
+  .footer-brand-name {
+    font-size: 29px;
   }
 
   .brand-description {
-    font-size: 0.85rem;
-
-    line-height: 1.6;
+    max-width: 290px;
+    font-size: 12px;
   }
 
-  .contact-item a {
-    font-size: 0.85rem;
+  .footer-links {
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-links h3 {
+    margin-bottom: 3px;
+  }
+
+  .footer-note {
+    padding: 18px;
+    text-align: center;
+  }
+
+  .footer-note > mat-icon {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .footer-note h3 {
+    font-size: 16px;
+  }
+
+  .footer-note p {
+    max-width: 280px;
+    margin: 9px auto 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .copyright {
+    order: 2;
+    font-size: 10px;
   }
 
   .footer-tagline {
-    font-size: 0.7rem;
+    order: 1;
+  }
+
+  .back-to-top {
+    order: 3;
+    margin-top: 2px;
+  }
+}
+
+/* ============================================================
+   RTL SUPPORT
+   ============================================================ */
+
+:host-context([dir="rtl"]) .footer-brand,
+:host-context([dir="rtl"]) .footer-links,
+:host-context([dir="rtl"]) .footer-note {
+  text-align: right;
+}
+
+:host-context([dir="rtl"]) .footer-links {
+  align-items: flex-start;
+}
+
+:host-context([dir="rtl"]) .footer-links a:hover {
+  transform: translateX(-4px);
+}
+
+@media (max-width: 768px) {
+
+  :host-context([dir="rtl"]) .footer-brand,
+  :host-context([dir="rtl"]) .footer-note {
+    text-align: center;
+  }
+
+  :host-context([dir="rtl"]) .footer-brand-decoration {
+    justify-content: center;
+  }
+
+  :host-context([dir="rtl"]) .footer-links {
+    align-items: center;
   }
 }

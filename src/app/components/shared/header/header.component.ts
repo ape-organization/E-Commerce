@@ -53,6 +53,7 @@ import {
 } from '@ngx-translate/core';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
+import { environment } from '../../../../environments/environment';
 
 
 // ============================================================
@@ -331,7 +332,6 @@ private searchProductsFromApi(
     .subscribe({
 
       next: (response: any) => {
-
         // Ignore an old request if the user
         // has already typed something newer.
         if (
@@ -356,7 +356,7 @@ private searchProductsFromApi(
 
 
         this.searchProductsResults.set(
-          products.slice(0, 6)
+          products.slice(0, 20)
         );
 
         this.isSearching.set(false);
@@ -373,13 +373,7 @@ private searchProductsFromApi(
         ) {
           return;
         }
-
-        console.error(
-          'Search autocomplete error:',
-          error
-        );
-
-        this.searchProductsResults.set([]);
+ this.searchProductsResults.set([]);
 
         this.isSearching.set(false);
 
@@ -420,6 +414,29 @@ clearSearch(): void {
 
   this.showSearchSuggestions.set(false);
 }
+ // ========================================================
+  // IMAGE URL
+  // ========================================================
+imageApi=environment.imageApiBaseUrl
+  getImageUrl(
+    imageUrl?: string | null
+  ): string {
+
+    if (!imageUrl) {
+
+      return 'assets/images/product-placeholder.png';
+    }
+
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://')
+    ) {
+
+      return imageUrl;
+    }
+
+    return `${this.imageApi}${imageUrl}`;
+  }
   // ==========================================================
   // MOBILE SEARCH
   // ==========================================================
@@ -629,13 +646,7 @@ clearSearch(): void {
         },
 
         error: error => {
-
-          console.error(
-            'Error loading categories:',
-            error
-          );
-
-          this.categoryError.set(
+ this.categoryError.set(
             'Unable to load categories.'
           );
 
@@ -681,13 +692,7 @@ clearSearch(): void {
         },
 
         error: error => {
-
-          console.error(
-            'Error loading brands:',
-            error
-          );
-
-          this.brandError.set(
+ this.brandError.set(
             'Unable to load brands.'
           );
 

@@ -78,7 +78,7 @@ private readonly data =
 
     this.phoneNumber.set(this.data.phoneNumber);
 this.sendOtp();
-   
+
   }
 
 get otp(): string {
@@ -147,7 +147,7 @@ private readonly router=inject(Router)
       });
   }
   verifyOtp(): void {
-
+this.errorMessage.set('')
     if (this.isLoading()) {
       return;
     }
@@ -170,30 +170,17 @@ private readonly router=inject(Router)
       phoneNumber: this.phoneNumber(),
       otp: this.otp
     };
-console.log(this.otp)
     this.otpService.verifyOtp(request)
      
      .subscribe({
 
         next: response => {
-console.log(response)
           this.isLoading.set(false);
 
           if (response.success) {
 
             this.successMessage.set( 'تم التحقق بنجاح . برجاء الانتظار لاتمام الطلب'
             );
-
-            /*
-             * Put your successful action here.
-             *
-             * For example:
-             *
-             * this.router.navigate(['/checkout']);
-             *
-             * or close the dialog.
-             */
-
     this.orderService
       .createOrder(this.data.order)
       .subscribe({
@@ -204,7 +191,9 @@ this.dialogRef.close(true)
         },
 
         error: error => {
- this.dialogRef.close(false)
+          this.errorMessage.set(error.error.message)
+          
+ //this.dialogRef.close(false)
         }
 
       });
@@ -225,7 +214,7 @@ this.dialogRef.close(true)
 
           const message = 'كود التحقق خطأ او منتهي الصلاحيه.';
 
-          this.errorMessage.set(message);
+          this.errorMessage.set(error.error.message);
 
           if (
             typeof error?.error?.attemptsRemaining === 'number'
@@ -251,6 +240,7 @@ closeDialog(): void {
 }
 
   resendOtp(): void {
+this.errorMessage.set('')
 
     if (
       this.isResending() ||
@@ -314,7 +304,6 @@ closeDialog(): void {
       .subscribe({
 
         next: response => {
-console.log(response)
           this.isResending.set(false);
 
           this.clearOtp();

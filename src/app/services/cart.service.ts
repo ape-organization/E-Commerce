@@ -70,7 +70,10 @@ export interface OrderItemRequest {
   quantity: number;
 
 }
-
+export interface CreateOrderRequest {
+  items: OrderItemRequest[];
+  clientTotal: number;
+}
 
 // ============================================================
 // CART SERVICE
@@ -79,6 +82,7 @@ export interface OrderItemRequest {
 @Injectable({
   providedIn: 'root'
 })
+
 export class CartService {
 
   // ==========================================================
@@ -574,6 +578,13 @@ console.log(quantity)
       );
 
   }
+
+getOrderRequest(): CreateOrderRequest {
+  return {
+    items: this.getOrderItems(),
+    clientTotal: this.getCartTotal()
+  };
+}
 
 
   // ==========================================================

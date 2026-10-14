@@ -65,7 +65,18 @@
 "SHOWING": "Showing",
 "PRODUCTS": "products"
 },
-
+"footer": {
+"tagline": "Discover beauty that feels like you. Your everyday essentials, chosen with care.",
+"quickLinks": "Quick Links",
+"home": "Home",
+"shopAll": "Shop All",
+"shoppingBag": "Shopping Bag",
+"beautyTitle": "Your beauty, your way.",
+"beautyDescription": "Make a little time for yourself. Discover everyday beauty essentials that help you feel confident and comfortable in your own skin.",
+"backToTop": "Back to top",
+"madeBy": "Made by",
+"copyright": "All rights reserved."
+},
 "PRODUCT": {
    "SHOW_MORE": "Show more",
     "SHOW_LESS": "Show less",

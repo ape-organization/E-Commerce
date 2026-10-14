@@ -861,11 +861,11 @@ readonly cartLoading$ =
     // ORDER ITEMS
     // =======================================================
 
-    const items =
-      this.cartService.getOrderItems();
+    const OrderRequest =
+      this.cartService.getOrderRequest();
+console.log(OrderRequest)
 
-
-    if (!items.length) {
+    if (!OrderRequest.items.length) {
 
       this.showError(
         'CHECKOUT.EMPTY_CART'
@@ -903,7 +903,7 @@ readonly cartLoading$ =
 
       },
 
-      items
+      OrderRequest
 
     };
 
@@ -919,7 +919,7 @@ readonly cartLoading$ =
     // OTP
     // =======================================================
 
-    this.dialog
+     this.dialog
       .open(
         OtpVerificationComponent,
         {
@@ -947,13 +947,6 @@ readonly cartLoading$ =
 
         next: (result: any) => {
 
-          /*
-           * The OTP component is responsible for the
-           * verification/order flow.
-           *
-           * If it closes without success, allow the
-           * user to try again.
-           */
           if (!result) {
 
             this.isSubmitting.set(false);
@@ -962,15 +955,6 @@ readonly cartLoading$ =
 
           }
 
-
-          /*
-           * If the OTP component returned successfully,
-           * keep the submission locked while it finishes
-           * navigation/order processing.
-           *
-           * If your OTP component closes with success after
-           * completing the order, it will navigate away.
-           */
           this.isSubmitting.set(false);
 
         },
@@ -986,7 +970,7 @@ readonly cartLoading$ =
         }
 
       });
-
+ 
   }
 
 

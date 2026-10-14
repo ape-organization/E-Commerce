@@ -1,36 +1,83 @@
-<footer id="footer" class="footer">
 
+<footer id="footer" class="footer">
   <div class="container">
 
+    <!-- BRAND SECTION -->
+    <div class="footer-main">
 
+      <div class="footer-brand">
+        <a routerLink="/" class="footer-brand-name">
+          Avera<span class="brand-period">.</span>
+        </a>
 
-    <!-- Bottom -->
+        <p class="brand-description">
+        {{ 'footer.tagline' | translate }}
+        </p>
+
+        <div class="footer-brand-decoration">
+          <span></span>
+          <mat-icon>spa</mat-icon>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="footer-links">
+        <h3>{{ 'footer.quickLinks' | translate }}</h3>
+
+        <a routerLink="/home">{{ 'footer.home' | translate }}</a>
+        <a routerLink="/products">{{ 'footer.shopAll' | translate }}</a>
+        <a routerLink="/cart">{{ 'footer.shoppingBag' | translate }}</a>
+      </div>
+
+      <!-- BEAUTY MESSAGE -->
+      <div class="footer-note">
+        <mat-icon>auto_awesome</mat-icon>
+
+        <h3>{{ 'footer.beautyTitle' | translate }}</h3>
+
+        <p>
+         {{ 'footer.beautyDescription' | translate }}
+        </p>
+      </div>
+
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="footer-divider"></div>
+
+    <!-- BOTTOM -->
     <div class="footer-bottom">
-<div class="footer-tagline">
-        <span>Made by </span>
+
+      <div class="footer-tagline">
+        <span>{{ 'footer.madeBy' | translate }}</span>
         <span class="gold-dot">•</span>
-     <a
-  href="https://ape-org.com/"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <img
-    src="../../../assets/images/APElogo (2).png"
-    width="50"
-    height="30"
-    alt="APE"
-  />
-</a>
+
+        <a
+          href="https://ape-org.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="APE website">
+
+          <img
+            src="../../../assets/images/APElogo (2).png"
+            width="50"
+            height="30"
+            alt="APE">
+        </a>
       </div>
 
       <p class="copyright">
-        &copy; {{ currentYear }} pinky Aura. All rights reserved.
+        &copy; {{ currentYear }} Avera.
+       {{ 'footer.copyright' | translate }}
       </p>
 
-      
+      <a routerLink="/" class="back-to-top">
+        <span>{{ 'footer.backToTop' | translate }}</span>
+        <mat-icon>north</mat-icon>
+      </a>
 
     </div>
 
   </div>
-
 </footer>

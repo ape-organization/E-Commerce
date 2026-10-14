@@ -351,7 +351,7 @@ width: 40%;
 
   border-radius: 7px;
 
-  background: var(--color-surface-soft);
+  background: transparent;
 
   color: var(--color-accent);
 }
@@ -480,9 +480,9 @@ width: 40%;
 
 .logoMobile {
   display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  width: 35%;
+  align-items: left;
+/*   gap: 7px;
+ */  width: 50%;
     height: 68px;
   color: var(--color-primary);
   text-decoration: none;
@@ -1185,21 +1185,19 @@ width: 40%;
 
 .menu-button,
 .close-button {
-  width: 38px;
+  width: 10%;
   height: 38px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
   border: 0;
   border-radius: 50%;
-
+margin: 0px auto;
   background: transparent;
   color: var(--color-primary);
 
   cursor: pointer;
-
   transition:
     background .2s ease,
     color .2s ease;
@@ -1472,7 +1470,7 @@ width: 40%;
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 991px) {
+@media (max-width: 791px) {
   .desktop-header {
     display: none;
   }
@@ -1492,7 +1490,7 @@ width: 40%;
    TABLET
    ========================================================= */
 
-@media (max-width: 1100px) and (min-width: 992px) {
+/*  @media (max-width: 1100px) and (min-width: 992px) {
   .desktop-search {
     width: 220px;
   }
@@ -1510,7 +1508,7 @@ width: 40%;
     padding: 0 7px;
     font-size: 12px;
   }
-}
+}  */
 
 
 /* =========================================================

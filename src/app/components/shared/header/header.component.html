@@ -99,9 +99,11 @@
 
                   <span class="suggestion-icon">
 
-                    <mat-icon>
-                      inventory_2
-                    </mat-icon>
+                    <img width="90%"  height="90%" 
+                     [src]="getImageUrl(product.imageUrl)"
+                      loading="lazy"
+                     />
+                   
 
                   </span>
 
@@ -175,9 +177,10 @@
 
                   <span class="suggestion-icon">
 
-                    <mat-icon>
-                      sell
-                    </mat-icon>
+                    <img  width="90%"  height="90%" 
+                     [src]="getImageUrl(brand.imageUrl)"
+                      loading="lazy"/>
+                    
 
                   </span>
 
@@ -641,13 +644,13 @@
             language
           </mat-icon>
 
-          <span>
+          <!-- <span>
             {{
               languageService.currentLanguage() === 'en'
                 ? ('HEADER.ARABIC' | translate)
                 : ('HEADER.ENGLISH' | translate)
             }}
-          </span>
+          </span> -->
 
         </button>
 
@@ -662,8 +665,7 @@
 
   <div class="mobile-header">
 
-    <!-- MENU -->
-    <button
+  <button
       type="button"
       class="menu-button"
       (click)="openMobileMenu()">
@@ -673,13 +675,12 @@
       </mat-icon>
 
     </button>
-
+ 
 
     <!-- LOGO -->
     <div class="logoMobile">
 <img src="../../../../assets/images/logoo.png" />
  </div>
-
 <div class="mobileHeader">
     <!-- MOBILE SEARCH -->
     <button
@@ -720,13 +721,13 @@
         language
       </mat-icon>
 
-      <span>
+    <!--   <span>
         {{
           languageService.currentLanguage() === 'en'
             ? ('HEADER.ARABIC' | translate)
             : ('HEADER.ENGLISH' | translate)
         }}
-      </span>
+      </span> -->
 
     </button>
 </div>
