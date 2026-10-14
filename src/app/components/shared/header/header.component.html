@@ -830,9 +830,10 @@
 
                   <span class="suggestion-icon">
 
-                    <mat-icon>
-                      inventory_2
-                    </mat-icon>
+                    <img width="90%"  height="90%" 
+                     [src]="getImageUrl(product.imageUrl)"
+                      loading="lazy"
+                     />
 
                   </span>
 
@@ -906,9 +907,9 @@
 
                   <span class="suggestion-icon">
 
-                    <mat-icon>
-                      sell
-                    </mat-icon>
+                     <img  width="90%"  height="90%" 
+                     [src]="getImageUrl(brand.imageUrl)"
+                      loading="lazy"/>
 
                   </span>
 
