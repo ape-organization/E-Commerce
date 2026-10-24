@@ -863,7 +863,6 @@ readonly cartLoading$ =
 
     const OrderRequest =
       this.cartService.getOrderRequest();
-console.log(OrderRequest)
 
     if (!OrderRequest.items.length) {
 

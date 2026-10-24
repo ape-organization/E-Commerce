@@ -448,7 +448,6 @@ updateQuantity(
   max: number
 ): void {
 
-  console.log('max:', max);
 
   const maxQuantity =
     max > 0
