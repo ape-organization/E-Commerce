@@ -16,11 +16,30 @@
   position: relative;
 
   width: 100%;
-  height: 400px;
+  height: clamp(340px, 38vw, 520px);
 
   overflow: hidden;
 
-  background: var(--color-primary);
+  background: var(--color-primary-dark);
+
+  isolation: isolate;
+}
+
+/* thin gold hairline under the hero */
+.hero::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 6;
+
+  height: 3px;
+
+  background: var(--gradient-gold);
 }
 
 
@@ -37,8 +56,8 @@
   visibility: hidden;
 
   transition:
-    opacity 0.8s ease,
-    visibility 0.8s ease;
+    opacity 0.9s var(--ease-out),
+    visibility 0.9s var(--ease-out);
 }
 
 .hero-slide.active {
@@ -50,16 +69,60 @@
 
 
 /* ============================================================
+   HERO BACKDROP (blurred copy of the slide image)
+   ============================================================ */
+
+.hero-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  filter: blur(28px) saturate(1.15) brightness(0.75);
+
+  transform: scale(1.2);
+}
+
+
+/* ============================================================
    HERO IMAGE
+   Shown whole (no stretching / no cropping)
    ============================================================ */
 
 .hero-image {
+  position: relative;
+
+  z-index: 1;
+
   width: 100%;
   height: 100%;
 
   display: block;
 
-  object-fit: fill;
+  object-fit: contain;
+
+  transform: scale(1);
+
+  will-change: transform;
+}
+
+/* slow "Ken Burns" zoom while the slide is visible */
+.hero-slide.active .hero-image {
+  animation: heroZoom 6s ease-out both;
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.06);
+  }
+
+  to {
+    transform: scale(1);
+  }
 }
 
 
@@ -72,12 +135,16 @@
 
   inset: 0;
 
+  z-index: 2;
+
+  pointer-events: none;
+
   background:
     linear-gradient(
-      90deg,
-      rgba(58, 39, 33, 0.88) 0%,
-      rgba(58, 39, 33, 0.58) 40%,
-      rgba(58, 39, 33, 0.12) 100%
+      0deg,
+      rgba(40, 26, 22, 0.55) 0%,
+      rgba(40, 26, 22, 0.12) 35%,
+      rgba(40, 26, 22, 0) 60%
     );
 }
 
@@ -89,20 +156,31 @@
 .hero-content {
   position: absolute;
 
-  left: 25px;
+  left: clamp(20px, 5vw, 72px);
   right: auto;
+  bottom: clamp(48px, 6vw, 72px);
 
-  top: 80%;
-
-  transform: translateY(-50%);
-
-  z-index: 2;
-
-  width: min(560px, 80%);
+  z-index: 3;
 
   color: var(--color-surface);
 
   text-align: left;
+}
+
+.hero-slide.active .hero-content {
+  animation: heroContentIn 0.9s var(--ease-out) 0.25s both;
+}
+
+@keyframes heroContentIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
@@ -110,31 +188,12 @@
    RTL HERO CONTENT
    ============================================================ */
 
-html[dir="rtl"] .hero-content {
+:host-context([dir="rtl"]) .hero-content {
   left: auto;
-  right: 25px;
+  right: clamp(20px, 5vw, 72px);
 
   text-align: right;
 }
-
-
-/* ============================================================
-   HERO SMALL TITLE
-   ============================================================ */
-
-.hero-small-title {
-  display: block;
-
-  margin-bottom: 15px;
-
-  color: var(--color-surface);
-
-  font-size: 12px;
-  font-weight: 700;
-
-  letter-spacing: 3px;
-}
-
 
 
 /* ============================================================
@@ -142,46 +201,83 @@ html[dir="rtl"] .hero-content {
    ============================================================ */
 
 .hero-button {
-  height: 41px;
+  position: relative;
+
+  height: 48px;
 
   display: inline-flex;
 
   align-items: center;
   justify-content: center;
 
-  gap: 8px;
+  gap: 10px;
 
-  padding: 0 24px;
+  padding: 0 30px;
 
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-sm);
+  overflow: hidden;
 
-  background: var(--color-accent);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+
+  background: var(--gradient-gold);
 
   color: var(--color-surface);
 
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 
   cursor: pointer;
-box-shadow: 1px 1px 1px var(--color-accent);
+
+  box-shadow: var(--shadow-gold);
+
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
 }
 
+/* light sweep across the button */
+.hero-button::before {
+  content: '';
 
-/* ============================================================
-   HERO BUTTON HOVER
-   ============================================================ */
+  position: absolute;
+
+  top: 0;
+  left: -75%;
+
+  width: 50%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  animation: buttonShine 4.5s ease-in-out infinite;
+}
+
+@keyframes buttonShine {
+  0%,
+  60% {
+    left: -75%;
+  }
+
+  100% {
+    left: 130%;
+  }
+}
 
 .hero-button:hover {
-  background: var(--color-accent);
+  transform: translateY(-2px);
 
-  border-color: var(--color-accent-light);
-
-  color: var(--color-primary-dark);
+  box-shadow: 0 16px 36px rgba(184, 138, 90, 0.45);
 }
 
 
@@ -195,7 +291,11 @@ box-shadow: 1px 1px 1px var(--color-accent);
 
   font-size: 18px;
 
-  transition: transform 0.2s ease;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.hero-button:hover mat-icon {
+  transform: translateX(4px);
 }
 
 
@@ -211,13 +311,17 @@ box-shadow: 1px 1px 1px var(--color-accent);
    The arrow is reversed so it points toward the left.
 */
 
-html[dir="rtl"] .hero-button mat-icon {
+:host-context([dir="rtl"]) .hero-button mat-icon {
   transform: rotate(180deg);
+}
+
+:host-context([dir="rtl"]) .hero-button:hover mat-icon {
+  transform: rotate(180deg) translateX(4px);
 }
 
 
 /* ============================================================
-   HERO ARROWS
+   HERO ARROWS (glass)
    ============================================================ */
 
 .slider-arrow {
@@ -229,17 +333,39 @@ html[dir="rtl"] .hero-button mat-icon {
 
   z-index: 5;
 
-  background: transparent;
+  width: 46px;
+  height: 46px;
 
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   color: var(--color-surface);
 
   cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s var(--ease-out);
 }
 
 .slider-arrow:hover {
-  transform: translateY(-50%) scale(1.05);
+  background: var(--color-accent);
+
+  border-color: var(--color-accent-light);
+
+  transform: translateY(-50%) scale(1.08);
 }
 
 
@@ -264,12 +390,12 @@ html[dir="rtl"] .hero-button mat-icon {
    In RTL the visual meaning of previous/next is reversed.
 */
 
-html[dir="rtl"] .slider-prev {
+:host-context([dir="rtl"]) .slider-prev {
   left: auto;
   right: 30px;
 }
 
-html[dir="rtl"] .slider-next {
+:host-context([dir="rtl"]) .slider-next {
   right: auto;
   left: 30px;
 }
@@ -283,7 +409,7 @@ html[dir="rtl"] .slider-next {
   position: absolute;
 
   left: 50%;
-  bottom: 25px;
+  bottom: 24px;
 
   transform: translateX(-50%);
 
@@ -294,33 +420,40 @@ html[dir="rtl"] .slider-next {
   align-items: center;
 
   gap: 8px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background: rgba(40, 26, 22, 0.25);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .slider-dots button {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 
   padding: 0;
 
   border: none;
 
-  border-radius: 50%;
+  border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.6);
 
   cursor: pointer;
 
   transition:
-    width 0.2s ease,
-    background-color 0.2s ease;
+    width 0.35s var(--ease-out),
+    background-color 0.35s ease;
 }
 
 .slider-dots button.active {
-  width: 25px;
+  width: 26px;
 
-  border-radius: 10px;
-
-  background: var(--color-accent-light);
+  background: var(--gradient-gold);
 }
 
 
@@ -330,6 +463,8 @@ html[dir="rtl"] .slider-next {
 
 .categories-section {
   width: 100%;
+
+  padding-top: 56px;
 }
 
 
@@ -339,32 +474,111 @@ html[dir="rtl"] .slider-next {
 
 .brands-section {
   width: 100%;
+
+  padding-top: 32px;
 }
 
-.seeMore
-{
+
+/* ============================================================
+   SEE MORE
+   ============================================================ */
+
+.seeMore {
   display: flex;
   justify-content: center;
-  color: var( --color-accent);
-  cursor: pointer;
+
+  padding: 6px 0 10px;
 }
+
+.see-more-button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 8px;
+
+  height: 42px;
+
+  padding: 0 26px;
+
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+
+  background: transparent;
+
+  color: var(--color-primary);
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s var(--ease-out);
+}
+
+.see-more-button mat-icon {
+  width: 16px;
+  height: 16px;
+
+  font-size: 16px;
+
+  color: var(--color-accent);
+
+  transition:
+    transform 0.3s var(--ease-out),
+    color 0.3s ease;
+}
+
+.see-more-button:hover {
+  background: var(--color-primary);
+
+  color: var(--color-surface);
+
+  box-shadow: var(--shadow-md);
+
+  transform: translateY(-2px);
+}
+
+.see-more-button:hover mat-icon {
+  color: var(--color-accent-light);
+
+  transform: translateX(4px);
+}
+
+:host-context([dir="rtl"]) .see-more-button mat-icon {
+  transform: rotate(180deg);
+}
+
+:host-context([dir="rtl"]) .see-more-button:hover mat-icon {
+  transform: rotate(180deg) translateX(4px);
+}
+
+
 /* ============================================================
    SCROLL REVEAL
    ============================================================ */
 
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(25px);
+  transform: translateY(28px);
 
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.8s var(--ease-out),
+    transform 0.8s var(--ease-out);
 }
 
 .scroll-reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+
 /* ============================================================
    MOBILE - TABLET
    ============================================================ */
@@ -372,27 +586,7 @@ html[dir="rtl"] .slider-next {
 @media (max-width: 900px) {
 
   .hero {
-    height: 300px;
-  }
-
-  .hero-content {
-    left: 25px;
-    right: auto;
-  }
-
-  /* RTL */
-  html[dir="rtl"] .hero-content {
-    left: auto;
-    right: 25px;
-  }
-
-  .category-card {
-    flex-basis: 165px;
-  }
-
-  .category-image {
-    width: 165px;
-    height: 165px;
+    height: 320px;
   }
 }
 
@@ -407,59 +601,16 @@ html[dir="rtl"] .slider-next {
     height: 300px;
   }
 
-
-  /* ----------------------------------------------------------
-     MOBILE OVERLAY
-     ---------------------------------------------------------- */
-
-  .hero-overlay {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(58, 39, 33, 0.85),
-        rgba(58, 39, 33, 0.35)
-      );
-  }
-
-
-  /* ----------------------------------------------------------
-     MOBILE HERO CONTENT
-     ---------------------------------------------------------- */
-
   .hero-content {
-    left: 25px;
-    right: auto;
-
-    width: auto;
-
-    text-align: left;
+    bottom: 50px;
   }
 
+  .hero-button {
+    height: 42px;
 
-  /* RTL mobile */
-  html[dir="rtl"] .hero-content {
-    left: auto;
-    right: 25px;
+    padding: 0 22px;
 
-    text-align: right;
-  }
-
-
-  /* ----------------------------------------------------------
-     MOBILE TITLE
-     ---------------------------------------------------------- */
-
-  .hero-content h1 {
-    font-size: 40px;
-  }
-
-
-  /* ----------------------------------------------------------
-     MOBILE DESCRIPTION
-     ---------------------------------------------------------- */
-
-  .hero-content p {
-    font-size: 14px;
+    font-size: 12px;
   }
 
 
@@ -468,8 +619,12 @@ html[dir="rtl"] .slider-next {
      ---------------------------------------------------------- */
 
   .slider-arrow {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .slider-arrow mat-icon {
+    font-size: 22px;
   }
 
 
@@ -486,63 +641,41 @@ html[dir="rtl"] .slider-next {
 
   /* RTL mobile arrows */
 
-  html[dir="rtl"] .slider-prev {
+  :host-context([dir="rtl"]) .slider-prev {
     left: auto;
     right: 12px;
   }
 
-  html[dir="rtl"] .slider-next {
+  :host-context([dir="rtl"]) .slider-next {
     right: auto;
     left: 12px;
   }
 
-
-  /* ----------------------------------------------------------
-     MOBILE CATEGORIES
-     ---------------------------------------------------------- */
+  .slider-dots {
+    bottom: 16px;
+  }
 
   .categories-section {
-    padding: 55px 15px 60px;
-  }
-
-
-  /* ----------------------------------------------------------
-     MOBILE SECTION HEADING
-     ---------------------------------------------------------- */
-
-  .section-heading {
-    margin-bottom: 30px;
-  }
-
-  .section-heading h2 {
-    font-size: 28px;
+    padding: 44px 15px 0;
   }
 }
 
 
 /* ============================================================
-   SMALL MOBILE
+   REDUCED MOTION
    ============================================================ */
 
-@media (max-width: 400px) {
+@media (prefers-reduced-motion: reduce) {
 
-  .hero {
-    height: 300px;
+  .hero-slide.active .hero-image,
+  .hero-slide.active .hero-content,
+  .hero-button::before {
+    animation: none;
   }
 
-  .hero-content h1 {
-    font-size: 34px;
-  }
-
-  .hero-content {
-    left: 20px;
-    right: auto;
-  }
-
-  /* RTL small mobile */
-
-  html[dir="rtl"] .hero-content {
-    left: auto;
-    right: 20px;
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

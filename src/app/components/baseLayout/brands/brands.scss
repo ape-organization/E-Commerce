@@ -119,15 +119,22 @@
   background-color: var(--color-surface);
 
   box-shadow:
-    3px 5px 5px var(--color-surface-soft);
+    0 0 0 1px var(--color-border-light),
+    var(--shadow-sm);
 
   transition:
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
+    box-shadow 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
 }
 
+/* gold ring on hover */
 .brand-card:hover .brand-image {
   transform: translateY(-5px);
+
+  box-shadow:
+    0 0 0 2px var(--color-accent),
+    0 0 0 6px rgba(216, 185, 138, 0.25),
+    var(--shadow-gold);
 }
 
 

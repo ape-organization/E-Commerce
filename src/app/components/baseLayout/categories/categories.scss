@@ -118,9 +118,28 @@
 
   border-radius: 50%;
 
-  background: transparent;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      var(--color-surface) 0%,
+      var(--color-surface-soft) 100%
+    );
 
-  transition: transform 0.25s ease;
+  box-shadow:
+    0 0 0 1px var(--color-border-light),
+    var(--shadow-sm);
+
+  transition:
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out);
+}
+
+/* gold ring on hover */
+.category-card:hover .category-image {
+  box-shadow:
+    0 0 0 2px var(--color-accent),
+    0 0 0 6px rgba(216, 185, 138, 0.25),
+    var(--shadow-gold);
 }
 
 .category-card:hover .category-image {

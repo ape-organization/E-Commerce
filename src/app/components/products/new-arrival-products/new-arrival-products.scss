@@ -34,21 +34,25 @@
 
   color: var(--color-primary);
 
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
 
-  font-size: 30px;
+  font-size: clamp(26px, 3vw, 34px);
   font-weight: 600;
 
   letter-spacing: 0.3px;
 }
 
 .title-line {
-  width: 35px;
+  width: 56px;
   height: 1px;
 
-  background: var(--color-accent);
+  background: linear-gradient(90deg, transparent, var(--color-accent));
 
   flex-shrink: 0;
+}
+
+.title-line:last-child {
+  background: linear-gradient(90deg, var(--color-accent), transparent);
 }
 
 .section-header p {

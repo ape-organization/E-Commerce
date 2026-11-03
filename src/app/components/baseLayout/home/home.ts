@@ -10,7 +10,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 
 import { Categories } from '../categories/categories';
 import { Brands } from '../brands/brands';
@@ -24,7 +23,6 @@ import { environment } from '../../../../environments/environment';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ProductModalComponent } from '../../products/product-modal/product-modal.component';
 import { BestSellers } from '../../products/best-sellers.component/best-sellers.component';
 import { NewArrivalProducts } from '../../products/new-arrival-products/new-arrival-products';
 
@@ -62,8 +60,6 @@ export class Home implements OnInit, AfterViewInit,OnDestroy {
   private readonly sliderService =
     inject(SliderService);
 
-  private readonly dialog =
-    inject(MatDialog);
 
   private readonly cartService =
     inject(CartService);
@@ -220,47 +216,43 @@ export class Home implements OnInit, AfterViewInit,OnDestroy {
 
 
 
+// =====================================================
+// SCROLL REVEAL
+// IntersectionObserver instead of a scroll listener:
+// no layout reads on every scroll frame, and each
+// section is unobserved once it has been revealed.
+// =====================================================
+
 private observer?: IntersectionObserver;
-private handleScroll = (): void => {
-  this.checkScrollAnimation();
-};
 
-
-private checkScrollAnimation(): void {
+ngAfterViewInit(): void {
 
   const elements =
     document.querySelectorAll('.scroll-reveal');
 
-  const windowHeight =
-    window.innerHeight;
+  if (!('IntersectionObserver' in window)) {
 
-  elements.forEach(element => {
+    elements.forEach(element => element.classList.add('visible'));
 
-    const rect =
-      element.getBoundingClientRect();
+    return;
+  }
 
-    if (
-      rect.top <
-      windowHeight * 0.90
-    ) {
+  this.observer =
+    new IntersectionObserver(entries => {
 
-      element.classList.add('visible');
+      entries.forEach(entry => {
 
-    }
+        if (entry.isIntersecting) {
 
-  });
-}
-ngAfterViewInit(): void {
+          entry.target.classList.add('visible');
 
-  setTimeout(() => {
-    this.checkScrollAnimation();
-  }, 300);
+          this.observer?.unobserve(entry.target);
+        }
+      });
 
-  window.addEventListener(
-    'scroll',
-    this.handleScroll,
-    { passive: true }
-  );
+    }, { rootMargin: '0px 0px -10% 0px' });
+
+  elements.forEach(element => this.observer!.observe(element));
 }
 headToAllBrands()
 {
@@ -523,10 +515,7 @@ headToAllBrands()
   // =====================================================
 
   ngOnDestroy(): void {
-window.removeEventListener(
-  'scroll',
-  this.handleScroll
-);
+    this.observer?.disconnect();
     this.stopSlider();
 
 

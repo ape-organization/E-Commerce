@@ -72,7 +72,33 @@
   --radius-lg: 14px;
   --radius-xl: 18px;
 
+  /* ==========================================================
+     TYPOGRAPHY
+     ========================================================== */
 
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Montserrat', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* ==========================================================
+     LUXE ACCENTS (built only from the palette above)
+     ========================================================== */
+
+  --gradient-gold:
+    linear-gradient(135deg, #D8B98A 0%, #B88A5A 55%, #8E6702 100%);
+
+  --gradient-espresso:
+    linear-gradient(135deg, #5A4036 0%, #3A2721 55%, #281A16 100%);
+
+  --shadow-gold:
+    0 10px 28px rgba(184, 138, 90, 0.32);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Arabic: one family that has real Arabic glyphs */
+html[dir="rtl"] {
+  --font-heading: 'Tajawal', 'Segoe UI', sans-serif;
+  --font-body: 'Tajawal', 'Segoe UI', sans-serif;
 }
 
 
@@ -100,12 +126,42 @@ body {
 
   line-height: 1.6;
 
+  font-family: var(--font-body);
+
   color: var(--color-text);
 
   background:
     var(--color-background);
 
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* h3 is used for product / card titles, which stay in the body font */
+h1,
+h2 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.2px;
+}
+
+::selection {
+  background: var(--color-accent-light);
+  color: var(--color-primary-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Angular Material dialogs/menus default to Roboto */
+.mat-mdc-dialog-container,
+.mat-mdc-dialog-surface,
+.mat-mdc-menu-panel,
+.mat-mdc-snack-bar-container,
+.mdc-button {
+  font-family: var(--font-body) !important;
 }
 /* ==============================
    Language Switcher
@@ -351,14 +407,16 @@ a {
 }
 
 .section-small-title {
-  display: block;
+  display: inline-block;
 
   color: var(--color-accent);
 
+  font-family: var(--font-body);
   font-size: 11px;
   font-weight: 700;
 
-  letter-spacing: 3px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
 .section-heading h2 {
@@ -366,7 +424,8 @@ a {
 
   color: var(--color-primary);
 
-  font-size: 34px;
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3.2vw, 38px);
   font-weight: 600;
 
   line-height: 1.2;
@@ -395,10 +454,14 @@ a {
 .title-line::after {
   content: '';
 
-  width: 45px;
+  width: 56px;
   height: 1px;
 
-  background: var(--color-accent);
+  background: linear-gradient(90deg, transparent, var(--color-accent));
+}
+
+.title-line::after {
+  background: linear-gradient(90deg, var(--color-accent), transparent);
 }
 
 .title-line span {
@@ -435,10 +498,11 @@ a {
   box-shadow: var(--shadow-sm);
 
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s var(--ease-out);
 }
 
 .carousel-arrow:hover {
@@ -448,7 +512,9 @@ a {
 
   color: var(--color-surface);
 
-  transform: scale(1.05);
+  box-shadow: var(--shadow-gold);
+
+  transform: scale(1.08);
 }
 
 .carousel-arrow mat-icon {
@@ -518,4 +584,24 @@ a {
   display: block;
 
   object-fit: cover;
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -11,10 +11,22 @@
       *ngFor="let slide of slides(); let i = index"
       [class.active]="i === currentSlide()"
     >
+      <!-- blurred copy fills the frame so any image ratio looks full -->
       <img
         [src]="getCategoryImage(slide)"
-        
+        class="hero-backdrop"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        [attr.fetchpriority]="i === 0 ? 'high' : 'low'"
+      />
+
+      <img
+        [src]="getCategoryImage(slide)"
         class="hero-image"
+        alt=""
+        decoding="async"
+        [attr.fetchpriority]="i === 0 ? 'high' : 'low'"
       />
 
       <div class="hero-overlay"></div>
@@ -110,7 +122,10 @@
 <app-brands></app-brands>
 
  <div class="seeMore">
-<h3 (click)="headToAllBrands()">{{'COMMON.seeMore'| translate}}</h3>
+<button type="button" class="see-more-button" (click)="headToAllBrands()">
+  <span>{{'COMMON.seeMore'| translate}}</span>
+  <mat-icon>arrow_forward</mat-icon>
+</button>
  </div>
 
 

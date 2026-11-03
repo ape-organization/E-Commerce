@@ -5,11 +5,14 @@ import {
 
 import {
   provideRouter,
-  withInMemoryScrolling
+  withInMemoryScrolling,
+  withPreloading,
+  PreloadAllModules
 } from '@angular/router';
 
 import {
   provideHttpClient,
+  withFetch,
   withInterceptors
 } from '@angular/common/http';
 
@@ -31,10 +34,14 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({
         anchorScrolling: 'enabled',
         scrollPositionRestoration: 'enabled'
-      })
+      }),
+
+      // Pages are lazy-loaded; fetch them in the background after first render
+      withPreloading(PreloadAllModules)
     ),
 
     provideHttpClient(
+      withFetch(),
       withInterceptors([
         cacheInterceptor
       ])

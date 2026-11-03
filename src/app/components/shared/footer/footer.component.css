@@ -63,7 +63,7 @@
 .footer-brand-name {
   display: inline-block;
   color: var(--color-text);
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
   font-size: 32px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -126,7 +126,7 @@
 .footer-note h3 {
   margin: 0 0 5px;
   color: var(--color-text);
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
   font-size: 17px;
   font-weight: 600;
 }

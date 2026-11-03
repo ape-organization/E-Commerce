@@ -865,3 +865,85 @@ width: 100%;
   -webkit-appearance: none;
   margin: 0;
 }
+/* ============================================================
+ENTRANCE ANIMATION
+"backwards" fill: styles apply only until the animation ends,
+so the existing hover transforms keep working afterwards.
+============================================================ */
+
+.image-frame {
+animation: pmFrameIn 0.7s var(--ease-out) backwards;
+}
+
+.image-frame img {
+animation: pmImageSettle 1.2s var(--ease-out) 0.1s backwards;
+}
+
+.image-label,
+.discount-badge,
+.stock-badge {
+animation: pmPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s backwards;
+}
+
+/* details rise in one after another */
+.product-details > * {
+animation: pmRise 0.6s var(--ease-out) backwards;
+}
+
+.product-details > :nth-child(1) { animation-delay: 0.10s; }
+.product-details > :nth-child(2) { animation-delay: 0.17s; }
+.product-details > :nth-child(3) { animation-delay: 0.24s; }
+.product-details > :nth-child(4) { animation-delay: 0.31s; }
+.product-details > :nth-child(5) { animation-delay: 0.38s; }
+.product-details > :nth-child(6) { animation-delay: 0.45s; }
+.product-details > :nth-child(n + 7) { animation-delay: 0.52s; }
+
+/* description opens with a soft slide */
+.description-content {
+animation: pmRise 0.35s var(--ease-out) backwards;
+}
+
+/* offer box: gentle glow to catch the eye */
+.offer-box {
+animation:
+  pmRise 0.6s var(--ease-out) backwards,
+  pmGlow 2.8s ease-in-out 1s infinite;
+}
+
+@keyframes pmFrameIn {
+from { opacity: 0; transform: scale(0.97); }
+to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pmImageSettle {
+from { opacity: 0; transform: scale(1.08); }
+to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pmPop {
+from { opacity: 0; transform: scale(0.6); }
+to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pmRise {
+from { opacity: 0; transform: translateY(14px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pmGlow {
+0%, 100% { box-shadow: 0 0 0 0 rgba(184, 138, 90, 0); }
+50% { box-shadow: 0 0 0 4px rgba(184, 138, 90, 0.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.image-frame,
+.image-frame img,
+.image-label,
+.discount-badge,
+.stock-badge,
+.product-details > *,
+.description-content,
+.offer-box {
+  animation: none;
+}
+}
