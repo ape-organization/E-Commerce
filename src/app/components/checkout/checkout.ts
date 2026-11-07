@@ -84,6 +84,7 @@ import {
 import {
   OtpVerificationComponent
 } from '../shared/otp-verification.component/otp-verification.component';
+import { OrderService } from '../../services/order.service';
 
 
 @Component({
@@ -788,13 +789,45 @@ readonly cartLoading$ =
   // =========================================================
   // PLACE ORDER
   // =========================================================
+private readonly orderService=inject(OrderService)
+  readonly errorMessage = signal('');
+  private handleSuccessfulOrder(): void {
 
+    this.cartService.clearCart();
+
+
+    const dialogRef =
+      this.dialog.open(
+        NotifyMessage,
+        {
+          width: '400px',
+
+          disableClose: true,
+
+          data: {
+
+            title:
+              'ORDER.SUCCESS',
+
+            message:
+              'ORDER.SUCCESSORDER'
+
+          }
+        }
+      );
+
+
+    dialogRef
+      .afterClosed()
+      .subscribe(() => {
+
+        this.router.navigate([
+          '/products'
+        ]);
+
+      });
+  }
   placeOrder(): void {
-
-    /*
-     * Prevent double clicks and accidental multiple
-     * submissions.
-     */
     if (this.isSubmitting()) {
 
       return;
@@ -912,13 +945,31 @@ readonly cartLoading$ =
     // =======================================================
 
     this.isSubmitting.set(true);
+///==============================
+    this.orderService
+      .createOrder(orderRequest)
+      .subscribe({
 
+        next: () => {
+this.handleSuccessfulOrder();
+        },
+
+        error: error => {
+          this.errorMessage.set(error.error.message)
+          
+          this.isSubmitting.set(false);
+
+          this.showError(
+            'CHECKOUT.ORDER_FAILED'
+          );
+        }
+      })
 
     // =======================================================
     // OTP
     // =======================================================
 
-     this.dialog
+     /* this.dialog
       .open(
         OtpVerificationComponent,
         {
@@ -968,7 +1019,7 @@ readonly cartLoading$ =
 
         }
 
-      });
+      }); */
  
   }
 
